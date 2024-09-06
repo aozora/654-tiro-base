@@ -1,0 +1,12 @@
+.auth-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin: 0 auto;
+
+  form {
+    padding: 1rem;
+    border: solid 1px var(--color-pastel-orangengis);
+    border-radius: var(--global-radius);
+  }
+}
