@@ -1,8 +1,19 @@
-import { PrismaClient } from '@prisma/client';
+// import { PrismaClient } from '@prisma/client';
 import { Argon2id } from 'oslo/password';
 import { generateId } from 'lucia';
+import { PrismaClient } from '@prisma/client';
+import { PrismaLibSQL } from '@prisma/adapter-libsql';
+import { createClient } from '@libsql/client';
 
-const prisma = new PrismaClient();
+const libsql = createClient({
+	url: process.env.TURSO_DATABASE_URL,
+	authToken: process.env.TURSO_AUTH_TOKEN
+});
+
+const adapter = new PrismaLibSQL(libsql);
+const prisma = new PrismaClient({ adapter });
+// const prisma = new PrismaClient();
+// import prisma from '../src/lib/server/prisma';
 
 async function seed() {
 	console.log(`Starting seeding database... 🌱`);
