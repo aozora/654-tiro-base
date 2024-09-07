@@ -17,17 +17,19 @@
   --color-primary: #000;
   --color-black: #000;
   --color-white: #fff;
-  --color-gray: #ccc;
-  --color-dark: #444;
-  --color-pantone: #6968AA;
+  --color-dark: #1E1D1C;
+  --color-red: #CD2B2A;
+  --color-yellow: #D9BC32;
+  --color-light: #D6D7D6;
+  --color-purple: #1F3762;
 
   // ################################################################
   //    DARK/LIGHT THEME
   // ################################################################
 
   --theme-foreground: var(--color-black);
-  --theme-background: var(--color-white);
-  --theme-brand: var(--color-pantone);
+  --theme-background: var(--color-light);
+  --theme-brand: var(--color-red);
 
   // defaults
   --body-background: var(--theme-background);

@@ -5,28 +5,73 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  // url      = "file:./dev.db"
-  url      = env("TURSO_DATABASE_URL")
+  provider = "cockroachdb"
+  url      = env("VITE_DATABASE_URL")
 }
 
 model User {
-  id       String    @id
-  // username is email
-  email    String    @unique
-  password String
-  role     String
-  sessions Session[]
+  id                 String                 @id
+  email              String                 @unique
+  password           String
+  role               String
+  sessions           Session[]
+  UsersOnTournaments PlayersOnTournaments[]
+  UsersOnMatches     PlayersOnMatches[]
 }
 
 model Session {
   id        String   @id
-  userId    String
   expiresAt DateTime
   user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+  userId    String
+}
+
+model Player {
+  id                   BigInt                 @id @default(autoincrement())
+  name                 String
+  picture              Bytes?
+  isActive             Boolean                @default(true)
+  PlayersOnTournaments PlayersOnTournaments[]
+  PlayersOnMatches     PlayersOnMatches[]
+}
+
+model Tournament {
+  id                   BigInt                 @id @default(autoincrement())
+  title                String
+  PlayersOnTournaments PlayersOnTournaments[]
+}
+
+model PlayersOnTournaments {
+  player       Player     @relation(fields: [playerId], references: [id])
+  playerId     BigInt
+  tournament   Tournament @relation(fields: [tournamentId], references: [id])
+  tournamentId BigInt
+  isActive     Boolean    @default(true)
+  User         User?      @relation(fields: [userId], references: [id])
+  userId       String?
+
+  @@id([playerId, tournamentId])
+}
+
+model Match {
+  id               BigInt             @id @default(autoincrement())
+  date             DateTime
+  PlayersOnMatches PlayersOnMatches[]
+}
+
+model PlayersOnMatches {
+  player   Player @relation(fields: [playerId], references: [id])
+  playerId BigInt
+  match    Match  @relation(fields: [matchId], references: [id])
+  matchId  BigInt
+
+  points Int
+  User   User?   @relation(fields: [userId], references: [id])
+  userId String?
+
+  @@id([playerId, matchId])
 }

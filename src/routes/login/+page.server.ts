@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { lucia } from '$lib/server/auth';
 import { fail, redirect } from '@sveltejs/kit';
 import { Argon2id } from 'oslo/password';
@@ -7,14 +8,8 @@ import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { authSchema } from '$lib/schemas/auth-schema';
 
-// const schema = z
-// 	.object({
-// 		email: z.string().email(),
-// 		password: z.string().min(8)
-// 	})
-// 	.required(); // all fields are required
-
 export const load: PageServerLoad = async (event) => {
+	// @ts-ignore
 	if (event.locals.user) {
 		return redirect(302, '/');
 	}
@@ -26,7 +21,7 @@ export const load: PageServerLoad = async (event) => {
 export const actions = {
 	default: async ({ request, cookies }) => {
 		const form = await superValidate(request, zod(authSchema));
-		console.log({ form });
+		console.log(`Form is valid: ${form.valid}`);
 
 		if (!form.valid) {
 			// Again, return { form } and things will just work.
@@ -62,6 +57,7 @@ export const actions = {
 			console.log('...redirecting to home');
 			return redirect(302, '/');
 		} catch (e) {
+			console.error(e);
 			return fail(500, {
 				message: 'An unknown error occurred',
 				form

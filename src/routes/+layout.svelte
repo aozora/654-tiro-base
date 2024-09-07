@@ -7,7 +7,7 @@ import { page } from '$app/stores';
 
 export let data: LayoutData;
 
-console.log($page.data.user.email)
+console.log($page.data.user)
 // console.log($data.user.email)
 </script>
 

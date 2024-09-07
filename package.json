@@ -10,7 +10,6 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig tsconfig.json --watch",
 		"lint": "prettier --check my-app && eslint .",
 		"format": "prettier --write my-app",
-		"seed2": "node --loader ts-node/esm prisma/seed.ts",
 		"seed": "tsx prisma/seed.ts"
 	},
 	"prisma": {
@@ -43,10 +42,9 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@libsql/client": "^0.8.1",
 		"@lucia-auth/adapter-prisma": "^4.0.1",
-		"@prisma/adapter-libsql": "^5.19.1",
 		"@prisma/client": "^5.19.1",
+		"bits-ui": "^0.21.13",
 		"lucia": "^3.2.0",
 		"oslo": "^1.2.1"
 	}

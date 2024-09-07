@@ -11,7 +11,7 @@
     validators: zod(authSchema),
     //   field: (value) => string | string[] | null | undefined;
     // },
-    validationMethod: 'auto', //  | 'oninput' | 'onblur' | 'submit-only' = 'auto',
+    validationMethod: 'submit-only', //  | 'oninput' | 'onblur' | 'submit-only' = 'auto',
   })
   // console.log({$form}, {$message})
 </script>
