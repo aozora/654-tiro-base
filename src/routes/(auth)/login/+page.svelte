@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type {ActionData} from "./$types";
+  import type {ActionData} from "../../../../.svelte-kit/types/src/routes";
   import {superForm} from "sveltekit-superforms";
   import {authSchema} from "$lib/schemas/auth-schema";
   import {zod} from "sveltekit-superforms/adapters";
@@ -16,8 +16,9 @@
   // console.log({$form}, {$message})
 </script>
 
-<div class="auth-page">
-  <h1>Sign in</h1>
+<div class="">
+  <h1>Risiko!</h1>
+  <h2>654 tiro base!</h2>
 
   <form method="POST" use:enhance>
     <label for="email">Email</label>

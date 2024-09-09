@@ -2,7 +2,7 @@
 import { lucia } from '$lib/server/auth';
 import { fail, redirect } from '@sveltejs/kit';
 import { Argon2id } from 'oslo/password';
-import type { Actions, PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from '../../../../.svelte-kit/types/src/routes';
 import prisma from '$lib/server/prisma';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';

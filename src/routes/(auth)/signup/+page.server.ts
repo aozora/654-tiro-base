@@ -4,7 +4,7 @@ import { generateId } from 'lucia';
 import { Argon2id } from 'oslo/password';
 // import { SqliteError } from 'better-sqlite3';
 
-import type { Actions, PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from '../../../../.svelte-kit/types/src/routes';
 import prisma from '$lib/server/prisma';
 
 export const load: PageServerLoad = async (event) => {

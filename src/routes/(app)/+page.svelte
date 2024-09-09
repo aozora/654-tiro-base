@@ -10,7 +10,7 @@
 <p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
 
 {#if data.user}
-  <form action="/?/logout" method="post" use:enhance>
+  <form action="?/logout" method="post" use:enhance>
     <button class="w3-bar-item w3-button">Logout</button>
   </form>
 {/if}

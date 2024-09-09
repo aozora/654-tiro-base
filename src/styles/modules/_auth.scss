@@ -3,10 +3,15 @@
   flex-direction: column;
   justify-content: flex-start;
   margin: 0 auto;
+  background: transparent url("/img/risiko-challenge-tabellone.webp") no-repeat center center fixed;
 
   form {
     padding: 1rem;
     border: solid 1px var(--color-pastel-orangengis);
     border-radius: var(--global-radius);
+  }
+
+  h1, h2 {
+    font-family: var();
   }
 }

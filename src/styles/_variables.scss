@@ -14,14 +14,19 @@
   // ################################################################
   //    COLORS
   // ################################################################
-  --color-primary: #000;
+  --color-brand: #e6795;
   --color-black: #000;
   --color-white: #fff;
-  --color-dark: #1E1D1C;
-  --color-red: #CD2B2A;
-  --color-yellow: #D9BC32;
-  --color-light: #D6D7D6;
-  --color-purple: #1F3762;
+  --color-blue: #487abf;
+  --color-blue-star: #1a4795;
+  --color-dark: #1e1d1c;
+  --color-gold: #c7f064;
+  --color-green: #66c364;
+  --color-light: #f0f3e0;
+  --color-montana: #c08859;
+  --color-orange: #b08054;
+  --color-purple: #cca4c3;
+  --color-yellow: #d9bc32;
 
   // ################################################################
   //    DARK/LIGHT THEME
@@ -36,8 +41,6 @@
   --body-font-color: var(--theme-foreground);
 
 
-
-
   // ################################################################
   //    TYPOGRAPHY SCALE & FONTS
   // ################################################################
@@ -47,24 +50,31 @@
   --kerning: normal; // auto (default), normal (enabled), none (disabled)
 
   // Fonts
-  //--variable-font-family: 'Inter var', Helvetica, Roboto, Arial, sans-serif;
-  --variable-font-family: '', Roboto, Helvetica, Arial, sans-serif;
+  --variable-font-family-default: 'Bodoni Moda', Helvetica, Roboto, Arial, sans-serif;
+  --variable-font-family-brutal: 'annonce', Roboto, Helvetica, Arial, sans-serif;
   --variable-heading-font-family: none;
-  --body-font-family: 'annonce', Roboto, Helvetica, Arial, sans-serif;
-  --heading-font-family: 'annonce', serif;
+  --body-font-family: var(--variable-font-family-default);
+  --heading-font-family: var(--variable-font-family-default);
 
-  /* type modular scale */
-  --text-base-size: 1rem; // 18px - html is set to 112.5%
+  // font weights
+  --font-weight-thin: 100;
+  --font-weight-extra-light: 200;
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semi-bold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extra-bold: 800;
+  --font-weight-black: 900;
 
   // type scale
-  --text-scale-ratio: 1.25; // base mobile ratio
-  //--text-base: 1rem;
-  --text-scale-1: calc(1rem * var(--text-scale-ratio)); // h3
-  --text-scale-2: calc(var(--text-scale-1) * var(--text-scale-ratio)); // h2
-  --text-scale-3: calc(var(--text-scale-2) * var(--text-scale-ratio)); // h1
-  --text-scale-4: calc(var(--text-scale-3) * var(--text-scale-ratio));
-  --text-scale-5: calc(var(--text-scale-4) * var(--text-scale-ratio));
-  --text-scale-6: calc(var(--text-scale-5) * var(--text-scale-ratio)); // h2 hero
+  --text-base-size: 1rem; // 16px - html is set to 112.5%
+  --text-scale-14: calc(14 / 16 * 1rem); //  14
+  --text-scale-16: calc(16 / 16 * 1rem); //  16
+  --text-scale-20: 1.25rem; //  20
+  --text-scale-24: calc(24 / 16 * 1rem); //  24
+  --text-scale-32: calc(32 / 16 * 1rem); //  32
+  --text-scale-40: 2.5rem; //  40
 
 
   /* max text sizes  */
@@ -104,11 +114,10 @@
   --placeholder-color: var(--color-black);
 
 
-
   // ################################################################
   //    GLOBALS
   // ################################################################
-  --global-radius: 4px;
+  --global-radius: 10px;
 
 
   // ################################################################
@@ -116,21 +125,13 @@
   // ################################################################
   --sectionMaxWidth: 1024px;
 
-
-
   // ################################################################
-  //    MAIN MENU
+  //    TRANSITIONS
   // ################################################################
-  --menu-background: transparent;
-  --menu-height: 3.33rem;
-
-
-  // ################################################################
-  //    Z-INDEXES
-  // ################################################################
-  --menu-zindex: 101;
-  --menu-toggle-button-zindex: calc(var(--menu-zindex) + 2);
-  --skiplink-zindex: calc(var(--menu-toggle-button-zindex) + 1);
-  --home-mobile-loader-zindex: 110;
+  --link-underline-transition: width 0.35s linear;
+  --transition-transform: transform .35s linear;
+  --transition-background-size: background-size .35s linear;
+  --transition-background-color: background-color .35s linear;
+  --transition-color: color .35s linear;
 }
 
