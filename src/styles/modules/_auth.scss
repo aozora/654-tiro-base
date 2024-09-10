@@ -12,6 +12,19 @@
   }
 
   h1, h2 {
-    font-family: var();
+    font-family: var(--variable-font-family-brutal);
+    color: var(--color-brand);
+    border: 6px solid var(--color-black);
+    border-radius: var(--global-radius);
+    text-align: center;
+    background-color: var(--color-light);
+  }
+
+  h1 {
+    font-size: var(--text-scale-48);
+  }
+
+  h2 {
+    font-size: var(--text-scale-32);
   }
 }
