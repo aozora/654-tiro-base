@@ -1,12 +1,11 @@
 <script lang="ts">
   import {enhance} from "$app/forms";
-
-  import type {ActionData} from "../../../../.svelte-kit/types/src/routes";
+  import type { ActionData } from '../../../../.svelte-kit/types/src/routes/(auth)/signup/$types';
 
   export let form: ActionData;
 </script>
 
-<div class="auth-page">
+<div class="auth-frame">
   <h1>Create an account</h1>
 
   <form method="post" use:enhance>

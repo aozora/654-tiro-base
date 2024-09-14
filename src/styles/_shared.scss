@@ -72,72 +72,19 @@
   }
 }
 
-@mixin dropcap {
-  /* Initial Cap styles */
-  &:first-of-type::first-letter {
-    --text-weight: calc(var(--p-vf-weight) * 1.75);
-
-    float: left;
-    font-size: calc(var(--dc-font-size) * 1rem);
-    line-height: var(--dc-line-height);
-    padding: .1em .05em .05em 0;
-    //border: 1px solid #fff;
-
-    // if initial-letter is supported
-    @supports (initial-letter: 2) or (-webkit-initial-letter: 2) {
-      -webkit-initial-letter: 2;
-      initial-letter: 2;
-      /* undo other bits */
-      float: none;
-      font-size: inherit;
-      line-height: inherit;
-      margin: 0;
-      padding: 0 0.25em 0 0;
-    }
-  }
-}
-
-@mixin icon-button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 2.667rem;
-  height: 2.667rem;
-  padding: 0;
-  margin: 0;
-  border: 2px dashed transparent;
-  background-color: var(--color-black);
-  color: var(--color-white);
-
-  &:active,
-  &:focus {
-    border: var(--focus-border-size) var(--focus-border-style) var(--focus-border-color);
-  }
-
-  //&:active,
-  //&:focus {
-  //  color: var(--color-primary);
-  //  text-decoration: none;
-  //}
-
-  path {
-    transition: opacity .55s ease-in;
-  }
-}
-
 @mixin ligature {
   font-variant-ligatures: normal;
   font-feature-settings: "liga" 1, "dlig" 0;
 }
 
-@mixin light-shadow {
-  --light-shadow-x: 0;
-  --light-shadow-y: .15ch;
-  --hue: 320;
-  --bg: oklch(35% .3 var(--hue));
-  --text: oklch(85% .1 var(--hue));
-  --shadow: oklch(25% .2 var(--hue));
-  --highlight: oklch(98% .05 var(--hue));
-  //text-shadow: 0 .15ch 15px var(--shadow), 0 -2px 0 var(--highlight);
-  text-shadow: var(--shadow-x) var(--shadow-y) 15px var(--shadow), 0 -2px 0 var(--highlight);
-}
+//@mixin light-shadow {
+//  --light-shadow-x: 0;
+//  --light-shadow-y: .15ch;
+//  --hue: 320;
+//  --bg: oklch(35% .3 var(--hue));
+//  --text: oklch(85% .1 var(--hue));
+//  --shadow: oklch(25% .2 var(--hue));
+//  --highlight: oklch(98% .05 var(--hue));
+//  //text-shadow: 0 .15ch 15px var(--shadow), 0 -2px 0 var(--highlight);
+//  text-shadow: var(--shadow-x) var(--shadow-y) 15px var(--shadow), 0 -2px 0 var(--highlight);
+//}
