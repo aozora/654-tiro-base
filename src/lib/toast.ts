@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /**
  * Custom theme for https://github.com/zerodevx/svelte-toast
  */
@@ -21,6 +22,7 @@ export function toast({
 }: ToastProps) {
 	svelteToast.push({
 		component: {
+			// @ts-ignore
 			src: ToastNotification,
 			props: {
 				kind,

@@ -52,6 +52,7 @@
     justify-content: left;
     align-items: flex-start;
     padding: 1rem 0;
+    border-left: 3px solid var(--color);
 
     &.cb-notification-toast-success {
       --color: var(--token-support-success-inverse);
@@ -68,8 +69,6 @@
     &.cb-notification-toast-warning {
       --color: var(--token-support-warning-inverse);
     }
-
-    border-left: 3px solid var(--color);
   }
 
   :global(.cb-notification-toast-icon) {

@@ -54,36 +54,6 @@
     z-index: 50;
   }
 
-  //.modal-wrapper {
-  //  position: fixed;
-  //  top: 0;
-  //  right: 0;
-  //  bottom: 0;
-  //  left: 0;
-  //  padding: 0;
-  //  z-index: 50;
-  //}
-  //
-  //.cb-modal {
-  //  position: absolute;
-  //  left: 50%;
-  //  top: 50%;
-  //  display: flex;
-  //  flex-direction: column;
-  //  justify-content: space-between;
-  //  width: 90vw;
-  //  max-width: 860px;
-  //  min-width: 320px;
-  //  max-height: 85vh;
-  //  min-height: 200px;
-  //  padding: 0;
-  //  transform: translate(-50%, -50%);
-  //  background-color: var(--token-layer01);
-  //  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-  //  z-index: 90;
-  //  overflow-y: auto;
-  //}
-
   .modal-content {
     position: fixed;
     top: 50%;
