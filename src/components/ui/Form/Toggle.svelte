@@ -25,27 +25,34 @@
 <div class='cb-form-field-wrapper'>
 	<Switch.Root
 		id="marketing"
-		class="toggle"
+		class="toggle" name={name}
+		bind:checked={value}
+		aria-invalid={errors ? 'true' : undefined}
+		aria-describedby={errors ? `${name}-message` : helperText ? `${name}-helper`: undefined }
+		required={required}
+		disabled={disabled}
+		{...constraints}
+		{...$$restProps}
 	>
 		<Switch.Thumb
 			class="toggle-thumb"
 		/>
 	</Switch.Root>
-	<Switch
-		name={name}
-		class={`cb-toggle ${value ? "cb-toggle-enabled" : "cb-toggle-disabled"}`}
-		bind:checked={value}
-		aria-invalid={errors ? 'true' : undefined}
-		aria-describedby={errors ? `${name}-message` : helperText ? `${name}-helper`: undefined }
-		required={required}
-		readonly={readonly}
-		disabled={disabled}
-		{...constraints}
-		{...$$restProps}
-	>
-		<input type="hidden" {id} {name} bind:value />
-		<span class='cb-toggle-value' class:toggle-on={value} class:toggle-off={!value} />
-	</Switch>
+<!--	<Switch-->
+<!--		name={name}-->
+<!--		class={`cb-toggle ${value ? "cb-toggle-enabled" : "cb-toggle-disabled"}`}-->
+<!--		bind:checked={value}-->
+<!--		aria-invalid={errors ? 'true' : undefined}-->
+<!--		aria-describedby={errors ? `${name}-message` : helperText ? `${name}-helper`: undefined }-->
+<!--		required={required}-->
+<!--		readonly={readonly}-->
+<!--		disabled={disabled}-->
+<!--		{...constraints}-->
+<!--		{...$$restProps}-->
+<!--	>-->
+<!--		<input type="hidden" {id} {name} bind:value />-->
+<!--		<span class='cb-toggle-value' class:toggle-on={value} class:toggle-off={!value} />-->
+<!--	</Switch>-->
 
 	{#if helperText}
 		<p id={`${name}-helper`}>{helperText}</p>

@@ -1,47 +1,64 @@
 <script lang="ts">
-import Main from '$components/Main.svelte';
-import { TableHandler, Datatable, Th } from '@vincjo/datatables'
-import type { Player } from '@prisma/client';
-import type { PageData } from './$types';
-import {PencilSimple} from 'phosphor-svelte'
-import Modal from '$components/ui/Modal/Modal.svelte';
-import TextInput from '$components/ui/Form/TextInput.svelte';
-import { superForm } from 'sveltekit-superforms/client';
-import { page } from '$app/stores';
-import { toast } from '$lib/toast';
+	import Main from '$components/Main.svelte';
+	import { TableHandler, Datatable, Th } from '@vincjo/datatables';
+	import type { Player } from '@prisma/client';
+	import type { PageData } from './$types';
+	import { PencilSimple } from 'phosphor-svelte';
+	import Modal from '$components/ui/Modal/Modal.svelte';
+	import TextInput from '$components/ui/Form/TextInput.svelte';
+	import { superForm } from 'sveltekit-superforms/client';
+	import { page } from '$app/stores';
+	import { toast } from '$lib/toast';
+	import Toggle from '$components/ui/Form/Toggle.svelte';
 
-type PageProps = {
-	players: Array<Player>
-}
-
-export let data: PageData;
-
-const { players }: PageProps = data;
-const {
-	form,
-	errors,
-	enhance,
-	delayed,
-	message,
-	constraints
-} = superForm(data.form, {
-	onUpdated: ({ form }) => {
-		// When the form is successfully submitted close the modal and reset the item variable
-		if (form.valid && message && $page.status < 400) {
-			item = undefined;
-			isModalOpen = false;
-
-			// show a toast
-			toast({ kind: 'success', title: 'Ok!', subtitle: 'Dati salvati!', showTimestamp: true, hideCloseButton: false });
-		}
+	type PageProps = {
+		players: Array<Player>
 	}
-});
 
-let isModalOpen = false;
-let item: Player | undefined = undefined;
+	export let data: PageData;
 
+	const { players }: PageProps = data;
+	const {
+		form,
+		errors,
+		enhance,
+		delayed,
+		message,
+		constraints
+	} = superForm(data.form, {
+		onUpdated: ({ form }) => {
+			// When the form is successfully submitted close the modal and reset the item variable
+			if (form.valid && message && $page.status < 400) {
+				item = undefined;
+				isModalOpen = false;
 
-const table = new TableHandler(players, { rowsPerPage: 10 })
+				// show a toast
+				toast({
+					kind: 'success',
+					title: 'Ok!',
+					subtitle: 'Dati salvati!',
+					showTimestamp: true,
+					hideCloseButton: false
+				});
+			}
+		}
+	});
+
+	let isModalOpen = false;
+	let item: Player | undefined = undefined;
+
+	const table = new TableHandler(players, { rowsPerPage: 10 });
+
+	const onNewPlayern = () => {
+		item = undefined;
+		isModalOpen = true;
+	};
+
+	const onEditPlayer = (row: Player) => {
+		item = row;
+		isModalOpen = true;
+	};
+
 </script>
 
 <Main className="admin-page">
@@ -65,8 +82,8 @@ const table = new TableHandler(players, { rowsPerPage: 10 })
 					<td>{row.picture}</td>
 					<td>{row.isActive}</td>
 					<td>
-						<button class="button">
-							<PencilSimple size="24"/>
+						<button class="button" on:click={() => onEditPlayer(row)}>
+							<PencilSimple size="24" />
 						</button>
 					</td>
 				</tr>
@@ -91,38 +108,28 @@ const table = new TableHandler(players, { rowsPerPage: 10 })
 								 invalidMessage={$errors?.name?.join(' - ')}
 								 value={item?.name}
 			/>
-			<TextInput label='Trustee' name='trustee' value={item?.trustee} />
-			<TextInput label='Status' name='status' value={item?.status} />
-			<Toggle label='Is external' name='isExternal' required={true} value={item?.isExternal} />
+			<TextInput label='Foto' name='picture' value={item?.picture} />
 			<Toggle label='Is active' name='isActive' required={true} value={item?.isActive} />
-
-			<Combobox id='select-team' name='team' required={true} label='Team' options={teamsItems} value={item?.teamId}
-								placeholder='' />
-			<Combobox id='select-city' name='city' required={true} label='City' options={cityItems} value={item?.cityId}
-								placeholder='' />
-			<Combobox id='select-rate' name='rate' required={true} label='Rate' options={rateItems} value={item?.rateId}
-								placeholder='' />
-
-			<TextInput label='Competence' name='competence' value={item?.competence} />
-			<TextArea label='Notes' name='notes' value={item?.notes} />
 		</form>
 	</svelte:fragment>
 
 	<svelte:fragment slot='modal-actions'>
-		<Button
-			label='Cancel'
-			kind='secondary'
-			size='extra'
-			class='cb-modal-action'
-			on:click={() => isModalOpen = false}
-		/>
-		<Button
-			label='Save'
-			type='submit'
-			kind='primary'
-			size='extra'
-			class='cb-modal-action'
-			form='form-people'
-		/>
+		<button type="button" class="button" on:click={()=>isModalOpen = false}>Annulla</button>
+		<button type="submit" form="form-player" class="button primary" on:click={()=>isModalOpen = false}>Salva</button>
+		<!--		<Button-->
+		<!--			label='Cancel'-->
+		<!--			kind='secondary'-->
+		<!--			size='extra'-->
+		<!--			class='cb-modal-action'-->
+		<!--			on:click={() => isModalOpen = false}-->
+		<!--		/>-->
+		<!--		<Button-->
+		<!--			label='Save'-->
+		<!--			type='submit'-->
+		<!--			kind='primary'-->
+		<!--			size='extra'-->
+		<!--			class='cb-modal-action'-->
+		<!--			form='form-people'-->
+		<!--		/>-->
 	</svelte:fragment>
 </Modal>
