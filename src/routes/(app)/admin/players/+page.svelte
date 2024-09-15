@@ -14,6 +14,8 @@
 	import AdminPageTitle from '$components/AdminPageTitle.svelte';
 	import Icon from '$components/Icon/Icon.svelte';
 	import { Icons } from '$types';
+	import Loader from '$components/Loader.svelte';
+	import Checkbox from '$components/ui/Form/Checkbox.svelte';
 
 	type PageProps = {
 		players: Array<Player>
@@ -30,6 +32,7 @@
 		message,
 		constraints
 	} = superForm(data.form, {
+		validationMethod: 'onsubmit', //'auto' | 'oninput' | 'onblur' | 'onsubmit' = 'auto',
 		onUpdated: ({ form }) => {
 			// When the form is successfully submitted close the modal and reset the item variable
 			if (form.valid && message && $page.status < 400) {
@@ -74,7 +77,6 @@
 
 <AdminPageTitle title="Gestione giocatori" />
 <Main className="admin-page">
-
 	<div>
 		<header class="page-header">
 			<button type="button" class="button" on:click={() => createPlayer()}>
@@ -123,12 +125,16 @@
 			</table>
 		</Datatable>
 	</div>
+
+	{#if $delayed}
+		<Loader />
+	{/if}
 </Main>
 
 <Modal title={item === undefined ? 'Nuovo giocatore':'Modifica giocatore'}
 			 bind:isOpen={isModalOpen}>
 	<svelte:fragment slot='modal-content'>
-		<form id="form-player" method="POST">
+		<form id="form-player" method="POST" use:enhance>
 			<input type='hidden' name='id' value={item?.id} />
 
 			<!--      <SuperDebug data={$form} />-->
@@ -139,7 +145,13 @@
 								 invalidMessage={$errors?.name?.join(' - ')}
 								 value={item?.name}
 			/>
-			<Toggle label='Is active' name='isActive' required={true} value={item?.isActive ?? false} />
+			<!--			<Toggle label='Is active' name='isActive' required={true} value={item?.isActive ?? false} />-->
+			<Checkbox label='Attivo' required={true} name='isActive'
+								errors={$errors.isActive}
+								constraints={$constraints.isActive}
+								invalidMessage={$errors?.isActive?.join(' - ')}
+								checked={item?.isActive}
+			/>
 		</form>
 	</svelte:fragment>
 

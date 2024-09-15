@@ -1,13 +1,14 @@
 <script lang='ts'>
 	import type { InputConstraint } from 'sveltekit-superforms';
-	import { Switch } from 'bits-ui';
 
 	export let id: string = crypto.randomUUID();
 	export let label: string;
 	export let name: string;
-	export let value: boolean;
+	export let checked: boolean;
+	export let placeholder: string | undefined = undefined;
+	export let autoComplete: boolean | undefined = false;
 	export let disabled: boolean | undefined = undefined;
-	// export let readonly: boolean | undefined = undefined;
+	export let readonly: boolean | undefined = undefined;
 	export let required: boolean | undefined = undefined;
 	export let invalidMessage: string | undefined = undefined;
 	export let helperText: string | undefined = undefined;
@@ -17,28 +18,27 @@
 	export let constraints: InputConstraint | undefined = undefined;
 </script>
 
-<!--for={id}-->
-<label >
+<label for={id}>
 	{label}
 	{#if required}<span aria-label='required'>*</span>{/if}
 </label>
 
 <div class='form-field-wrapper'>
-	<Switch.Root
-		class="toggle" name={name}
-		bind:checked={value}
-		aria-invalid={errors ? 'true' : undefined}
-		aria-describedby={errors ? `${name}-message` : helperText ? `${name}-helper`: undefined }
-		required={required}
-		disabled={disabled}
-		{...constraints}
-		{...$$restProps}
-	>
-		<Switch.Thumb
-			class="toggle-thumb"
-		/>
-		<Switch.Input id={id} />
-	</Switch.Root>
+	<input id={id}
+				 name={name}
+				 type="checkbox"
+				 placeholder={placeholder}
+				 aria-invalid={errors ? 'true' : undefined}
+				 aria-describedby={errors ? `${name}-message` : helperText ? `${name}-helper`: undefined }
+				 required={required}
+				 readonly={readonly}
+				 disabled={disabled}
+				 autocomplete={!autoComplete ? "off" : undefined}
+				 autofill={!autoComplete ? "off" : undefined}
+				 bind:checked
+				 {...constraints}
+				 {...$$restProps}
+	/>
 
 	{#if helperText}
 		<p id={`${name}-helper`}>{helperText}</p>
