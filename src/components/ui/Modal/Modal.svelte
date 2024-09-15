@@ -23,9 +23,9 @@
 				<slot name='modal-content' />
 			</div>
 
-			<div class="modal-actions">
-				<slot name='modal-actions' />
-			</div>
+<!--			<div class="modal-actions">-->
+<!--				<slot name='modal-actions' />-->
+<!--			</div>-->
 
 			<Dialog.Close class="modal-close" on:click={() => (isOpen = false)}>
 				<div>

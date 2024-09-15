@@ -9,7 +9,7 @@
 	import { superForm } from 'sveltekit-superforms/client';
 	import { page } from '$app/stores';
 	import { toast } from '$lib/toast';
-	import Toggle from '$components/ui/Form/Toggle.svelte';
+	// import Toggle from '$components/ui/Form/Toggle.svelte';
 	import Avatar from '$components/ui/Avatar/Avatar.svelte';
 	import AdminPageTitle from '$components/AdminPageTitle.svelte';
 	import Icon from '$components/Icon/Icon.svelte';
@@ -32,7 +32,7 @@
 		message,
 		constraints
 	} = superForm(data.form, {
-		validationMethod: 'onsubmit', //'auto' | 'oninput' | 'onblur' | 'onsubmit' = 'auto',
+		// validationMethod: 'onsubmit', //'auto' | 'oninput' | 'onblur' | 'onsubmit' = 'auto',
 		onUpdated: ({ form }) => {
 			// When the form is successfully submitted close the modal and reset the item variable
 			if (form.valid && message && $page.status < 400) {
@@ -152,11 +152,11 @@
 								invalidMessage={$errors?.isActive?.join(' - ')}
 								checked={item?.isActive}
 			/>
-		</form>
-	</svelte:fragment>
 
-	<svelte:fragment slot='modal-actions'>
-		<button type="button" class="button" on:click={()=>isModalOpen = false}>Annulla</button>
-		<button type="submit" form="form-player" class="button primary" on:click={()=>isModalOpen = false}>Salva</button>
+			<div class="modal-actions">
+				<button type="button" class="button" on:click={()=>isModalOpen = false}>Annulla</button>
+				<button type="submit" class="button primary">Salva</button>
+			</div>
+		</form>
 	</svelte:fragment>
 </Modal>
