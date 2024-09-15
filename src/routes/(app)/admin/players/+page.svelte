@@ -137,9 +137,7 @@
 		<form id="form-player" method="POST" use:enhance>
 			<input type='hidden' name='id' value={item?.id} />
 
-			<!--      <SuperDebug data={$form} />-->
-
-			<TextInput label='Nome' required={true} name='name'
+			<TextInput label='Nome' name='name'
 								 errors={$errors.name}
 								 constraints={$constraints.name}
 								 invalidMessage={$errors?.name?.join(' - ')}

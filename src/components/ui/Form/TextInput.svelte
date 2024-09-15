@@ -1,43 +1,41 @@
 <script lang='ts'>
 	import type { InputConstraint } from 'sveltekit-superforms';
 
-	export let id: string = crypto.randomUUID();
-	export let label: string;
-	export let name: string;
-	export let value: string;
-	export let placeholder: string | undefined = undefined;
-	export let autoComplete: boolean | undefined = false;
-	export let disabled: boolean | undefined = undefined;
-	export let readonly: boolean | undefined = undefined;
-	export let required: boolean | undefined = undefined;
-	export let invalidMessage: string | undefined = undefined;
-	export let helperText: string | undefined = undefined;
+	interface Props {
+		id: string;
+		label: string;
+		name: string;
+		value: string;
+		helperText: string | undefined;
+		errors: string[] | undefined;
+		constraints: InputConstraint | undefined;
+	}
 
-	// superforms requirements
-	export let errors: string[] | undefined = undefined;
-	export let constraints: InputConstraint | undefined = undefined;
+	let {
+		id = crypto.randomUUID(),
+		label,
+		name,
+		value,
+		helperText = undefined,
+		errors = undefined, constraints = undefined,
+		...restProps
+	}: Props = $props();
 </script>
 
 <label for={id}>
 	{label}
-	{#if required}<span aria-label='required'>*</span>{/if}
+	<!--{#if required}<span aria-label='required'>*</span>{/if}-->
 </label>
 
 <div class='form-field-wrapper'>
 	<input id={id}
 				 name={name}
 				 type="text"
-				 placeholder={placeholder}
 				 aria-invalid={errors ? 'true' : undefined}
 				 aria-describedby={errors ? `${name}-message` : helperText ? `${name}-helper`: undefined }
-				 required={required}
-				 readonly={readonly}
-				 disabled={disabled}
-				 autocomplete={!autoComplete ? "off" : undefined}
-				 autofill={!autoComplete ? "off" : undefined}
 				 bind:value
 				 {...constraints}
-				 {...$$restProps}
+				 {...restProps}
 	/>
 
 	{#if helperText}
@@ -45,6 +43,6 @@
 	{/if}
 
 	{#if errors}
-		<p id={`${name}-message`} role='alert'>{invalidMessage}</p>
+		<p id={`${name}-message`} role='alert'>{errors}</p>
 	{/if}
 </div>
