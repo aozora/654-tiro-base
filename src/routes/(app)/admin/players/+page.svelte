@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Main from '$components/Main.svelte';
-	import { TableHandler, Datatable } from '@vincjo/datatables';
+	import { Datatable, TableHandler } from '@vincjo/datatables';
 	import type { Player } from '@prisma/client';
 	import type { PageData } from './$types';
 	import { CheckCircle, PencilSimple, UserSquare, XCircle } from 'phosphor-svelte';
@@ -125,7 +125,7 @@
 	</div>
 </Main>
 
-<Modal title={item ? 'Nuovo giocatore':'Modifica giocatore'}
+<Modal title={item === undefined ? 'Nuovo giocatore':'Modifica giocatore'}
 			 bind:isOpen={isModalOpen}>
 	<svelte:fragment slot='modal-content'>
 		<form id="form-player" method="POST">

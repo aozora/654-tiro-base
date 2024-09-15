@@ -44,8 +44,10 @@ export const actions: Actions = {
 			return fail(400, { form });
 		}
 
+		console.log('Mao');
+
 		try {
-			// console.log('DEBUG form.data: ', form.data);
+			console.log('DEBUG form.data: ', form.data);
 
 			await upsertPlayer(
 				form.data.id === 'undefined' ? undefined : Number(form.data.id),

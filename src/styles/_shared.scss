@@ -23,9 +23,12 @@
 @mixin page-layout {
   position: relative;
   @include layout-grid;
-  height: 100%;
-  min-height: calc(100vh - 160px);
-  min-height: calc(100dvh - 160px);
+
+  & {
+    height: 100%;
+    min-height: calc(100vh - 160px);
+    min-height: calc(100dvh - 160px);
+  }
 
   > * {
     grid-column: 2;

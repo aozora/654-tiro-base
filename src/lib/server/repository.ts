@@ -16,6 +16,8 @@ export async function upsertPlayer(
 	name: string,
 	isActive: boolean
 ): Promise<Player> {
+	console.log({ id, name, isActive });
+
 	return prisma.player.upsert({
 		where: {
 			id: id
