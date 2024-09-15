@@ -50,7 +50,7 @@ export const actions: Actions = {
 			console.log('DEBUG form.data: ', form.data);
 
 			await upsertPlayer(
-				form.data.id === 'undefined' ? undefined : Number(form.data.id),
+				form.data.id === 'undefined' ? '' : String(form.data.id),
 				form.data.name,
 				form.data.isActive
 			);

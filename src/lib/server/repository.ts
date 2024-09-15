@@ -12,7 +12,7 @@ export async function getPlayers(): Promise<Array<Player>> {
 }
 
 export async function upsertPlayer(
-	id: undefined | number,
+	id: undefined | string,
 	name: string,
 	isActive: boolean
 ): Promise<Player> {

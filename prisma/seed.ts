@@ -8,29 +8,32 @@ async function seed() {
 	console.log(`Starting seeding database... 🌱`);
 
 	// cleanup the existing database
-	// await prisma.user.deleteMany({where: {email: }}).catch(() => {
+	// await prisma.user.deleteMany({ where: { email: 'marcello.kot@yandex.com' } }).catch(() => {
+	// 	// no worries if it doesn't exist yet
+	// });
+	// await prisma.user.deleteMany({ where: { email: 'porco@dio.com' } }).catch(() => {
 	// 	// no worries if it doesn't exist yet
 	// });
 
-	// // create admin user
-	// await prisma.user.create({
-	// 	data: {
-	// 		id: generateId(15),
-	// 		email: 'marcello.kot@yandex.com',
-	// 		role: 'admin',
-	// 		password: await new Argon2id().hash('T@t0Ts@r!')
-	// 	}
-	// });
-	//
-	// // create viewer user
-	// await prisma.user.create({
-	// 	data: {
-	// 		id: generateId(15),
-	// 		email: 'porco@dio.com',
-	// 		role: 'user',
-	// 		password: await new Argon2id().hash('654tirobase')
-	// 	}
-	// });
+	// create admin user
+	await prisma.user.create({
+		data: {
+			// id: generateId(15),
+			email: 'marcello.kot@yandex.com',
+			role: 'admin',
+			password: await new Argon2id().hash('T@t0Ts@r!')
+		}
+	});
+
+	// create viewer user
+	await prisma.user.create({
+		data: {
+			// id: generateId(15),
+			email: 'porco@dio.com',
+			role: 'user',
+			password: await new Argon2id().hash('654tirobase')
+		}
+	});
 
 	// create players
 	await prisma.player.create({
