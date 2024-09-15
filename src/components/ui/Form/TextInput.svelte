@@ -6,6 +6,7 @@
 	export let name: string;
 	export let value: string;
 	export let placeholder: string | undefined = undefined;
+	export let autoComplete: boolean | undefined = false;
 	export let disabled: boolean | undefined = undefined;
 	export let readonly: boolean | undefined = undefined;
 	export let required: boolean | undefined = undefined;
@@ -22,7 +23,7 @@
 	{#if required}<span aria-label='required'>*</span>{/if}
 </label>
 
-<div class='cb-form-field-wrapper'>
+<div class='form-field-wrapper'>
 	<input id={id}
 				 name={name}
 				 type="text"
@@ -32,6 +33,8 @@
 				 required={required}
 				 readonly={readonly}
 				 disabled={disabled}
+				 autocomplete={!autoComplete ? "off" : undefined}
+				 autofill={!autoComplete ? "off" : undefined}
 				 bind:value
 				 {...constraints}
 				 {...$$restProps}

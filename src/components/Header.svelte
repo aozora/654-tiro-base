@@ -1,5 +1,6 @@
 <script lang="ts">
 
+import { DiceSix } from 'phosphor-svelte';
 </script>
 
 <header class="header">
@@ -7,6 +8,9 @@
     <span>654 tiro base</span>
   </a>
 
+  <button type="button" class="toggle-menu">
+    <DiceSix size="36"/>
+  </button>
   <nav class="menu">
     <!--    <ul></ul>-->
   </nav>
@@ -22,15 +26,30 @@
     align-items: center;
     width: 100%;
     height: 48px;
-    padding: 1rem;
-    background-color: var(--color-pastel-sky);
+    padding: 0 1rem;
+    background: var(--color-dark) url(/img/frame-mini1.webp) no-repeat center center;
+    background-size: 100%;
   }
 
-  .logo {
+  .logo{
+    font-family: var(--variable-font-family-brutal);
+    font-size: var(--text-scale-18);
+    text-decoration: none;
+    color: var(--color-black);
+  }
 
+  .toggle-menu {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    background-color: var(--color-brand);
   }
 
   .menu {
-
+    display: none;
   }
 </style>

@@ -3,13 +3,15 @@
 	import { TableHandler, Datatable, Th } from '@vincjo/datatables';
 	import type { Player } from '@prisma/client';
 	import type { PageData } from './$types';
-	import { PencilSimple } from 'phosphor-svelte';
+	import { CheckCircle, PencilSimple, UserSquare, XCircle } from 'phosphor-svelte';
 	import Modal from '$components/ui/Modal/Modal.svelte';
 	import TextInput from '$components/ui/Form/TextInput.svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { page } from '$app/stores';
 	import { toast } from '$lib/toast';
 	import Toggle from '$components/ui/Form/Toggle.svelte';
+	import Avatar from '$components/ui/Avatar/Avatar.svelte';
+	import AdminPageTitle from '$components/AdminPageTitle.svelte';
 
 	type PageProps = {
 		players: Array<Player>
@@ -55,35 +57,56 @@
 	};
 
 	const onEditPlayer = (row: Player) => {
+		console.log({ row });
 		item = row;
 		isModalOpen = true;
+	};
+
+	// TODO
+	const onEditPlayerPicture = (row: Player) => {
+		console.log({ row });
+		// item = row;
+		// isModalOpen = true;
 	};
 
 </script>
 
 <Main className="admin-page">
 
-	<h1>Gestione giocatori</h1>
+	<AdminPageTitle title="Gestione giocatori"/>
 
-	<Datatable basic {table}>
-		<table>
+	<Datatable {table}>
+		<table class="table">
 			<thead>
 			<tr>
-				<Th>Nome</Th>
-				<Th>Foto</Th>
-				<Th>Attivo</Th>
+				<th>Nome</th>
+				<th>Attivo</th>
+				<th></th>
 				<th></th>
 			</tr>
 			</thead>
 			<tbody>
 			{#each table.rows as row}
 				<tr>
-					<td>{row.name}</td>
-					<td>{row.picture}</td>
-					<td>{row.isActive}</td>
 					<td>
-						<button class="button" on:click={() => onEditPlayer(row)}>
-							<PencilSimple size="24" />
+						<Avatar picture={row.picture} name={row.name}/>
+						<span>{row.name}</span>
+					</td>
+					<td>
+						{#if row.isActive}
+							<CheckCircle size="20" />
+						{:else}
+							<XCircle size="20" />
+						{/if}
+					</td>
+					<td>
+						<button class="table-button" on:click={() => onEditPlayerPicture(row)}>
+							<UserSquare size="20" />
+						</button>
+					</td>
+					<td>
+						<button class="table-button" on:click={() => onEditPlayer(row)}>
+							<PencilSimple size="20" />
 						</button>
 					</td>
 				</tr>
@@ -108,7 +131,7 @@
 								 invalidMessage={$errors?.name?.join(' - ')}
 								 value={item?.name}
 			/>
-			<TextInput label='Foto' name='picture' value={item?.picture} />
+<!--			<TextInput label='Foto' name='picture' value={item?.picture} />-->
 			<Toggle label='Is active' name='isActive' required={true} value={item?.isActive} />
 		</form>
 	</svelte:fragment>

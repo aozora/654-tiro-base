@@ -29,6 +29,9 @@
   --color-yellow: #d9bc32;
   --color-light-gray: #d9d9d9;
 
+  // utility colors
+  --color-error: #f00;
+
   // ################################################################
   //    DARK/LIGHT THEME
   // ################################################################
@@ -51,11 +54,12 @@
   --kerning: normal; // auto (default), normal (enabled), none (disabled)
 
   // Fonts
-  --variable-font-family-default: 'Bodoni Moda', Helvetica, Roboto, Arial, sans-serif;
+  --variable-font-family-default: 'Inter var', Helvetica, Roboto, Arial, sans-serif;
+  --variable-font-family-brand: 'Bodoni Moda', Helvetica, Roboto, Arial, sans-serif;
   --variable-font-family-brutal: 'annonce', Roboto, Helvetica, Arial, sans-serif;
   --variable-heading-font-family: none;
   --body-font-family: var(--variable-font-family-default);
-  --heading-font-family: var(--variable-font-family-default);
+  --heading-font-family: var(--variable-font-family-brand);
 
   // font weights
   --font-weight-thin: 100;
@@ -69,14 +73,16 @@
   --font-weight-black: 900;
 
   // type scale
-  --text-base-size: 1rem; // 16px - html is set to 112.5%
-  --text-scale-14: calc(14 / 16 * 1rem); //  14
-  --text-scale-16: calc(16 / 16 * 1rem); //  16
-  --text-scale-20: 1.25rem; //  20
-  --text-scale-24: calc(24 / 16 * 1rem); //  24
-  --text-scale-32: calc(32 / 16 * 1rem); //  32
-  --text-scale-40: 2.5rem; //  40
-  --text-scale-48: 2.667rem; //  48
+  --text-base-size: 1rem; // 18px - html is set to 112.5%
+  --text-scale-12: calc(12 / 18 * 1rem); //  12
+  --text-scale-14: calc(14 / 18 * 1rem); //  14
+  --text-scale-16: calc(16 / 18 * 1rem); //  16
+  --text-scale-18: calc(18 / 18 * 1rem); //  18
+  --text-scale-20: calc(20 / 18 * 1rem); //  20
+  --text-scale-24: calc(24 / 18 * 1rem); //  24
+  --text-scale-32: calc(32 / 18 * 1rem); //  32
+  --text-scale-40: calc(40 / 18 * 1rem); //  40
+  --text-scale-48: calc(48 / 18 * 1rem); //  48
 
 
   /* max text sizes  */
@@ -88,13 +94,6 @@
   --focus-border-size: 2px;
   --focus-border-style: dashed;
   --focus-border-color: var(--color-black);
-
-
-  ///* vf initial values */
-  //--heading-weight: 700;
-  //--text-weight: var(--body-font-weight);
-  //--text-width: 100;
-  //--text-opticalsize: 16;
 
   /* spacing */
   --text-letter-spacing: 1px;

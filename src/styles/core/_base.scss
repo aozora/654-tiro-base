@@ -32,7 +32,7 @@ html, body, main, #root {
 
 html {
   height: 100%;
-  font-size: 112.5%;
+  font-size: 112.5%; // 1rem === 18px
   scroll-behavior: smooth;
 
   // Use smooth scrolling for anchor links—but not if the reduce motion accessibility preference is enabled
@@ -60,11 +60,8 @@ strong,
 button {
   --text-weight: var(--body-font-weight);
   font-family: var(--body-font-family);
-
-  //@supports (font-variation-settings: normal) {
-  //  font-family: var(--variable-font-family);
-  //  font-variation-settings: 'wght' var(--text-weight);
-  //}
+  font-weight: var(--text-weight);
+  font-variation-settings: 'wght' var(--text-weight);
 }
 
 // Default body styles
@@ -80,8 +77,6 @@ body {
   transition: background-color .5s ease, color .5s ease;
   font-size: var(--text-base-size);
   line-height: var(--baseline);
-  font-weight: var(--text-weight);
-  font-variation-settings: 'wght' var(--text-weight);
   font-style: normal;
   letter-spacing: var(--text-letter-spacing);
   font-kerning: var(--kerning);
@@ -119,17 +114,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: var(--heading-font-weight);
   font-variation-settings: 'wght' var(--heading-font-weight);
   transition: all linear 0.2s;
-  --text-weight: var(--heading-weight);
   color: inherit;
-
-  //@supports (font-variation-settings: normal) {
-  //  font-family: var(--variable-heading-font-family);
-  //  // this settings depends on th vf selected
-  //  font-variation-settings: 'wght' var(--heading-weight);
-  //  /* ,
-  //     'wdth' var(--text-width),
-  //     'opsz' var(--text-opticalsize); */
-  //}
 }
 
 
