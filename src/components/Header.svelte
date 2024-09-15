@@ -29,6 +29,7 @@ import { DiceSix } from 'phosphor-svelte';
     padding: 0 1rem;
     background: var(--color-dark) url(/img/frame-mini1.webp) no-repeat center center;
     background-size: 100%;
+    z-index: 10;
   }
 
   .logo{

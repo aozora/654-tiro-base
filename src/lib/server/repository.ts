@@ -10,3 +10,23 @@ export async function getPlayers(): Promise<Array<Player>> {
 		]
 	});
 }
+
+export async function upsertPlayer(
+	id: undefined | number,
+	name: string,
+	isActive: boolean
+): Promise<Player> {
+	return prisma.player.upsert({
+		where: {
+			id: id
+		},
+		update: {
+			name,
+			isActive
+		},
+		create: {
+			name,
+			isActive
+		}
+	});
+}

@@ -26,17 +26,10 @@
 			<div class="modal-actions">
 				<slot name='modal-actions' />
 			</div>
-			<!--			<div>-->
-			<!--				<Dialog.Close-->
-			<!--					class="inline-flex h-input items-center justify-center rounded-input bg-dark px-[50px] text-[15px] font-semibold text-background shadow-mini hover:bg-dark/95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dark focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"-->
-			<!--				>-->
-			<!--					Salva-->
-			<!--				</Dialog.Close>-->
-			<!--			</div>-->
 
-			<Dialog.Close class="" on:click={() => (isOpen = false)}>
+			<Dialog.Close class="modal-close" on:click={() => (isOpen = false)}>
 				<div>
-					<X class="size-5 text-foreground" />
+					<X size="24" />
 				</div>
 			</Dialog.Close>
 		</Dialog.Content>

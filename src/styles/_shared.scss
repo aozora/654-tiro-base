@@ -20,9 +20,27 @@
   }
 }
 
+@mixin page-layout {
+  position: relative;
+  @include layout-grid;
+  height: 100%;
+  min-height: calc(100vh - 160px);
+  min-height: calc(100dvh - 160px);
+
+  > * {
+    grid-column: 2;
+  }
+
+  // see https://www.joshwcomeau.com/css/full-bleed/
+  > .full-bleed {
+    width: 100%;
+    grid-column: 1 / -1;
+  }
+}
+
 @mixin layout-grid {
   display: grid;
-  grid-template-columns: 1.5rem calc(100% - 3rem) 1.5rem;
+  grid-template-columns: 1rem calc(100% - 3rem) 1rem;
   grid-gap: 0;
   gap: 0;
   margin: 0;

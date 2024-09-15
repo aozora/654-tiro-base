@@ -1,9 +1,10 @@
-import type { PageServerLoad } from './$types';
-import { getPlayers } from '$lib/server/repository';
+import type { Actions, PageServerLoad } from './$types';
+import { getPlayers, upsertPlayer } from '$lib/server/repository';
 import type { Player } from '@prisma/client';
-import { superValidate } from 'sveltekit-superforms';
+import { message, superValidate } from 'sveltekit-superforms';
 import { z } from 'zod';
 import { zod } from 'sveltekit-superforms/adapters';
+import { fail } from '@sveltejs/kit';
 
 const schemaTemp = z.object({
 	id: z.string().nullable().optional(),
@@ -29,4 +30,37 @@ export const load: PageServerLoad = async () => {
 		players,
 		form
 	};
+};
+
+/**
+ * Page Action
+ */
+export const actions: Actions = {
+	default: async ({ request }) => {
+		const form = await superValidate(request, zod(schema));
+
+		if (!form.valid) {
+			// Again, always return form and things will just work.
+			return fail(400, { form });
+		}
+
+		try {
+			// console.log('DEBUG form.data: ', form.data);
+
+			await upsertPlayer(
+				form.data.id === 'undefined' ? undefined : Number(form.data.id),
+				form.data.name,
+				form.data.isActive
+			);
+
+			return message(form, 'success');
+		} catch (error: unknown) {
+			console.error(error);
+
+			return fail(500, {
+				message: 'An unknown error occurred.',
+				form
+			});
+		}
+	}
 };

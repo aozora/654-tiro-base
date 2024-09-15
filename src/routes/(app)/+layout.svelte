@@ -3,6 +3,7 @@
 	import Header from '$components/Header.svelte';
 	import type { LayoutData } from '../../../.svelte-kit/types/src/routes';
 	import { page } from '$app/stores';
+	import { SvelteToast } from '@zerodevx/svelte-toast'
 	import '$styles/app.scss';
 
 	// eslint-disable-next-line svelte/valid-compile
@@ -202,6 +203,7 @@
 <SkipLink />
 <Header />
 
+<SvelteToast />
 
 <slot></slot>
 
