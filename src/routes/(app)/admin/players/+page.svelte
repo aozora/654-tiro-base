@@ -3,19 +3,21 @@
 	import { Datatable, TableHandler } from '@vincjo/datatables';
 	import type { Player } from '@prisma/client';
 	import type { PageData } from './$types';
-	import { CheckCircle, PencilSimple, UserSquare, XCircle } from 'phosphor-svelte';
+	import { CheckCircle, PencilSimple, Trash, UserSquare, XCircle } from 'phosphor-svelte';
 	import Modal from '$components/ui/Modal/Modal.svelte';
 	import TextInput from '$components/ui/Form/TextInput.svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { page } from '$app/stores';
 	import { toast } from '$lib/toast';
-	// import Toggle from '$components/ui/Form/Toggle.svelte';
+	import { AlertDialog } from 'bits-ui';
 	import Avatar from '$components/ui/Avatar/Avatar.svelte';
 	import AdminPageTitle from '$components/AdminPageTitle.svelte';
 	import Icon from '$components/Icon/Icon.svelte';
 	import { Icons } from '$types';
 	import Loader from '$components/Loader.svelte';
 	import Checkbox from '$components/ui/Form/Checkbox.svelte';
+	import { CldUploadWidget, getCldImageUrl } from 'svelte-cloudinary';
+	import { fade } from 'svelte/transition';
 
 	type PageProps = {
 		players: Array<Player>
@@ -62,16 +64,44 @@
 		isModalOpen = true;
 	};
 
-	// TODO
-	const onEditPlayerPicture = (row: Player) => {
+	const onRemovePlayer = (e, row: Player) => {
+
+		const okDelete = confirm(`Elimino l'utente ${row.name} ?`);
+
+		if (!okDelete) {
+			e.preventDefault();
+			return;
+		}
+
+	};
+
+	const onEditPlayerPicture = async (results, row: Player) => {
 		console.log({ row });
-		// item = row;
-		// isModalOpen = true;
+		console.log('Public ID', results.info.public_id);
+
+		const response = await fetch('/api/player', {
+			method: 'POST',
+			body: JSON.stringify({ id: row.id, picture: results.info.public_id }),
+			headers: {
+				'content-type': 'application/json'
+			}
+		});
+
+		const success: boolean = await response.json();
+		console.log({ success });
 	};
 
 	const createPlayer = () => {
 		item = undefined;
 		isModalOpen = true;
+	};
+
+	const getPictureUrl = (publicId: string) => {
+		return getCldImageUrl({
+			width: 64,
+			height: 64,
+			src: publicId
+		});
 	};
 </script>
 
@@ -93,13 +123,14 @@
 					<th>Attivo</th>
 					<th></th>
 					<th></th>
+					<th></th>
 				</tr>
 				</thead>
 				<tbody>
 				{#each table.rows as row}
 					<tr>
 						<td>
-							<Avatar picture={row.picture} name={row.name} />
+							<Avatar picture={row.picture ? getPictureUrl(row.picture) : undefined} name={row.name} />
 							<span>{row.name}</span>
 						</td>
 						<td>
@@ -110,14 +141,29 @@
 							{/if}
 						</td>
 						<td>
-							<button class="table-button" on:click={() => onEditPlayerPicture(row)}>
-								<UserSquare size="20" />
+							<CldUploadWidget uploadPreset="kfzhcgck"
+															 onSuccess={(results) => onEditPlayerPicture(results, row)}
+															 let:open
+															 let:isLoading>
+								<button type="button" class="table-button" on:click={open} disabled={isLoading}>
+									<UserSquare size="20" />
+								</button>
+							</CldUploadWidget>
+						</td>
+						<td>
+							<button type="button" class="table-button" on:click={() => onEditPlayer(row)}>
+								<PencilSimple size="20" />
 							</button>
 						</td>
 						<td>
-							<button class="table-button" on:click={() => onEditPlayer(row)}>
-								<PencilSimple size="20" />
-							</button>
+							<form action="?/delete" method="POST" on:submit={(e) => onRemovePlayer(e, row)}>
+								<input type='hidden' name='id' value={item?.id} />
+								<input type='hidden' name='action' value="delete" />
+								<button type="submit"
+												class="table-button">
+									<Trash size="20" />
+								</button>
+							</form>
 						</td>
 					</tr>
 				{/each}
@@ -134,7 +180,7 @@
 <Modal title={item === undefined ? 'Nuovo giocatore':'Modifica giocatore'}
 			 bind:isOpen={isModalOpen}>
 	<svelte:fragment slot='modal-content'>
-		<form id="form-player" method="POST" use:enhance>
+		<form id="form-player" action="?/update" method="POST" use:enhance>
 			<input type='hidden' name='id' value={item?.id} />
 
 			<TextInput label='Nome' name='name'
@@ -158,3 +204,4 @@
 		</form>
 	</svelte:fragment>
 </Modal>
+

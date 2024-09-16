@@ -15,6 +15,7 @@ export async function upsertPlayer(
 	id: undefined | string,
 	name: string,
 	isActive: boolean
+	// picture: string
 ): Promise<Player> {
 	console.log({ id, name, isActive });
 
@@ -25,10 +26,34 @@ export async function upsertPlayer(
 		update: {
 			name,
 			isActive
+			// picture
 		},
 		create: {
 			name,
 			isActive
+			// picture
+		}
+	});
+}
+
+export async function updatePlayerPicture(
+	id: undefined | string,
+	picture: string
+): Promise<Player> {
+	return prisma.player.update({
+		where: {
+			id: id
+		},
+		data: {
+			picture
+		}
+	});
+}
+
+export async function deletePlayer(id: string): Promise<Player> {
+	return prisma.player.delete({
+		where: {
+			id: id
 		}
 	});
 }

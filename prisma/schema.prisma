@@ -33,7 +33,7 @@ model Session {
 model Player {
   id                   String                 @id @default(uuid())
   name                 String
-  picture              Bytes?
+  picture              String?
   isActive             Boolean                @default(true)
   PlayersOnTournaments PlayersOnTournaments[]
   PlayersOnMatches     PlayersOnMatches[]
