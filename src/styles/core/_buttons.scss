@@ -8,7 +8,7 @@
   padding: 0 16px;
   border: 1px solid var(--color-dark);
   border-radius: var(--global-radius);
-  font-size: var(--text-scale-18);
+  font-size: var(--text-scale-16);
   line-height: 1.25;
   color: var(--color-black);
   text-transform: uppercase;
@@ -26,6 +26,16 @@
   &:hover,
   &:focus-visible {
     background-color: var(--color-brand);
+  }
+
+  &.primary {
+    background-color: var(--color-brand);
+
+    &:hover,
+    &:focus-visible {
+      background-color: var(--color-blue-star);
+      color: var(--color-white);
+    }
   }
 }
 

@@ -3,7 +3,7 @@
 	import { Datatable, TableHandler } from '@vincjo/datatables';
 	import type { Tournament } from '@prisma/client';
 	import type { PageData } from './$types';
-	import { CheckCircle, PencilSimple, XCircle } from 'phosphor-svelte';
+	import { CheckCircle, PencilSimple, UsersThree, XCircle } from 'phosphor-svelte';
 	import Modal from '$components/ui/Modal/Modal.svelte';
 	import TextInput from '$components/ui/Form/TextInput.svelte';
 	import { superForm } from 'sveltekit-superforms/client';
@@ -16,7 +16,7 @@
 	import Checkbox from '$components/ui/Form/Checkbox.svelte';
 
 	type PageProps = {
-		players: Array<Tournament>
+		tournaments: Array<Tournament>
 	}
 
 	export let data: PageData;
@@ -83,6 +83,7 @@
 					<th>Titolo</th>
 					<th>Attivo</th>
 					<th></th>
+					<th></th>
 				</tr>
 				</thead>
 				<tbody>
@@ -102,6 +103,11 @@
 							<button type="button" class="table-button" on:click={() => onEditTournament(row)}>
 								<PencilSimple size="20" />
 							</button>
+						</td>
+						<td>
+							<a href={`/admin/tournaments/${row.id}`} class="table-button">
+								<UsersThree size="20" />
+							</a>
 						</td>
 					</tr>
 				{/each}

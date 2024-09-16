@@ -1,5 +1,5 @@
 import prisma from '$lib/server/prisma';
-import type { Player, Tournament } from '@prisma/client';
+import type { Player, PlayersOnTournaments, Tournament } from '@prisma/client';
 
 export async function getPlayers(): Promise<Array<Player>> {
 	return prisma.player.findMany({
@@ -87,3 +87,54 @@ export async function upsertTournament(
 		}
 	});
 }
+
+export type TournamentWithPlayers =
+	| (Tournament & {
+			PlayersOnTournaments: ({
+				player: { id: string; name: string; picture: string | null; isActive: boolean };
+			} & {
+				playerId: string;
+				tournamentId: string;
+				isActive: boolean;
+				userId: string | null;
+			})[];
+	  })
+	| null;
+
+// :Promise<{PlayersOnTournaments: ({player: {id: string, name: string, picture: string | null, isActive: boolean}} & {playerId: string, tournamentId: string, isActive: boolean, userId: string | null})[]} | null>
+export async function getTournamentPlayers(id: string): Promise<TournamentWithPlayers | null> {
+	return prisma.tournament.findUnique({
+		include: {
+			PlayersOnTournaments: {
+				include: {
+					player: true
+				}
+			}
+		},
+		where: { id }
+	});
+}
+
+export async function addPlayerToTournament(tournamentId: string, playerId: string) {
+	return prisma.playersOnTournaments.create({
+		data: {
+			tournamentId,
+			playerId
+		}
+	});
+}
+
+// export async function deletePlayerFromTournament(tournamentId: string, playerId: string) {
+// 	return prisma.playersOnTournaments.delete({
+// 		where: {
+// 			tournamentId,
+// 			playerId
+// 		},
+// 		// include:{
+// 		// 	PlayersOnTournaments: {
+// 		// 		player: true,
+// 		// 		tournamentId: true
+// 		// 	}
+// 		// }
+// 	});
+// }

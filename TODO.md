@@ -1,5 +1,7 @@
 # TODO
 
+* refresh list dopo update
+
 * Per Admin
     * Gestione Tornei
     * Gestione Matches
