@@ -42,6 +42,7 @@ model Player {
 model Tournament {
   id                   String                 @id @default(uuid())
   title                String
+  isActive             Boolean                @default(true)
   PlayersOnTournaments PlayersOnTournaments[]
 }
 

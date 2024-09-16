@@ -1,9 +1,7 @@
 # TODO
 
-
 * Per Admin
     * Gestione Tornei
-    * Gestione Players
     * Gestione Matches
 
 * Normal Users

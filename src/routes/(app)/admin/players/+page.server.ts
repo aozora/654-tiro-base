@@ -62,7 +62,7 @@ export const actions: Actions = {
 		} catch (error: unknown) {
 			console.error(error);
 
-			return fail(500, withFiles({ form }));
+			return fail(500);
 		}
 	},
 
