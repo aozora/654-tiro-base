@@ -33,7 +33,6 @@ model Player {
   name     String
   picture  String?
   isActive Boolean            @default(true)
-  // PlayersOnTournaments PlayersOnTournaments[]
   matches  PlayersOnMatches[]
 }
 
@@ -41,19 +40,8 @@ model Tournament {
   id       String  @id @default(uuid())
   title    String
   isActive Boolean @default(true)
-  // PlayersOnTournaments PlayersOnTournaments[]
   matches  Match[]
 }
-
-// model PlayersOnTournaments {
-//   player       Player     @relation(fields: [playerId], references: [id])
-//   playerId     String
-//   tournament   Tournament @relation(fields: [tournamentId], references: [id])
-//   tournamentId String
-//   isActive     Boolean    @default(true)
-//
-//   @@id([playerId, tournamentId])
-// }
 
 model Match {
   id           String             @id @default(uuid())

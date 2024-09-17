@@ -2,6 +2,10 @@
 
 * refresh list dopo update
 
+* menu
+  * +admin
+  * normal pages
+  
 * Per Admin
   * check user logged!
   * Lista Tornei

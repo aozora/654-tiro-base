@@ -74,6 +74,14 @@ export async function getTournament(id: string): Promise<Tournament> {
 	});
 }
 
+export async function getActiveTournament(): Promise<Tournament> {
+	return prisma.tournament.findFirstOrThrow({
+		where: {
+			isActive: true
+		}
+	});
+}
+
 export async function upsertTournament(
 	id: undefined | string,
 	title: string,
@@ -93,61 +101,6 @@ export async function upsertTournament(
 		}
 	});
 }
-
-// export type TournamentWithPlayers = {
-// 	PlayersOnTournaments: ({
-// 		player: { id: string; name: string; picture: string | null; isActive: boolean };
-// 	} & {
-// 		playerId: string;
-// 		tournamentId: string;
-// 		isActive: boolean;
-// 	})[];
-// };
-
-// export async function getTournamentPlayers(id: string): Promise<TournamentWithPlayers | null> {
-// 	return prisma.tournament.findUnique({
-// 		include: {
-// 			PlayersOnTournaments: {
-// 				include: {
-// 					player: true
-// 				}
-// 			}
-// 		},
-// 		where: { id }
-// 	});
-// }
-//
-// export async function addPlayerToTournament(tournamentId: string, playerId: string) {
-// 	return prisma.playersOnTournaments.create({
-// 		data: {
-// 			tournamentId,
-// 			playerId
-// 		}
-// 	});
-// }
-//
-// export async function deletePlayerFromTournament(tournamentId: string, playerId: string) {
-// 	return prisma.playersOnTournaments.delete({
-// 		where: {
-// 			playerId_tournamentId: {
-// 				tournamentId,
-// 				playerId
-// 			}
-// 		}
-// 	});
-// }
-
-/*
-export async function getTournamentMatches(     tournamentId: string):
-Promise<
-({players: {player: {id: string, name: string, picture: string | null, isActive: boolean}}[]}
-& {id: string, date: Date, tournamentId: string})[]
->
-* */
-// export type TournamentWithMatchesAndPlayers = {
-// 	// players: Array<Player> & Match;
-// 	Array<({players: Array<Player>} & Tournament)[]
-// };
 
 export async function getMatches(tournamentId: string): Promise<Array<Match>> {
 	return prisma.match.findMany({
@@ -251,6 +204,21 @@ export async function removePlayerFromMatch(matchId: string, playerId: string) {
 	return prisma.playersOnMatches.delete({
 		where: {
 			playerId_matchId: { playerId, matchId }
+		}
+	});
+}
+
+export async function getLeaderboard(tournamentId: string) {
+	// get all tournament matches
+	// group by player
+	// sum points
+	// order by points
+	const matches = await prisma.match.findMany({
+		where: {
+			tournamentId
+		},
+		select: {
+			players: true
 		}
 	});
 }
