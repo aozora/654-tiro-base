@@ -1,11 +1,9 @@
 <script lang="ts">
 	import Main from '$components/Main.svelte';
 	import { Datatable, TableHandler } from '@vincjo/datatables';
-	import type { Player, Tournament } from '@prisma/client';
+	import type { Player } from '@prisma/client';
 	import type { PageData } from './$types';
-	import { CheckCircle, PencilSimple, UserCirclePlus, XCircle } from 'phosphor-svelte';
-	import Modal from '$components/ui/Modal/Modal.svelte';
-	import TextInput from '$components/ui/Form/TextInput.svelte';
+	import { CheckCircle, Trash, XCircle } from 'phosphor-svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { page } from '$app/stores';
 	import { toast } from '$lib/toast';
@@ -16,7 +14,7 @@
 	type PageProps = {
 		players: Array<Player>,
 		tournamentWithPlayers: TournamentWithPlayers,
-		tournamentId:string
+		tournamentId: string
 	}
 
 	export let data: PageData;
@@ -24,19 +22,13 @@
 	const { players, tournamentWithPlayers, tournamentId }: PageProps = data;
 	const {
 		form,
-		errors,
 		enhance,
 		delayed,
-		message,
-		constraints
+		message
 	} = superForm(data.form, {
-		// validationMethod: 'onsubmit', //'auto' | 'oninput' | 'onblur' | 'onsubmit' = 'auto',
 		onUpdated: ({ form }) => {
 			// When the form is successfully submitted close the modal and reset the item variable
 			if (form.valid && message && $page.status < 400) {
-				item = undefined;
-				isModalOpen = false;
-
 				// show a toast
 				toast({
 					kind: 'success',
@@ -49,21 +41,28 @@
 		}
 	});
 
-	let isModalOpen = false;
-	let item: Tournament | undefined = undefined;
-
 	let availablePlayers;
 
 	$:availablePlayers = players.filter(p => !tournamentWithPlayers.PlayersOnTournaments.find(x => x.playerId === p.id));
 
 	const table = new TableHandler(tournamentWithPlayers.PlayersOnTournaments, { rowsPerPage: 10 });
+
+	const onRemovePlayerFromTournament = (e, row) => {
+		const okDelete = confirm(`Elimino l'utente ${row.name} ?`);
+
+		if (!okDelete) {
+			e.preventDefault();
+			return;
+		}
+
+	};
 </script>
 
 <AdminPageTitle title={`${tournamentWithPlayers.title}`} subtitle="Gestione giocatori" />
 <Main className="admin-page">
 	<div>
 		<header class="page-header">
-			<form method="POST" class="admin-page-header-form">
+			<form action="?/create" method="POST" class="admin-page-header-form" use:enhance>
 				<input type="hidden" name="id" value={tournamentId}>
 				<label for="select-player">Giocatore</label>
 				<div>
@@ -100,9 +99,14 @@
 							{/if}
 						</td>
 						<td>
-							<button type="button" class="table-button" on:click={() => onEditTournament(row)}>
-								<PencilSimple size="20" />
-							</button>
+							<form action="?/delete" method="POST" on:submit={(e) => onRemovePlayerFromTournament(e, row)} use:enhance>
+								<input type='hidden' name='playerId' value={row.playerId} />
+								<input type='hidden' name='tournamentId' value={row.tournamentId} />
+
+								<button type="submit" class="table-button">
+									<Trash size="20" />
+								</button>
+							</form>
 						</td>
 					</tr>
 				{/each}
@@ -119,12 +123,12 @@
 <style lang="scss">
   .admin-page-header-form {
 
-		div {
+    div {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: .5rem;
-		}
+    }
 
     select {
       flex: 1 1 auto;

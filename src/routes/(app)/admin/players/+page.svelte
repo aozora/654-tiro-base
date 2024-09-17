@@ -65,7 +65,6 @@
 	};
 
 	const onRemovePlayer = (e, row: Player) => {
-
 		const okDelete = confirm(`Elimino l'utente ${row.name} ?`);
 
 		if (!okDelete) {

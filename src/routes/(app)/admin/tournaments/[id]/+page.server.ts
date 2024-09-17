@@ -1,13 +1,14 @@
 import type { Actions, PageServerLoad } from './$types';
 import {
 	addPlayerToTournament,
+	deletePlayer,
 	getPlayers,
 	getTournamentPlayers,
 	type TournamentWithPlayers,
 	upsertTournament
 } from '$lib/server/repository';
 import type { Player, Tournament } from '@prisma/client';
-import { message, superValidate, fail } from 'sveltekit-superforms';
+import { message, superValidate, fail, withFiles } from 'sveltekit-superforms';
 import { z } from 'zod';
 import { zod } from 'sveltekit-superforms/adapters';
 import { error } from '@sveltejs/kit';
@@ -16,6 +17,12 @@ const schema = z
 	.object({
 		id: z.string(),
 		player: z.string()
+	})
+	.required();
+
+const schemaDelete = z
+	.object({
+		playerId: z.string()
 	})
 	.required();
 
@@ -46,7 +53,7 @@ export const load: PageServerLoad = async ({ params }) => {
  * Page Action
  */
 export const actions: Actions = {
-	default: async ({ request }) => {
+	create: async ({ request }) => {
 		const form = await superValidate(request, zod(schema));
 
 		if (!form.valid) {
@@ -63,6 +70,25 @@ export const actions: Actions = {
 			console.error(error);
 
 			return fail(500);
+		}
+	},
+
+	delete: async ({ request }) => {
+		const form = await superValidate(request, zod(schemaDelete));
+
+		if (!form.valid) {
+			// Again, always return form and things will just work.
+			console.error('Delete Form not valid', form);
+			return fail(400, { form });
+		}
+
+		try {
+			await deletePlayer(form.data.id);
+			return message(form, 'success');
+		} catch (error: unknown) {
+			console.error(error);
+
+			return fail(500, withFiles({ form }));
 		}
 	}
 };
