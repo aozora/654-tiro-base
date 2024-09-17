@@ -4,8 +4,10 @@
 
 * Per Admin
   * check user logged!
-  * Gestione Tornei
-  * Gestione Matches
+  * Lista Tornei
+    * edit torneo title
+    * Lista Matches + edit
+      * edit match: date + players
 
 * Normal Users
     * selezione torneo (default: current)

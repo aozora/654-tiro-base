@@ -1,10 +1,10 @@
 <script lang="ts">
 	interface Props {
 		title: string;
-		subtitle: string;
+		subtitle?: string;
 	}
 
-	let { title, subtitle }: Props = $props();
+	let { title, subtitle=undefined }: Props = $props();
 </script>
 
 <h1 class="page-title full-bleed">

@@ -1,51 +1,40 @@
 import type { Actions, PageServerLoad } from './$types';
-import {
-	addPlayerToTournament,
-	deletePlayerFromTournament,
-	getPlayers,
-	getTournamentPlayers,
-	type TournamentWithPlayers
-} from '$lib/server/repository';
+import { deletePlayer, getPlayers, upsertPlayer } from '$lib/server/repository';
 import type { Player } from '@prisma/client';
 import { message, superValidate, fail, withFiles } from 'sveltekit-superforms';
 import { z } from 'zod';
 import { zod } from 'sveltekit-superforms/adapters';
-import { error } from '@sveltejs/kit';
 
-const schema = z
-	.object({
-		id: z.string(),
-		player: z.string()
-	})
-	.required();
+const schemaUpdateTemp = z.object({
+	id: z.string().nullable().optional(),
+	name: z.string().min(2),
+	picture: z.string().nullable().optional(),
+	action: z.string().nullable().optional(),
+	isActive: z.boolean()
+});
+const schemaUpdate = schemaUpdateTemp.required({
+	// id is false to allow new items
+	name: true,
+	// picture: true,
+	isActive: true
+});
 
 const schemaDelete = z
 	.object({
-		tournamentId: z.string(),
-		playerId: z.string()
+		id: z.string()
 	})
 	.required();
 
 /**
  * Page Load
  */
-export const load: PageServerLoad = async ({ params }) => {
-	const id: string = params.id; // YYYYMM
-
+export const load: PageServerLoad = async () => {
 	const players: Array<Player> = await getPlayers();
-	const tournamentWithPlayers: TournamentWithPlayers | null = await getTournamentPlayers(id);
-
-	if (!tournamentWithPlayers) {
-		error(500, `Tournament with id ${id} not found`);
-	}
-
-	const form = await superValidate(zod(schema));
+	const form = await superValidate(zod(schemaUpdate));
 
 	return {
 		players,
-		tournamentWithPlayers,
-		form,
-		tournamentId: id
+		form
 	};
 };
 
@@ -53,8 +42,8 @@ export const load: PageServerLoad = async ({ params }) => {
  * Page Action
  */
 export const actions: Actions = {
-	create: async ({ request }) => {
-		const form = await superValidate(request, zod(schema));
+	update: async ({ request }) => {
+		const form = await superValidate(request, zod(schemaUpdate));
 
 		if (!form.valid) {
 			// Again, always return form and things will just work.
@@ -63,7 +52,11 @@ export const actions: Actions = {
 		}
 
 		try {
-			await addPlayerToTournament(String(form.data.id), form.data.player);
+			await upsertPlayer(
+				form.data.id === 'undefined' ? '' : String(form.data.id),
+				form.data.name,
+				form.data.isActive
+			);
 
 			return message(form, 'success');
 		} catch (error: unknown) {
@@ -73,6 +66,10 @@ export const actions: Actions = {
 		}
 	},
 
+	/**
+	 * NOTE: delete don't work cause of FK relations in table Player
+	 * @param request
+	 */
 	delete: async ({ request }) => {
 		const form = await superValidate(request, zod(schemaDelete));
 
@@ -83,12 +80,12 @@ export const actions: Actions = {
 		}
 
 		try {
-			await deletePlayerFromTournament(form.data.tournamentId, form.data.playerId);
+			await deletePlayer(form.data.id);
 			return message(form, 'success');
 		} catch (error: unknown) {
 			console.error(error);
 
-			return fail(500, withFiles({ form }));
+			return fail(500);
 		}
 	}
 };

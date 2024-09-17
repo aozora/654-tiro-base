@@ -18,6 +18,7 @@
 	import Checkbox from '$components/ui/Form/Checkbox.svelte';
 	import { CldUploadWidget, getCldImageUrl } from 'svelte-cloudinary';
 	import { fade } from 'svelte/transition';
+	import DateInput from '$components/ui/Form/DateInput.svelte';
 
 	type PageProps = {
 		players: Array<Player>
@@ -109,7 +110,7 @@
 	<div>
 		<header class="page-header">
 			<button type="button" class="button" on:click={() => createPlayer()}>
-				<span>Aggiungi giocatore</span>
+				<span>Nuova partita</span>
 				<Icon id={Icons.TankBrand} />
 			</button>
 		</header>
@@ -118,8 +119,8 @@
 			<table class="table">
 				<thead>
 				<tr>
-					<th>Nome</th>
-					<th>Attivo</th>
+					<th>Partita</th>
+					<th></th>
 					<th></th>
 					<th></th>
 					<th></th>
@@ -182,16 +183,11 @@
 		<form id="form-player" action="?/update" method="POST" use:enhance>
 			<input type='hidden' name='id' value={item?.id} />
 
-			<TextInput label='Nome' name='name'
-								 errors={$errors.name}
-								 constraints={$constraints.name}
-								 value={item?.name}
-			/>
-			<!--			<Toggle label='Is active' name='isActive' required={true} value={item?.isActive ?? false} />-->
-			<Checkbox label='Attivo' required={true} name='isActive'
-								errors={$errors.isActive}
-								constraints={$constraints.isActive}
-								checked={item?.isActive}
+			<DateInput label='Data partita' name='date'
+								 errors={$errors.date}
+								 constraints={$constraints.date}
+								 invalidMessage={$errors?.date?.join(' - ')}
+								 value={item?.date}
 			/>
 
 			<div class="modal-actions">

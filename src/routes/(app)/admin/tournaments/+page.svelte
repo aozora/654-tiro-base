@@ -3,7 +3,7 @@
 	import { Datatable, TableHandler } from '@vincjo/datatables';
 	import type { Tournament } from '@prisma/client';
 	import type { PageData } from './$types';
-	import { CheckCircle, PencilSimple, UsersThree, XCircle } from 'phosphor-svelte';
+	import { CheckCircle, DiceSix, PencilSimple, UsersThree, XCircle } from 'phosphor-svelte';
 	import Modal from '$components/ui/Modal/Modal.svelte';
 	import TextInput from '$components/ui/Form/TextInput.svelte';
 	import { superForm } from 'sveltekit-superforms/client';
@@ -67,6 +67,7 @@
 </script>
 
 <AdminPageTitle title="Gestione tornei" />
+
 <Main className="admin-page">
 	<div>
 		<header class="page-header">
@@ -106,7 +107,7 @@
 						</td>
 						<td>
 							<a href={`/admin/tournaments/${row.id}`} class="table-button">
-								<UsersThree size="20" />
+								<DiceSix size="20" />
 							</a>
 						</td>
 					</tr>
@@ -130,14 +131,12 @@
 			<TextInput label='Titolo' name='title'
 								 errors={$errors.title}
 								 constraints={$constraints.title}
-								 invalidMessage={$errors?.title?.join(' - ')}
 								 value={item?.title}
 			/>
 			<!--			<Toggle label='Is active' name='isActive' required={true} value={item?.isActive ?? false} />-->
 			<Checkbox label='Attivo' required={true} name='isActive'
 								errors={$errors.isActive}
 								constraints={$constraints.isActive}
-								invalidMessage={$errors?.isActive?.join(' - ')}
 								checked={item?.isActive}
 			/>
 
