@@ -1,38 +1,50 @@
 import type { Actions, PageServerLoad } from './$types';
-import { deletePlayer, getPlayers, upsertPlayer } from '$lib/server/repository';
-import type { Player } from '@prisma/client';
-import { message, superValidate, fail, withFiles } from 'sveltekit-superforms';
+import {
+	deletePlayer,
+	getMatch,
+	getMatchPlayers,
+	getPlayers,
+	getTournament,
+	type PlayerExtended,
+	removePlayerFromMatch,
+	upsertMatchPlayer
+} from '$lib/server/repository';
+import type { Player, Tournament } from '@prisma/client';
+import { message, superValidate, fail } from 'sveltekit-superforms';
 import { z } from 'zod';
 import { zod } from 'sveltekit-superforms/adapters';
 
-const schemaUpdateTemp = z.object({
-	id: z.string().nullable().optional(),
-	name: z.string().min(2),
-	picture: z.string().nullable().optional(),
-	action: z.string().nullable().optional(),
-	isActive: z.boolean()
-});
-const schemaUpdate = schemaUpdateTemp.required({
-	// id is false to allow new items
-	name: true,
-	// picture: true,
-	isActive: true
-});
+const schemaUpdate = z
+	.object({
+		matchId: z.string(),
+		playerId: z.string(),
+		points: z.number()
+	})
+	.required();
 
 const schemaDelete = z
 	.object({
-		id: z.string()
+		matchId: z.string(),
+		playerId: z.string()
 	})
 	.required();
 
 /**
  * Page Load
  */
-export const load: PageServerLoad = async () => {
-	const players: Array<Player> = await getPlayers();
+export const load: PageServerLoad = async ({ params }) => {
+	const tournamentId: string = params.tournamentId;
+	const matchId: string = params.matchId;
+	const match = await getMatch(matchId);
+	const tournament: Tournament = await getTournament(tournamentId);
+	const allPlayers: Array<Player> = await getPlayers();
+	const players: Array<PlayerExtended> = await getMatchPlayers(matchId);
 	const form = await superValidate(zod(schemaUpdate));
 
 	return {
+		match,
+		tournament,
+		allPlayers,
 		players,
 		form
 	};
@@ -52,11 +64,7 @@ export const actions: Actions = {
 		}
 
 		try {
-			await upsertPlayer(
-				form.data.id === 'undefined' ? '' : String(form.data.id),
-				form.data.name,
-				form.data.isActive
-			);
+			await upsertMatchPlayer(form.data.matchId, form.data.playerId, form.data.points);
 
 			return message(form, 'success');
 		} catch (error: unknown) {
@@ -80,7 +88,7 @@ export const actions: Actions = {
 		}
 
 		try {
-			await deletePlayer(form.data.id);
+			await removePlayerFromMatch(form.data.matchId, form.data.playerId);
 			return message(form, 'success');
 		} catch (error: unknown) {
 			console.error(error);

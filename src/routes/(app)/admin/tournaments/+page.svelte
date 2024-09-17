@@ -66,7 +66,7 @@
 	};
 </script>
 
-<AdminPageTitle title="Gestione tornei" />
+<AdminPageTitle title="Gestione tornei" showBackButton={true}/>
 
 <Main className="admin-page">
 	<div>

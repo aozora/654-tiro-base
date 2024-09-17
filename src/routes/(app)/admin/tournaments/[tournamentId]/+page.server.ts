@@ -31,7 +31,7 @@ const schemaDelete = z
  * Page Load
  */
 export const load: PageServerLoad = async ({ params }) => {
-	const tournamentId: string = params.tournamentId; // YYYYMM
+	const tournamentId: string = params.tournamentId;
 
 	const tournament: Tournament = await getTournament(tournamentId);
 	const players: Array<Player> = await getPlayers();

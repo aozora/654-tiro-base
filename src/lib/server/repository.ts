@@ -165,6 +165,12 @@ export async function getMatches(tournamentId: string): Promise<Array<Match>> {
 	});
 }
 
+export async function getMatch(id: string): Promise<Match> {
+	return prisma.match.findUniqueOrThrow({
+		where: { id }
+	});
+}
+
 export async function upsertMatch(
 	id: undefined | string,
 	tournamentId: string,
@@ -196,6 +202,55 @@ export async function deleteMatchDeep(id: string): Promise<Match> {
 	return prisma.match.delete({
 		where: {
 			id: id
+		}
+	});
+}
+
+export type PlayerExtended = Player & { points: number };
+
+export async function getMatchPlayers(matchId: string): Promise<Array<PlayerExtended>> {
+	const data = await prisma.playersOnMatches.findMany({
+		include: {
+			player: true
+		},
+		where: {
+			matchId
+		}
+		// orderBy: {
+		// 	player: {
+		// 		name: true
+		// 	}
+		// }
+	});
+
+	return data.map((x) => {
+		return {
+			...x.player,
+			points: x.points
+		} satisfies PlayerExtended;
+	});
+}
+
+export async function upsertMatchPlayer(matchId: string, playerId: string, points: number) {
+	return prisma.playersOnMatches.upsert({
+		where: {
+			playerId_matchId: { playerId, matchId }
+		},
+		update: {
+			points
+		},
+		create: {
+			matchId,
+			playerId,
+			points
+		}
+	});
+}
+
+export async function removePlayerFromMatch(matchId: string, playerId: string) {
+	return prisma.playersOnMatches.delete({
+		where: {
+			playerId_matchId: { playerId, matchId }
 		}
 	});
 }

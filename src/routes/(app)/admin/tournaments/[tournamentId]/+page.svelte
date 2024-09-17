@@ -3,7 +3,7 @@
 	import { Datatable, TableHandler } from '@vincjo/datatables';
 	import type { Match, Player, Tournament } from '@prisma/client';
 	import type { PageData } from './$types';
-	import { DiceThree, Trash } from 'phosphor-svelte';
+	import { DiceThree, PencilSimple, Trash } from 'phosphor-svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { page } from '$app/stores';
 	import { toast } from '$lib/toast';
@@ -62,6 +62,12 @@
 		isModalOpen = true;
 	};
 
+
+	const onEditMatch = (row: Player) => {
+		item = row;
+		isModalOpen = true;
+	};
+
 	const onDeleteMatch = (e, row) => {
 		const okDelete = confirm(`Elimino la partita del ${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(row.date)} ?`);
 
@@ -72,7 +78,7 @@
 	};
 </script>
 
-<AdminPageTitle title={`${tournament.title}`} subtitle="Gestione partite" />
+<AdminPageTitle title={`${tournament.title}`} subtitle="Gestione partite" showBackButton={true} />
 
 <Main className="admin-page">
 	<div>
@@ -91,6 +97,7 @@
 						<th>Data partita</th>
 						<th></th>
 						<th></th>
+						<th></th>
 					</tr>
 					</thead>
 					<tbody>
@@ -100,6 +107,11 @@
 							<span>
 								{new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(row.date)}
 							</span>
+							</td>
+							<td>
+								<button type="button" class="table-button" on:click={() => onEditMatch(row)}>
+									<PencilSimple size="20" />
+								</button>
 							</td>
 							<td>
 								<a href={`/admin/tournaments/${tournament.id}/${row.id}`} class="table-button">
