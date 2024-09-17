@@ -9,7 +9,7 @@
 	// eslint-disable-next-line svelte/valid-compile
 	export let data: LayoutData;
 
-	console.log($page.data.user);
+	console.log( $page.data.user);
 	// console.log($data.user.email)
 </script>
 

@@ -3,13 +3,11 @@
 	import { authSchema } from '$lib/schemas/auth-schema';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import type { ActionData } from '../../../../.svelte-kit/types/src/routes/(auth)/login/$types';
-	import Main from '$components/Main.svelte';
 	import Icon from '$components/Icon/Icon.svelte';
 	import { Icons } from '$types';
 
 	export let data: ActionData;
-	$: console.log({ data });
-	// const {form, errors, constraints, message, enhance} = superForm(data.form);
+
 	const { form, errors, enhance, constraints, message } = superForm(data.form, {
 		validators: zod(authSchema),
 		//   field: (value) => string | string[] | null | undefined;

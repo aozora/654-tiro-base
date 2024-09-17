@@ -75,8 +75,8 @@
 	};
 
 	const onEditPlayerPicture = async (results, row: Player) => {
-		console.log({ row });
-		console.log('Public ID', results.info.public_id);
+		// console.log({ row });
+		// console.log('Public ID', results.info.public_id);
 
 		const response = await fetch('/api/player', {
 			method: 'POST',
@@ -87,7 +87,6 @@
 		});
 
 		const success: boolean = await response.json();
-		console.log({ success });
 	};
 
 	const createPlayer = () => {
