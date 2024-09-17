@@ -48,7 +48,7 @@
 	const table = new TableHandler(tournamentWithPlayers.PlayersOnTournaments, { rowsPerPage: 10 });
 
 	const onRemovePlayerFromTournament = (e, row) => {
-		const okDelete = confirm(`Elimino l'utente ${row.name} ?`);
+		const okDelete = confirm(`Elimino l'utente ${row.player.name} ?`);
 
 		if (!okDelete) {
 			e.preventDefault();

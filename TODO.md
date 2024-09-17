@@ -3,8 +3,9 @@
 * refresh list dopo update
 
 * Per Admin
-    * Gestione Tornei
-    * Gestione Matches
+  * check user logged!
+  * Gestione Tornei
+  * Gestione Matches
 
 * Normal Users
     * selezione torneo (default: current)

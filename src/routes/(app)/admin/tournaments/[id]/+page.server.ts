@@ -1,13 +1,12 @@
 import type { Actions, PageServerLoad } from './$types';
 import {
 	addPlayerToTournament,
-	deletePlayer,
+	deletePlayerFromTournament,
 	getPlayers,
 	getTournamentPlayers,
-	type TournamentWithPlayers,
-	upsertTournament
+	type TournamentWithPlayers
 } from '$lib/server/repository';
-import type { Player, Tournament } from '@prisma/client';
+import type { Player } from '@prisma/client';
 import { message, superValidate, fail, withFiles } from 'sveltekit-superforms';
 import { z } from 'zod';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -22,6 +21,7 @@ const schema = z
 
 const schemaDelete = z
 	.object({
+		tournamentId: z.string(),
 		playerId: z.string()
 	})
 	.required();
@@ -83,7 +83,7 @@ export const actions: Actions = {
 		}
 
 		try {
-			await deletePlayer(form.data.id);
+			await deletePlayerFromTournament(form.data.tournamentId, form.data.playerId);
 			return message(form, 'success');
 		} catch (error: unknown) {
 			console.error(error);
