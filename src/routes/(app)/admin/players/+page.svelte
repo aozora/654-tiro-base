@@ -9,7 +9,6 @@
 	import { superForm } from 'sveltekit-superforms/client';
 	import { page } from '$app/stores';
 	import { toast } from '$lib/toast';
-	import { AlertDialog } from 'bits-ui';
 	import Avatar from '$components/ui/Avatar/Avatar.svelte';
 	import AdminPageTitle from '$components/AdminPageTitle.svelte';
 	import Icon from '$components/Icon/Icon.svelte';
@@ -17,7 +16,6 @@
 	import Loader from '$components/Loader.svelte';
 	import Checkbox from '$components/ui/Form/Checkbox.svelte';
 	import { CldUploadWidget, getCldImageUrl } from 'svelte-cloudinary';
-	import { fade } from 'svelte/transition';
 
 	type PageProps = {
 		players: Array<Player>

@@ -1,1 +1,23 @@
+<script lang="ts">
+	import type { Player, Tournament } from '@prisma/client';
+	import type { PageData } from './$types';
+
+	type PageProps = {
+		players: Array<Player>
+		tournament: Tournament
+		leaderboard: any
+	}
+
+	export let data: PageData;
+
+	const {
+		tournament,
+		players,
+		leaderboard
+	}: PageProps = data;
+
+	console.log({ tournament, players, leaderboard });
+</script>
+
 <h1>Leaderboard</h1>
+
