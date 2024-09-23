@@ -17,7 +17,7 @@ export async function upsertPlayer(
 	isActive: boolean
 	// picture: string
 ): Promise<Player> {
-	console.log({ id, name, isActive });
+	// console.log({ id, name, isActive });
 
 	return prisma.player.upsert({
 		where: {
@@ -234,12 +234,16 @@ export async function getLeaderboard(tournamentId: string) {
 	const playersStatus = await prisma.playersOnMatches.groupBy({
 		by: ['playerId'],
 		where: {
-			match: {
-				equals: tournamentId
+			matchId: {
+				in: matches.map(m => m.id)
 			}
+		},
+		_sum:{
+			points: true
 		}
 	});
 
-	console.log({ matches });
-	return matches;
+	// console.log({ matches });
+	console.log({ playersStatus });
+	return playersStatus;
 }

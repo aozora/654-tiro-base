@@ -21,7 +21,7 @@ export const load: PageServerLoad = async (event) => {
 export const actions = {
 	default: async ({ request, cookies }) => {
 		const form = await superValidate(request, zod(authSchema));
-		console.log(`Form is valid: ${form.valid}`);
+		// console.log(`Form is valid: ${form.valid}`);
 
 		if (!form.valid) {
 			// Again, return { form } and things will just work.
