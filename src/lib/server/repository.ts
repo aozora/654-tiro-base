@@ -235,10 +235,10 @@ export async function getLeaderboard(tournamentId: string) {
 		by: ['playerId'],
 		where: {
 			matchId: {
-				in: matches.map(m => m.id)
+				in: matches.map((m) => m.id)
 			}
 		},
-		_sum:{
+		_sum: {
 			points: true
 		}
 	});
