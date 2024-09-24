@@ -5,6 +5,7 @@
 	import Avatar from '$components/ui/Avatar/Avatar.svelte';
 	import Main from '$components/Main.svelte';
 	import TopThree from '$components/TopThree.svelte';
+	import { ArrowCircleRight } from 'phosphor-svelte';
 
 	type PageProps = {
 		players: Array<Player>
@@ -36,6 +37,7 @@
 							<Avatar name={player.name} picture={player.picture} />
 							<strong>{player.name}</strong>
 							<span class="points">{player.sumPoints} punti</span>
+							<ArrowCircleRight size="20" class="arrow"/>
 						</a>
 					</li>
 				{/each}
@@ -104,6 +106,10 @@
       :global(.avatar) {
         margin-right: 1rem;
       }
+
+			:global(.arrow){
+				margin-left: .5rem;
+			}
     }
   }
 
