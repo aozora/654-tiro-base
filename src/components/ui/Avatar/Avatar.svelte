@@ -41,8 +41,10 @@
 
   .avatar-picture {
     width: var(--size);
+    max-width: none;
     height: var(--size);
     border-radius: 50%;
+    object-fit: cover;
   }
 
   .avatar-initials {

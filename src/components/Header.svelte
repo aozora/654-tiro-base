@@ -9,7 +9,7 @@ import { DiceSix } from 'phosphor-svelte';
   </a>
 
   <button type="button" class="toggle-menu">
-    <DiceSix size="36"/>
+    <DiceSix size="36" weight="fill"/>
   </button>
   <nav class="menu">
     <!--    <ul></ul>-->
@@ -47,7 +47,7 @@ import { DiceSix } from 'phosphor-svelte';
     height: 36px;
     padding: 0;
     border: 0;
-    background-color: var(--color-brand);
+    background-color: transparent;
   }
 
   .menu {

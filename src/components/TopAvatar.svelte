@@ -13,8 +13,8 @@
 
 	const getPictureUrl = (publicId: string) => {
 		return getCldImageUrl({
-			width: size,
-			height: size,
+			width: size + 3,
+			height: size + 3,
 			src: publicId
 		});
 	};
@@ -46,14 +46,16 @@
     width: var(--size);
     height: var(--size);
     border-radius: 50%;
-    border: 3px solid #C7F064;
     background-color: var(--color-brand);
   }
 
   .avatar-picture {
     width: var(--size);
+		max-width: none;
     height: var(--size);
+		object-fit: cover;
     border-radius: 50%;
+    border: 3px solid #C7F064;
   }
 
   .avatar-initials {

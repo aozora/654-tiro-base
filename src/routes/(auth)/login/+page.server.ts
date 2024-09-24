@@ -54,8 +54,8 @@ export const actions = {
 				...sessionCookie.attributes
 			});
 
-			console.log('...redirecting to home');
-			return redirect(302, '/');
+			console.log('...redirecting to leaderboard');
+			return redirect(302, '/leaderboard');
 		} catch (e) {
 			console.error(e);
 			return fail(500, {
