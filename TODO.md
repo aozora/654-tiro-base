@@ -16,4 +16,5 @@
 * Normal Users
     * selezione torneo (default: current)
     * view leaderboard
+    * view player + chart + history
     * view matches + details

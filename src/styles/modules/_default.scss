@@ -4,4 +4,8 @@
 
 .user-page {
   @include page-layout;
+
+  & {
+    background-color: var(--color-white);
+  }
 }

@@ -209,21 +209,6 @@ export async function removePlayerFromMatch(matchId: string, playerId: string) {
 }
 
 export async function getLeaderboard(tournamentId: string) {
-	// get all tournament matches
-	// group by player
-	// sum points
-	// order by points
-
-	// restituisce un array (di matches) che contiene un array di playersfrmatch
-	// const matches = await prisma.match.findMany({
-	// 	where: {
-	// 		tournamentId
-	// 	},
-	// 	select: {
-	// 		players: true
-	// 	}
-	// });
-
 	// get all the matches of the given tournament
 	const matches = await prisma.match.findMany({
 		where: {
@@ -243,7 +228,5 @@ export async function getLeaderboard(tournamentId: string) {
 		}
 	});
 
-	// console.log({ matches });
-	console.log({ playersStatus });
 	return playersStatus;
 }
