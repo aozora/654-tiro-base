@@ -92,17 +92,10 @@
 		item = undefined;
 		isModalOpen = true;
 	};
-
-	const getPictureUrl = (publicId: string) => {
-		return getCldImageUrl({
-			width: 64,
-			height: 64,
-			src: publicId
-		});
-	};
 </script>
 
-<AdminPageTitle title="Gestione giocatori" />
+<AdminPageTitle title="Gestione giocatori" showBackButton={true} />
+
 <Main className="admin-page">
 	<div>
 		<header class="page-header">
@@ -112,61 +105,63 @@
 			</button>
 		</header>
 
-		<Datatable {table}>
-			<table class="table">
-				<thead>
-				<tr>
-					<th>Nome</th>
-					<th>Attivo</th>
-					<th></th>
-					<th></th>
-					<th></th>
-				</tr>
-				</thead>
-				<tbody>
-				{#each table.rows as row}
+		{#if table}
+			<Datatable handler={tableHanlder}>
+				<table class="table">
+					<thead>
 					<tr>
-						<td>
-							<Avatar picture={row.picture ? getPictureUrl(row.picture) : undefined} name={row.name} />
-							<span>{row.name}</span>
-						</td>
-						<td>
-							{#if row.isActive}
-								<CheckCircle size="20" />
-							{:else}
-								<XCircle size="20" />
-							{/if}
-						</td>
-						<td>
-							<CldUploadWidget uploadPreset="kfzhcgck"
-															 onSuccess={(results) => onEditPlayerPicture(results, row)}
-															 let:open
-															 let:isLoading>
-								<button type="button" class="table-button" on:click={open} disabled={isLoading}>
-									<UserSquare size="20" />
-								</button>
-							</CldUploadWidget>
-						</td>
-						<td>
-							<button type="button" class="table-button" on:click={() => onEditPlayer(row)}>
-								<PencilSimple size="20" />
-							</button>
-						</td>
-						<td>
-							<form action="?/delete" method="POST" on:submit={(e) => onRemovePlayer(e, row)}>
-								<input type='hidden' name='id' value={item?.id} />
-								<input type='hidden' name='action' value="delete" />
-								<button type="submit"
-												class="table-button">
-									<Trash size="20" />
-								</button>
-							</form>
-						</td>
+						<th>Nome</th>
+						<th>Attivo</th>
+						<th></th>
+						<th></th>
+						<th></th>
 					</tr>
-				{/each}
-				</tbody>
-			</table>
-		</Datatable>
+					</thead>
+					<tbody>
+					{#each $table as row}
+						<tr>
+							<td>
+								<Avatar picture={row.picture} name={row.name} />
+								<span>{row.name}</span>
+							</td>
+							<td>
+								{#if row.isActive}
+									<CheckCircle size="20" />
+								{:else}
+									<XCircle size="20" />
+								{/if}
+							</td>
+							<td>
+								<CldUploadWidget uploadPreset="kfzhcgck"
+																 onSuccess={(results) => onEditPlayerPicture(results, row)}
+																 let:open
+																 let:isLoading>
+									<button type="button" class="table-button" on:click={open} disabled={isLoading}>
+										<UserSquare size="20" />
+									</button>
+								</CldUploadWidget>
+							</td>
+							<td>
+								<button type="button" class="table-button" on:click={() => onEditPlayer(row)}>
+									<PencilSimple size="20" />
+								</button>
+							</td>
+							<td>
+								<form action="?/delete" method="POST" on:submit={(e) => onRemovePlayer(e, row)}>
+									<input type='hidden' name='id' value={item?.id} />
+									<input type='hidden' name='action' value="delete" />
+									<button type="submit"
+													class="table-button">
+										<Trash size="20" />
+									</button>
+								</form>
+							</td>
+						</tr>
+					{/each}
+					</tbody>
+				</table>
+			</Datatable>
+		{/if}
 	</div>
 
 	{#if $delayed}

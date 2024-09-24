@@ -1,27 +1,14 @@
 <script lang='ts'>
 	import type { InputConstraint } from 'sveltekit-superforms';
 
-	interface Props {
-		id: string;
-		label: string;
-		name: string;
-		value: string;
-		rows:number;
-		helperText: string | undefined;
-		errors: string[] | undefined;
-		constraints: InputConstraint | undefined;
-	}
-
-	let {
-		id = crypto.randomUUID(),
-		label,
-		name,
-		value,
-		rows = 4,
-		helperText = undefined,
-		errors = undefined, constraints = undefined,
-		...restProps
-	}: Props = $props();
+	export let id: string = crypto.randomUUID();
+	export let label: string;
+	export let name: string;
+	export let value: string;
+	export let rows: number;
+	export let helperText: string | undefined = undefined;
+	export let errors: string[] | undefined = undefined;
+	export let constraints: InputConstraint | undefined = undefined;
 </script>
 
 <label for={id}>
@@ -36,7 +23,7 @@
 						aria-describedby={errors ? `${name}-message` : helperText ? `${name}-helper`: undefined }
 						bind:value
 						{...constraints}
-						{...restProps}
+						{...$$props}
 	></textarea>
 
 	{#if helperText}

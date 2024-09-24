@@ -1,13 +1,9 @@
 <script lang="ts">
 	import { ArrowLeft } from 'phosphor-svelte';
 
-	interface Props {
-		title: string;
-		subtitle?: string;
-		showBackButton?: boolean;
-	}
-
-	let { title, subtitle = undefined, showBackButton = false }: Props = $props();
+	export let title: string;
+	export let subtitle: string | undefined = undefined;
+	export let showBackButton: boolean = false;
 
 	const goBack = () => {
 		window.history.back();

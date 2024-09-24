@@ -31,12 +31,12 @@
 			<ul>
 				{#each leaderboard as player, index}
 					<li>
-						<button type="button">
+						<a href={`/player/${player.playerId}`}>
 							<span>{index + 1}</span>
 							<Avatar name={player.name} picture={player.picture} />
 							<strong>{player.name}</strong>
 							<span class="points">{player.sumPoints} punti</span>
-						</button>
+						</a>
 					</li>
 				{/each}
 			</ul>
@@ -79,7 +79,7 @@
       width: 100%;
     }
 
-    button {
+    a {
       display: flex;
       justify-content: flex-start;
       align-items: center;
@@ -88,6 +88,8 @@
       border: 0;
       border-radius: var(--global-radius);
       background-color: var(--color-white);
+			text-decoration: none;
+			color: var(--color-dark);
 
       span:not(.points) {
         flex: 0;

@@ -33,7 +33,7 @@
 				 disabled={disabled}
 				 bind:value
 				 {...constraints}
-				 {...$$restProps}
+				 {...$$props}
 	/>
 
 	{#if helperText}

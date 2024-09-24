@@ -101,7 +101,7 @@
 			</button>
 		</header>
 
-		<Datatable {table}>
+		<Datatable handler={tableHanlder}>
 			<table class="table">
 				<thead>
 				<tr>
@@ -112,7 +112,7 @@
 				</tr>
 				</thead>
 				<tbody>
-				{#each table.rows as row}
+				{#each $table as row}
 					<tr>
 						<td>
 							<Avatar picture={row.picture ? getPictureUrl(row.picture) : undefined} name={row.name} />

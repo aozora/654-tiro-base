@@ -32,7 +32,7 @@
 		required={required}
 		disabled={disabled}
 		{...constraints}
-		{...$$restProps}
+		{...$$props}
 	>
 		<Switch.Thumb
 			class="toggle-thumb"
