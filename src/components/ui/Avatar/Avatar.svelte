@@ -1,15 +1,25 @@
 <script lang="ts">
 	// PROPS
+	import { getCldImageUrl } from 'svelte-cloudinary';
+
 	export let picture: string;
 	export let name: string;
 
 	let initials: string;
 	$:initials = name[0] + name[1];
+
+	const getPictureUrl = (publicId: string) => {
+		return getCldImageUrl({
+			width: 24,
+			height: 24,
+			src: publicId
+		});
+	};
 </script>
 
 <div class="avatar">
 	{#if picture}
-		<img src={picture} alt="" class="avatar-picture" />
+		<img src={getPictureUrl(picture)} alt="" class="avatar-picture" />
 	{:else }
 		<div class="avatar-initials">{initials}</div>
 	{/if}
