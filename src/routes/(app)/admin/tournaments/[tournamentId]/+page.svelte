@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Main from '$components/Main.svelte';
-	import { Datatable, TableHandler } from '@vincjo/datatables';
+	import { Datatable, DataHandler } from '@vincjo/datatables';
 	import type { Match, Player, Tournament } from '@prisma/client';
 	import type { PageData } from './$types';
 	import { DiceThree, PencilSimple, Trash } from 'phosphor-svelte';
@@ -55,7 +55,8 @@
 	let isModalOpen = false;
 	let item: Match | undefined = undefined;
 
-	const table = new TableHandler(matches, { rowsPerPage: 10 });
+	const tableHanlder = new DataHandler(matches, { rowsPerPage: 10 });
+	const table = tableHanlder.getRows();
 
 	const createMatch = () => {
 		item = undefined;

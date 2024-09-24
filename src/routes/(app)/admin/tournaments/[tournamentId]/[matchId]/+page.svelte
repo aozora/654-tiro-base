@@ -1,22 +1,19 @@
 <script lang="ts">
 	import Main from '$components/Main.svelte';
-	import { Datatable, TableHandler } from '@vincjo/datatables';
+	import { Datatable, DataHandler } from '@vincjo/datatables';
 	import type { Match, Player, Tournament } from '@prisma/client';
 	import type { PageData } from './$types';
-	import { CheckCircle, PencilSimple, Ranking, Trash, UserSquare, XCircle } from 'phosphor-svelte';
+	import { Ranking, Trash } from 'phosphor-svelte';
 	import Modal from '$components/ui/Modal/Modal.svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { page } from '$app/stores';
 	import { toast } from '$lib/toast';
 	import Avatar from '$components/ui/Avatar/Avatar.svelte';
 	import AdminPageTitle from '$components/AdminPageTitle.svelte';
-	import Icon from '$components/Icon/Icon.svelte';
-	import { Icons } from '$types';
 	import Loader from '$components/Loader.svelte';
 	import { getCldImageUrl } from 'svelte-cloudinary';
 	import type { PlayerExtended } from '$lib/server/repository';
 	import Select from '$components/ui/Form/Select.svelte';
-	import TextInput from '$components/ui/Form/TextInput.svelte';
 	import NumberInput from '$components/ui/Form/NumberInput.svelte';
 
 	type PageProps = {
@@ -58,7 +55,8 @@
 	let isModalOpen = false;
 	let item: Player | undefined = undefined;
 
-	const table = new TableHandler(players, { rowsPerPage: 10 });
+	const tableHanlder = new DataHandler(players, { rowsPerPage: 10 });
+	const table = tableHanlder.getRows();
 
 	const onEditPoints = (row: Player) => {
 		// console.log({ row });

@@ -1,8 +1,10 @@
 <script lang="ts">
 	// PROPS
-	let { picture, name } = $props();
+	export let picture: string;
+	export let name: string;
 
-	const initials: string = $derived(name[0] + name[1]);
+	let initials: string;
+	$:initials = name[0] + name[1];
 </script>
 
 <div class="avatar">

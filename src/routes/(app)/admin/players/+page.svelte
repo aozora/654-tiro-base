@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Main from '$components/Main.svelte';
-	import { Datatable, TableHandler } from '@vincjo/datatables';
+	import { Datatable, DataHandler } from '@vincjo/datatables';
 	import type { Player } from '@prisma/client';
 	import type { PageData } from './$types';
 	import { CheckCircle, PencilSimple, Trash, UserSquare, XCircle } from 'phosphor-svelte';
@@ -54,7 +54,8 @@
 	let isModalOpen = false;
 	let item: Player | undefined = undefined;
 
-	const table = new TableHandler(players, { rowsPerPage: 10 });
+	const tableHanlder = new DataHandler(players, { rowsPerPage: 10 });
+	const table = tableHanlder.getRows();
 
 	const onEditPlayer = (row: Player) => {
 		// console.log({ row });

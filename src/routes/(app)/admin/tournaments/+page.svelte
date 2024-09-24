@@ -1,9 +1,9 @@
 <script lang="ts">
 	import Main from '$components/Main.svelte';
-	import { Datatable, TableHandler } from '@vincjo/datatables';
+	import { Datatable, DataHandler } from '@vincjo/datatables';
 	import type { Tournament } from '@prisma/client';
 	import type { PageData } from './$types';
-	import { CheckCircle, DiceSix, PencilSimple, UsersThree, XCircle } from 'phosphor-svelte';
+	import { CheckCircle, DiceSix, PencilSimple, XCircle } from 'phosphor-svelte';
 	import Modal from '$components/ui/Modal/Modal.svelte';
 	import TextInput from '$components/ui/Form/TextInput.svelte';
 	import { superForm } from 'sveltekit-superforms/client';
@@ -52,7 +52,8 @@
 	let isModalOpen = false;
 	let item: Tournament | undefined = undefined;
 
-	const table = new TableHandler(tournaments, { rowsPerPage: 10 });
+	const tableHanlder = new DataHandler(tournaments, { rowsPerPage: 10 });
+	const table = tableHanlder.getRows();
 
 	const onEditTournament = (row: Tournament) => {
 		// console.log({ row });
