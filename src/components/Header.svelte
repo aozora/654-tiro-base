@@ -1,19 +1,24 @@
 <script lang="ts">
 
-import { DiceSix } from 'phosphor-svelte';
+	import { DiceSix } from 'phosphor-svelte';
+	import MobileMenu from '$components/MobileMenu.svelte';
+
+	let isOpen = false;
 </script>
 
 <header class="header">
-  <a href="/" class="logo">
-    <span>654 tiro base</span>
-  </a>
+	<a href="/" class="logo">
+		<span>654 tiro base</span>
+	</a>
 
-  <button type="button" class="toggle-menu">
-    <DiceSix size="36" weight="fill"/>
-  </button>
-  <nav class="menu">
-    <!--    <ul></ul>-->
-  </nav>
+	<button type="button" class="toggle-menu" aria-expanded={isOpen} on:click={()=>isOpen = !isOpen}>
+		<DiceSix size="36" weight="fill" />
+	</button>
+	<MobileMenu open={isOpen} />
+
+	<nav class="menu">
+		<!--    <ul></ul>-->
+	</nav>
 
 </header>
 
@@ -32,7 +37,7 @@ import { DiceSix } from 'phosphor-svelte';
     z-index: 10;
   }
 
-  .logo{
+  .logo {
     font-family: var(--variable-font-family-brutal);
     font-size: var(--text-scale-18);
     text-decoration: none;
@@ -48,6 +53,12 @@ import { DiceSix } from 'phosphor-svelte';
     padding: 0;
     border: 0;
     background-color: transparent;
+    z-index: 101;
+		transition: color .35s ease-in-out;
+
+		&[aria-expanded="true"] {
+      color: var(--color-white);
+		}
   }
 
   .menu {
