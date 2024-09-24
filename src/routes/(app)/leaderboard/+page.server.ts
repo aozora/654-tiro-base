@@ -28,16 +28,9 @@ export const load: PageServerLoad = async () => {
 	}
 
 	const leaderboardData = await getLeaderboard(tournament.id);
-
-	// playerId
-	// _sum.points
 	const leaderboard: Array<PlayerLeaderboard> = leaderboardData
 		.map((x) => {
 			const player = players.find((p) => p.id === x.playerId);
-
-			// if (!player) {
-			// 	error(500, 'Player not found');
-			// }
 
 			return {
 				playerId: x.playerId,

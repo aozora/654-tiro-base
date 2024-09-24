@@ -4,6 +4,7 @@
 	import type { PlayerLeaderboard } from '$types';
 	import Avatar from '$components/ui/Avatar/Avatar.svelte';
 	import Main from '$components/Main.svelte';
+	import TopThree from '$components/TopThree.svelte';
 
 	type PageProps = {
 		players: Array<Player>
@@ -18,13 +19,13 @@
 		players,
 		leaderboard
 	}: PageProps = data;
-
-	console.log({ tournament, players, leaderboard });
 </script>
 
 <Main className="user-page">
 	<div>
-		<h1>Leaderboard</h1>
+		<h1 class="title">Classifica</h1>
+
+		<TopThree leaderboard={leaderboard} />
 
 		<div class="leaderboard-wrapper full-bleed">
 			<ul>
@@ -48,10 +49,13 @@
 
   .leaderboard-wrapper {
     @include layout-grid;
-    min-height: auto;
-    padding: 1rem 0;
-    border-radius: var(--global-radius);
-    background-color: var(--color-light-gray);
+
+    & {
+      min-height: auto;
+      padding: 1rem 0;
+      border-radius: var(--global-radius);
+      background-color: var(--color-light-gray);
+    }
 
     > * {
       grid-column: 2;
@@ -92,16 +96,19 @@
 
       strong {
         flex: 1 1 auto;
-				text-align: left;
-      }
-
-      span.points {
-        //align-self: flex-end;
+        text-align: left;
       }
 
       :global(.avatar) {
         margin-right: 1rem;
       }
     }
+  }
+
+  .title {
+    display: block;
+    font-size: var(--text-scale-20);
+    text-align: center;
+    text-transform: uppercase;
   }
 </style>

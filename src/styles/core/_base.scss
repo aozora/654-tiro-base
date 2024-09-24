@@ -117,28 +117,28 @@ h1, h2, h3, h4, h5, h6 {
   color: inherit;
 }
 
-
-h1 {
-  //margin: calc(2 * var(--text-base-size)) 0 calc(3 * var(--text-base-size)) 0;
-  max-width: 50rem;
-  font-size: var(--h1-font-size);
-  line-height: var(--h1-line-height);
-}
-
-h2 {
-  //margin: calc(1 * var(--text-base-size)) 0 calc(3 * var(--text-base-size)) 0;
-  //max-width: var(--text-max-width);
-  font-size: 11rem;
-  line-height: 1.5;
-}
-
-h3 {
-  //margin: calc(1 * var(--text-base-size)) 0 calc(2 * var(--text-base-size)) 0;
-  //max-width: var(--text-max-width);
-  text-align: left;
-  font-size: var(--h3-font-size);
-  line-height: var(--h3-line-height);
-}
+//
+//h1 {
+//  //margin: calc(2 * var(--text-base-size)) 0 calc(3 * var(--text-base-size)) 0;
+//  max-width: 50rem;
+//  font-size: var(--h1-font-size);
+//  line-height: var(--h1-line-height);
+//}
+//
+//h2 {
+//  //margin: calc(1 * var(--text-base-size)) 0 calc(3 * var(--text-base-size)) 0;
+//  //max-width: var(--text-max-width);
+//  font-size: 11rem;
+//  line-height: 1.5;
+//}
+//
+//h3 {
+//  //margin: calc(1 * var(--text-base-size)) 0 calc(2 * var(--text-base-size)) 0;
+//  //max-width: var(--text-max-width);
+//  text-align: left;
+//  font-size: var(--h3-font-size);
+//  line-height: var(--h3-line-height);
+//}
 
 
 .italic,
@@ -232,41 +232,3 @@ img {
   max-width: 100%;
   width: 100%;
 }
-
-blockquote {
-  margin: calc(.5 * var(--text-base-size)) 5% calc(1 * var(--text-base-size)) calc(.5 * var(--text-base-size));
-  transition: all linear 0.2s;
-  padding-left: 1rem;
-  border-left: .5rem solid var(--color-pantone);
-
-  &.right {
-    float: right;
-    margin-left: calc(.5 * var(--text-base-size));
-    margin-right: 5%;
-  }
-
-  &.left {
-    float: left;
-    margin-left: 5%;
-    margin-right: calc(.5 * var(--text-base-size));
-  }
-
-  p {
-    --text-weight: calc(var(--text-weight) * .65);
-    font-size: var(--text-scale-1); // 2.5vw;
-    line-height: var(--bq-line-height);
-    margin: 0 0 .25em 0;
-    position: relative;
-  }
-
-  cite {
-    display: block;
-    font-size: 3.5vw;
-    text-align: right;
-
-    &:before {
-      content: "—";
-    }
-  }
-}
-
