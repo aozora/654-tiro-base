@@ -1,8 +1,8 @@
-import { error, json } from '@sveltejs/kit';
 import { updatePlayerPicture } from '$lib/server/repository';
+import { error, json } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
 
-/** @type {import('./$types').RequestHandler} */
-export async function POST({ request }) {
+export const POST: RequestHandler = async ({ request }) => {
 	const { id, picture } = await request.json();
 
 	try {
@@ -14,4 +14,4 @@ export async function POST({ request }) {
 	}
 
 	return json(true);
-}
+};
