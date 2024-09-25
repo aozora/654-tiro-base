@@ -1,5 +1,6 @@
 <script lang="ts">
 	export let open: boolean = false;
+	export let user;
 </script>
 
 <div class="mobile-menu" class:is-open={open}>
@@ -14,12 +15,13 @@
 			<li>
 				<a href="/tournaments">Tornei</a>
 			</li>
-			<!-- <li class="separator">
-				<div />
-			</li> -->
-			<li>
-				<a href="/admin">Amministrazione</a>
-			</li>
+
+			{#if user && user?.role === 'admin'}
+				<li>
+					<a href="/admin">Amministrazione</a>
+				</li>
+			{/if}
+
 			<li class="logout">
 				<form action="/logout" method="POST">
 					<button type="submit">Esci</button>

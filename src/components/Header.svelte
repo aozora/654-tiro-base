@@ -2,6 +2,11 @@
 	import { DiceSix } from 'phosphor-svelte';
 	import MobileMenu from '$components/MobileMenu.svelte';
 
+	export let data;
+
+	// console.log({ data });
+	const { user } = data;
+
 	let isOpen = false;
 </script>
 
@@ -18,7 +23,7 @@
 	>
 		<DiceSix size="36" weight="fill" />
 	</button>
-	<MobileMenu open={isOpen} />
+	<MobileMenu open={isOpen} {user} />
 
 	<nav class="menu">
 		<!--    <ul></ul>-->

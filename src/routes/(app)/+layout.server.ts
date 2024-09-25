@@ -2,15 +2,15 @@
 import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 
-export const load: LayoutServerLoad = async (event) => {
+export const load: LayoutServerLoad = async ({ locals }) => {
 	// @ts-ignore
-	if (!event.locals.user) {
+	if (!locals.user) {
 		console.log('no user');
 		return redirect(302, '/login');
 	}
 
 	return {
 		// @ts-ignore
-		user: event.locals.user
+		user: locals.user
 	};
 };

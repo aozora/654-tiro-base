@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+import { authSchema } from '$lib/schemas/auth-schema';
 import { lucia } from '$lib/server/auth';
+import prisma from '$lib/server/prisma';
 import { fail, redirect } from '@sveltejs/kit';
 import { Argon2id } from 'oslo/password';
-import type { Actions, PageServerLoad } from '../../../../.svelte-kit/types/src/routes';
-import prisma from '$lib/server/prisma';
-import { superValidate, message } from 'sveltekit-superforms';
+import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { authSchema } from '$lib/schemas/auth-schema';
+import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async (event) => {
+export const load: PageServerLoad = async ({ locals }) => {
 	// @ts-ignore
-	if (event.locals.user) {
-		return redirect(302, '/');
+	if (locals.user) {
+		redirect(302, '/leaderboard');
 	}
 
 	const form = await superValidate(zod(authSchema));
