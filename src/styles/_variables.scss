@@ -11,128 +11,122 @@
     **************************************************************** */
 
 :root {
-  // ################################################################
-  //    COLORS
-  // ################################################################
-  --color-brand: #e6795a;
-  --color-black: #000;
-  --color-white: #fff;
-  --color-blue: #487abf;
-  --color-blue-star: #1a4795;
-  --color-dark: #1e1d1c;
-  --color-gold: #c7f064;
-  --color-green: #66c364;
-  --color-light: #f0f3e0;
-  --color-montana: #c08859;
-  --color-orange: #b08054;
-  --color-purple: #cca4c3;
-  --color-yellow: #d9bc32;
-  --color-light-gray: #d9d9d9;
+	// ################################################################
+	//    COLORS
+	// ################################################################
+	--color-brand: #e6795a;
+	--color-black: #000;
+	--color-white: #fff;
+	--color-blue: #487abf;
+	--color-blue-star: #1a4795;
+	--color-dark: #1e1d1c;
+	--color-gold: #c7f064;
+	--color-green: #66c364;
+	--color-light: #f0f3e0;
+	--color-montana: #c08859;
+	--color-orange: #b08054;
+	--color-purple: #cca4c3;
+	--color-yellow: #d9bc32;
+	--color-light-gray: #d9d9d9;
+	--color-dark-background: #312244;
 
-  // utility colors
-  --color-error: #f00;
+	// utility colors
+	--color-error: #f00;
 
-  // ################################################################
-  //    DARK/LIGHT THEME
-  // ################################################################
+	// ################################################################
+	//    DARK/LIGHT THEME
+	// ################################################################
 
-  --theme-foreground: var(--color-black);
-  --theme-background: var(--color-light);
-  --theme-brand: var(--color-red);
+	--theme-foreground: var(--color-white);
+	--theme-background: var(--color-dark-background);
+	--theme-brand: var(--color-red);
 
-  // defaults
-  --body-background: var(--theme-background);
-  --body-font-color: var(--theme-foreground);
+	// defaults
+	--body-background: var(--theme-background);
+	--body-font-color: var(--theme-foreground);
 
+	// ################################################################
+	//    TYPOGRAPHY SCALE & FONTS
+	// ################################################################
+	--baseline: 1.5;
+	--body-font-weight: 400;
+	--heading-font-weight: 400;
+	--kerning: normal; // auto (default), normal (enabled), none (disabled)
 
-  // ################################################################
-  //    TYPOGRAPHY SCALE & FONTS
-  // ################################################################
-  --baseline: 1.5;
-  --body-font-weight: 400;
-  --heading-font-weight: 400;
-  --kerning: normal; // auto (default), normal (enabled), none (disabled)
+	// Fonts
+	--variable-font-family-default: 'Inter var', Helvetica, Roboto, Arial, sans-serif;
+	--variable-font-family-brand: 'Bodoni Moda', Helvetica, Roboto, Arial, sans-serif;
+	--variable-font-family-brutal: 'annonce', Roboto, Helvetica, Arial, sans-serif;
+	--variable-heading-font-family: none;
+	--body-font-family: var(--variable-font-family-default);
+	--heading-font-family: var(--variable-font-family-brand);
 
-  // Fonts
-  --variable-font-family-default: 'Inter var', Helvetica, Roboto, Arial, sans-serif;
-  --variable-font-family-brand: 'Bodoni Moda', Helvetica, Roboto, Arial, sans-serif;
-  --variable-font-family-brutal: 'annonce', Roboto, Helvetica, Arial, sans-serif;
-  --variable-heading-font-family: none;
-  --body-font-family: var(--variable-font-family-default);
-  --heading-font-family: var(--variable-font-family-brand);
+	// font weights
+	--font-weight-thin: 100;
+	--font-weight-extra-light: 200;
+	--font-weight-light: 300;
+	--font-weight-regular: 400;
+	--font-weight-medium: 500;
+	--font-weight-semi-bold: 600;
+	--font-weight-bold: 700;
+	--font-weight-extra-bold: 800;
+	--font-weight-black: 900;
 
-  // font weights
-  --font-weight-thin: 100;
-  --font-weight-extra-light: 200;
-  --font-weight-light: 300;
-  --font-weight-regular: 400;
-  --font-weight-medium: 500;
-  --font-weight-semi-bold: 600;
-  --font-weight-bold: 700;
-  --font-weight-extra-bold: 800;
-  --font-weight-black: 900;
+	// type scale
+	--text-base-size: 1rem; // 18px - html is set to 112.5%
+	--text-scale-12: calc(12 / 18 * 1rem); //  12
+	--text-scale-14: calc(14 / 18 * 1rem); //  14
+	--text-scale-16: calc(16 / 18 * 1rem); //  16
+	--text-scale-18: calc(18 / 18 * 1rem); //  18
+	--text-scale-20: calc(20 / 18 * 1rem); //  20
+	--text-scale-24: calc(24 / 18 * 1rem); //  24
+	--text-scale-32: calc(32 / 18 * 1rem); //  32
+	--text-scale-40: calc(40 / 18 * 1rem); //  40
+	--text-scale-48: calc(48 / 18 * 1rem); //  48
 
-  // type scale
-  --text-base-size: 1rem; // 18px - html is set to 112.5%
-  --text-scale-12: calc(12 / 18 * 1rem); //  12
-  --text-scale-14: calc(14 / 18 * 1rem); //  14
-  --text-scale-16: calc(16 / 18 * 1rem); //  16
-  --text-scale-18: calc(18 / 18 * 1rem); //  18
-  --text-scale-20: calc(20 / 18 * 1rem); //  20
-  --text-scale-24: calc(24 / 18 * 1rem); //  24
-  --text-scale-32: calc(32 / 18 * 1rem); //  32
-  --text-scale-40: calc(40 / 18 * 1rem); //  40
-  --text-scale-48: calc(48 / 18 * 1rem); //  48
+	/* max text sizes  */
+	--text-max-width: 38rem;
 
+	/* focus state */
+	--focus-outline: none;
+	--focus-box-shadow: none;
+	--focus-border-size: 2px;
+	--focus-border-style: dashed;
+	--focus-border-color: var(--color-black);
 
-  /* max text sizes  */
-  --text-max-width: 38rem;
+	/* spacing */
+	--text-letter-spacing: 1px;
+	--text-on-dark-letter-spacing: 2px;
 
-  /* focus state */
-  --focus-outline: none;
-  --focus-box-shadow: none;
-  --focus-border-size: 2px;
-  --focus-border-style: dashed;
-  --focus-border-color: var(--color-black);
+	// ################################################################
+	//    SHADOWS
+	// ################################################################
+	--default-box-shadow: none;
+	--default-text-shadow: none;
 
-  /* spacing */
-  --text-letter-spacing: 1px;
-  --text-on-dark-letter-spacing: 2px;
+	// ################################################################
+	//    STATES
+	// ################################################################
+	--selection-color: var(--color-white);
+	--selection-background-color: var(--color-pantone);
+	--placeholder-color: var(--color-black);
 
+	// ################################################################
+	//    GLOBALS
+	// ################################################################
+	--global-radius: 10px;
 
-  // ################################################################
-  //    SHADOWS
-  // ################################################################
-  --default-box-shadow: none;
-  --default-text-shadow: none;
+	// ################################################################
+	//    SECTIONING
+	// ################################################################
+	--sectionMaxWidth: 1024px;
 
-
-  // ################################################################
-  //    STATES
-  // ################################################################
-  --selection-color: var(--color-white);
-  --selection-background-color: var(--color-pantone);
-  --placeholder-color: var(--color-black);
-
-
-  // ################################################################
-  //    GLOBALS
-  // ################################################################
-  --global-radius: 10px;
-
-
-  // ################################################################
-  //    SECTIONING
-  // ################################################################
-  --sectionMaxWidth: 1024px;
-
-  // ################################################################
-  //    TRANSITIONS
-  // ################################################################
-  --link-underline-transition: width 0.35s linear;
-  --transition-transform: transform .35s linear;
-  --transition-background-size: background-size .35s linear;
-  --transition-background-color: background-color .35s linear;
-  --transition-color: color .35s linear;
+	// ################################################################
+	//    TRANSITIONS
+	// ################################################################
+	--link-underline-transition: width 0.35s linear;
+	--transition-transform: transform 0.35s linear;
+	--transition-background-size: background-size 0.35s linear;
+	--transition-background-color: background-color 0.35s linear;
+	--transition-color: color 0.35s linear;
 }
-

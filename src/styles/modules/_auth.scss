@@ -1,5 +1,6 @@
 .auth-page {
-	background: transparent url('/img/risiko-challenge-tabellone.webp') no-repeat center center fixed;
+	/* background: transparent url('/img/risiko-challenge-tabellone.webp') no-repeat center center fixed; */
+	background: transparent url('/img/frame6.webp') no-repeat center center fixed;
 
 	&::before {
 		content: '';
@@ -8,8 +9,8 @@
 		position: absolute;
 		top: 0;
 		left: 0;
-		background-color: #fff;
-		opacity: 0.7;
+		background-color: #000;
+		opacity: 0.38;
 		z-index: 0;
 	}
 }
