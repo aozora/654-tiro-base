@@ -1,16 +1,11 @@
 <script lang="ts">
 	import SkipLink from '$components/SkipLink.svelte';
 	import Header from '$components/Header.svelte';
-	import type { LayoutData } from '../../../.svelte-kit/types/src/routes';
-	import { page } from '$app/stores';
+	import type { LayoutData } from './$types';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import '$styles/app.scss';
 
-	// eslint-disable-next-line svelte/valid-compile
 	export let data: LayoutData;
-
-	// console.log( $page.data.user);
-	// console.log($data.user.email)
 </script>
 
 <!-- svg-sprite -->

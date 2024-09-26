@@ -15,23 +15,16 @@
 	import { Icons } from '$types';
 	import Loader from '$components/Loader.svelte';
 	import Checkbox from '$components/ui/Form/Checkbox.svelte';
-	import { CldUploadWidget, getCldImageUrl } from 'svelte-cloudinary';
+	import { CldUploadWidget } from 'svelte-cloudinary';
 
 	type PageProps = {
-		players: Array<Player>
-	}
+		players: Array<Player>;
+	};
 
 	export let data: PageData;
 
 	const { players }: PageProps = data;
-	const {
-		form,
-		errors,
-		enhance,
-		delayed,
-		message,
-		constraints
-	} = superForm(data.form, {
+	const { form, errors, enhance, delayed, message, constraints } = superForm(data.form, {
 		// validationMethod: 'onsubmit', //'auto' | 'oninput' | 'onblur' | 'onsubmit' = 'auto',
 		onUpdated: ({ form }) => {
 			// When the form is successfully submitted close the modal and reset the item variable
@@ -70,7 +63,6 @@
 			e.preventDefault();
 			return;
 		}
-
 	};
 
 	const onEditPlayerPicture = async (results, row: Player) => {
@@ -86,6 +78,7 @@
 		});
 
 		const success: boolean = await response.json();
+		return success;
 	};
 
 	const createPlayer = () => {
@@ -109,55 +102,56 @@
 			<Datatable handler={tableHanlder}>
 				<table class="table">
 					<thead>
-					<tr>
-						<th>Nome</th>
-						<th>Attivo</th>
-						<th></th>
-						<th></th>
-						<th></th>
-					</tr>
+						<tr>
+							<th>Nome</th>
+							<th>Attivo</th>
+							<th></th>
+							<th></th>
+							<th></th>
+						</tr>
 					</thead>
 					<tbody>
-					{#each $table as row}
-						<tr>
-							<td>
-								<Avatar picture={row.picture} name={row.name} />
-								<span>{row.name}</span>
-							</td>
-							<td>
-								{#if row.isActive}
-									<CheckCircle size="20" />
-								{:else}
-									<XCircle size="20" />
-								{/if}
-							</td>
-							<td>
-								<CldUploadWidget uploadPreset="kfzhcgck"
-																 onSuccess={(results) => onEditPlayerPicture(results, row)}
-																 let:open
-																 let:isLoading>
-									<button type="button" class="table-button" on:click={open} disabled={isLoading}>
-										<UserSquare size="20" />
+						{#each $table as row}
+							<tr>
+								<td>
+									<Avatar picture={row.picture} name={row.name} />
+									<span>{row.name}</span>
+								</td>
+								<td>
+									{#if row.isActive}
+										<CheckCircle size="20" />
+									{:else}
+										<XCircle size="20" />
+									{/if}
+								</td>
+								<td>
+									<CldUploadWidget
+										uploadPreset="kfzhcgck"
+										onSuccess={(results) => onEditPlayerPicture(results, row)}
+										let:open
+										let:isLoading
+									>
+										<button type="button" class="table-button" on:click={open} disabled={isLoading}>
+											<UserSquare size="20" />
+										</button>
+									</CldUploadWidget>
+								</td>
+								<td>
+									<button type="button" class="table-button" on:click={() => onEditPlayer(row)}>
+										<PencilSimple size="20" />
 									</button>
-								</CldUploadWidget>
-							</td>
-							<td>
-								<button type="button" class="table-button" on:click={() => onEditPlayer(row)}>
-									<PencilSimple size="20" />
-								</button>
-							</td>
-							<td>
-								<form action="?/delete" method="POST" on:submit={(e) => onRemovePlayer(e, row)}>
-									<input type='hidden' name='id' value={item?.id} />
-									<input type='hidden' name='action' value="delete" />
-									<button type="submit"
-													class="table-button">
-										<Trash size="20" />
-									</button>
-								</form>
-							</td>
-						</tr>
-					{/each}
+								</td>
+								<td>
+									<form action="?/delete" method="POST" on:submit={(e) => onRemovePlayer(e, row)}>
+										<input type="hidden" name="id" value={item?.id} />
+										<input type="hidden" name="action" value="delete" />
+										<button type="submit" class="table-button">
+											<Trash size="20" />
+										</button>
+									</form>
+								</td>
+							</tr>
+						{/each}
 					</tbody>
 				</table>
 			</Datatable>
@@ -169,29 +163,35 @@
 	{/if}
 </Main>
 
-<Modal title={item === undefined ? 'Nuovo giocatore':'Modifica giocatore'}
-			 bind:isOpen={isModalOpen}>
-	<svelte:fragment slot='modal-content'>
+<Modal
+	title={item === undefined ? 'Nuovo giocatore' : 'Modifica giocatore'}
+	bind:isOpen={isModalOpen}
+>
+	<svelte:fragment slot="modal-content">
 		<form id="form-player" action="?/update" method="POST" use:enhance>
-			<input type='hidden' name='id' value={item?.id} />
+			<input type="hidden" name="id" value={item?.id} />
 
-			<TextInput label='Nome' name='name'
-								 errors={$errors.name}
-								 constraints={$constraints.name}
-								 value={item?.name}
+			<TextInput
+				label="Nome"
+				name="name"
+				errors={$errors.name}
+				constraints={$constraints.name}
+				value={item?.name}
 			/>
 			<!--			<Toggle label='Is active' name='isActive' required={true} value={item?.isActive ?? false} />-->
-			<Checkbox label='Attivo' required={true} name='isActive'
-								errors={$errors.isActive}
-								constraints={$constraints.isActive}
-								checked={item?.isActive}
+			<Checkbox
+				label="Attivo"
+				required={true}
+				name="isActive"
+				errors={$errors.isActive}
+				constraints={$constraints.isActive}
+				checked={item?.isActive}
 			/>
 
 			<div class="modal-actions">
-				<button type="button" class="button" on:click={()=>isModalOpen = false}>Annulla</button>
+				<button type="button" class="button" on:click={() => (isModalOpen = false)}>Annulla</button>
 				<button type="submit" class="button primary">Salva</button>
 			</div>
 		</form>
 	</svelte:fragment>
 </Modal>
-

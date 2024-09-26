@@ -1,9 +1,9 @@
-import type { Actions, PageServerLoad } from './$types';
 import { deletePlayer, getPlayers, upsertPlayer } from '$lib/server/repository';
 import type { Player } from '@prisma/client';
-import { message, superValidate, fail, withFiles } from 'sveltekit-superforms';
-import { z } from 'zod';
+import { fail, message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
+import { z } from 'zod';
+import type { Actions, PageServerLoad } from './$types';
 
 const schemaUpdateTemp = z.object({
 	id: z.string().nullable().optional(),

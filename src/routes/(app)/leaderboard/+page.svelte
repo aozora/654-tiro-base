@@ -8,25 +8,21 @@
 	import { ArrowCircleRight } from 'phosphor-svelte';
 
 	type PageProps = {
-		players: Array<Player>
-		tournament: Tournament
-		leaderboard: Array<PlayerLeaderboard>
-	}
+		players: Array<Player>;
+		tournament: Tournament;
+		leaderboard: Array<PlayerLeaderboard>;
+	};
 
 	export let data: PageData;
 
-	const {
-		tournament,
-		players,
-		leaderboard
-	}: PageProps = data;
+	const { tournament, players, leaderboard }: PageProps = data;
 </script>
 
 <Main className="user-page">
-	<div>
+	<div class="leaderboard">
 		<h1 class="title">Classifica</h1>
 
-		<TopThree leaderboard={leaderboard} />
+		<TopThree {leaderboard} />
 
 		<div class="leaderboard-wrapper full-bleed">
 			<ul>
@@ -37,7 +33,7 @@
 							<Avatar name={player.name} picture={player.picture} />
 							<strong>{player.name}</strong>
 							<span class="points">{player.sumPoints} punti</span>
-							<ArrowCircleRight size="20" class="arrow"/>
+							<ArrowCircleRight size="20" class="arrow" />
 						</a>
 					</li>
 				{/each}
@@ -47,76 +43,83 @@
 </Main>
 
 <style lang="scss">
-  @import '../../../styles/shared';
+	@import '../../../styles/shared';
 
-  .leaderboard-wrapper {
-    @include layout-grid;
+	.leaderboard {
+		display: flex;
+		flex-direction: column;
+	}
 
-    & {
-      min-height: auto;
-      padding: 1rem 0;
-      border-radius: var(--global-radius);
-      background-color: var(--color-light-gray);
-    }
+	.leaderboard-wrapper {
+		@include layout-grid;
 
-    > * {
-      grid-column: 2;
-    }
+		& {
+			min-height: auto;
+			padding: 1rem 0;
+			border-radius: var(--global-radius);
+			/* background-color: var(--color-light-gray); */
+		}
 
-    ul, li {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-    }
+		> * {
+			grid-column: 2;
+		}
 
-    ul {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      width: 100%;
-    }
+		ul,
+		li {
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+		}
 
-    li {
-      width: 100%;
-    }
+		ul {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 1rem;
+			width: 100%;
+		}
 
-    a {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      width: 100%;
-      padding: .5rem;
-      border: 0;
-      border-radius: var(--global-radius);
-      background-color: var(--color-white);
+		li {
+			width: 100%;
+		}
+
+		a {
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+			width: 100%;
+			padding: 0.5rem;
+			border: 0;
+			border-radius: var(--global-radius);
+			background-color: var(--color-white);
 			text-decoration: none;
 			color: var(--color-dark);
 
-      span:not(.points) {
-        flex: 0;
-        margin-right: 1rem;
-      }
-
-      strong {
-        flex: 1 1 auto;
-        text-align: left;
-      }
-
-      :global(.avatar) {
-        margin-right: 1rem;
-      }
-
-			:global(.arrow){
-				margin-left: .5rem;
+			span:not(.points) {
+				flex: 0;
+				margin-right: 1rem;
 			}
-    }
-  }
 
-  .title {
-    display: block;
-    font-size: var(--text-scale-20);
-    text-align: center;
-    text-transform: uppercase;
-  }
+			strong {
+				flex: 1 1 auto;
+				text-align: left;
+			}
+
+			:global(.avatar) {
+				margin-right: 1rem;
+			}
+
+			:global(.arrow) {
+				margin-left: 0.5rem;
+			}
+		}
+	}
+
+	.title {
+		display: block;
+		margin: 2rem 0;
+		font-size: var(--text-scale-20);
+		text-align: center;
+		text-transform: uppercase;
+	}
 </style>

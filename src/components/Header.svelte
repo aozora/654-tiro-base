@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { DiceSix } from 'phosphor-svelte';
 	import MobileMenu from '$components/MobileMenu.svelte';
+	import { page } from '$app/stores';
 
 	export let data;
 
-	// console.log({ data });
+	// console.log($page.data.tournament);
 	const { user } = data;
 
 	let isOpen = false;
@@ -12,7 +13,11 @@
 
 <header class="header">
 	<a href="/" class="logo">
-		<span>654 tiro base</span>
+		{#if $page.data.tournament}
+			<span>{$page.data.tournament.title}</span>
+		{:else}
+			<span>654 tiro base</span>
+		{/if}
 	</a>
 
 	<button
@@ -40,8 +45,8 @@
 		width: 100%;
 		height: 48px;
 		padding: 0 1rem;
-		background: var(--color-dark) url(/img/frame-mini1.webp) no-repeat center center;
-		background-size: 100%;
+		/* background: var(--color-dark) url(/img/frame-mini1.webp) no-repeat center center;
+		background-size: 100%; */
 		z-index: 10;
 	}
 
@@ -49,7 +54,7 @@
 		font-family: var(--variable-font-family-brutal);
 		font-size: var(--text-scale-18);
 		text-decoration: none;
-		color: var(--color-black);
+		color: var(--color-white);
 	}
 
 	.toggle-menu {
@@ -60,6 +65,7 @@
 		height: 36px;
 		padding: 0;
 		border: 0;
+		color: var(--color-white);
 		background-color: transparent;
 		z-index: 101;
 		transition:
