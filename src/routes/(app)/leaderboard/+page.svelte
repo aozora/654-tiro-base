@@ -117,7 +117,7 @@
 
 	.title {
 		display: block;
-		margin: 2rem 0;
+		margin: 1.5rem 0 2rem 0;
 		font-size: var(--text-scale-20);
 		text-align: center;
 		text-transform: uppercase;

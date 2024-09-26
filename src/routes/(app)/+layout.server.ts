@@ -5,7 +5,6 @@ import type { LayoutServerLoad } from './$types';
 export const load: LayoutServerLoad = async ({ locals }) => {
 	// @ts-ignore
 	if (!locals.user) {
-		console.log('no user');
 		return redirect(302, '/login');
 	}
 

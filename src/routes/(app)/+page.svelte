@@ -7,5 +7,5 @@
 <h1>Sei un {data.user?.role}</h1>
 
 <a href="/leaderboard">Classifica</a>
-
+<br>
 <a href="/admin/">Admin</a>
