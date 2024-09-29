@@ -7,7 +7,7 @@
 
 	export let data: LayoutData;
 
-	console.log($page.data.user);
+	// console.log($page.data.user);
 	// console.log($data.user.email)
 </script>
 
@@ -204,5 +204,5 @@
 	<slot></slot>
 </Main>
 
-<img src="/img/risiko-challenge-tabellone.webp" alt="" />
+<!--<img src="/img/risiko-challenge-tabellone.webp" alt="" />-->
 <!--<Footer />-->

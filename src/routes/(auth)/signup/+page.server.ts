@@ -1,13 +1,14 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { lucia } from '$lib/server/auth';
 import { fail, redirect } from '@sveltejs/kit';
 import { generateId } from 'lucia';
 import { Argon2id } from 'oslo/password';
 // import { SqliteError } from 'better-sqlite3';
-
-import type { Actions, PageServerLoad } from '../../../../.svelte-kit/types/src/routes';
+import type { Actions, PageServerLoad } from './$types';
 import prisma from '$lib/server/prisma';
 
 export const load: PageServerLoad = async (event) => {
+	// @ts-ignore
 	if (event.locals.user) {
 		return redirect(302, '/');
 	}
@@ -43,6 +44,7 @@ export const actions = {
 
 		try {
 			await prisma.user.create({
+				// @ts-ignore
 				data: {
 					id: userId,
 					email: email,
@@ -57,16 +59,16 @@ export const actions = {
 				...sessionCookie.attributes
 			});
 		} catch (e) {
-			if (e instanceof SqliteError && e.code === 'SQLITE_CONSTRAINT_UNIQUE') {
-				return fail(400, {
-					message: 'Username already used'
-				});
-			}
+			// if (e instanceof SqliteError && e.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+			// 	return fail(400, {
+			// 		message: 'Username already used'
+			// 	});
+			// }
 			return fail(500, {
 				message: 'An unknown error occurred'
 			});
 		}
 
-		return redirect(302, '/');
+		redirect(302, '/leaderboard');
 	}
 } satisfies Actions;

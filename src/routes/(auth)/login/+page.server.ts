@@ -55,7 +55,7 @@ export const actions = {
 			});
 
 			console.log('...redirecting to leaderboard');
-			return redirect(302, '/leaderboard');
+			redirect(302, '/leaderboard');
 		} catch (e) {
 			console.error(e);
 			return fail(500, {
