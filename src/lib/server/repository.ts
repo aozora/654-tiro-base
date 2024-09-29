@@ -1,5 +1,5 @@
 import prisma from '$lib/server/prisma';
-import type { Match, Player, Tournament } from '@prisma/client';
+import type { Match, Player, PlayersOnMatches, Tournament } from '@prisma/client';
 
 export async function getPlayers(): Promise<Array<Player>> {
 	return prisma.player.findMany({
@@ -8,6 +8,55 @@ export async function getPlayers(): Promise<Array<Player>> {
 				name: 'asc'
 			}
 		]
+	});
+}
+
+export async function getPlayerById(id: string): Promise<Player> {
+	return prisma.player.findUniqueOrThrow({
+		where: {
+			id
+		}
+	});
+}
+
+export type PlayerMatches = {
+	points: number;
+	date: Date;
+};
+
+export async function getPlayerWithMatchesById(
+	tournamentId: string,
+	playerId: string
+): Promise<Array<PlayerMatches>> {
+	const tournamentMatches = await prisma.playersOnMatches.findMany({
+		where: {
+			match: {
+				tournamentId
+			},
+			player: {
+				id: playerId
+			}
+		},
+		select: {
+			match: {
+				select: {
+					date: true
+				}
+			},
+			points: true
+		},
+		orderBy: {
+			match: {
+				date: 'asc'
+			}
+		}
+	});
+
+	return tournamentMatches.map((m) => {
+		return {
+			date: m.match.date,
+			points: m.points
+		};
 	});
 }
 

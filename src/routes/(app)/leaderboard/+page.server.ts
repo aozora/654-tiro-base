@@ -45,7 +45,6 @@ export const load: PageServerLoad = async () => {
 
 	return {
 		tournament,
-		players,
 		leaderboard
 	};
 };

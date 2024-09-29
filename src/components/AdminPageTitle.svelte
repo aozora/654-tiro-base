@@ -29,6 +29,7 @@
 
 <style lang="scss">
   .back-button {
+		flex: 0 0 auto;
     display: inline-flex;
     width: 24px;
     height: 24px;
@@ -42,7 +43,7 @@
     position: sticky;
     top: 48px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     width: 100%;
     min-height: 40px;
@@ -52,6 +53,7 @@
     z-index: 10;
 
     h1 {
+			flex: 1 1 auto;
       margin: 0;
       font-family: var(--variable-font-family-brutal);
       font-size: var(--text-scale-18);

@@ -6,6 +6,8 @@
 	import Main from '$components/Main.svelte';
 	import TopThree from '$components/TopThree.svelte';
 	import { ArrowCircleRight } from 'phosphor-svelte';
+	import PageTitle from '$components/PageTitle.svelte';
+	import { pluralizePoints } from '$lib/helpers';
 
 	type PageProps = {
 		players: Array<Player>;
@@ -15,12 +17,12 @@
 
 	export let data: PageData;
 
-	const { tournament, players, leaderboard }: PageProps = data;
+	const { tournament, leaderboard }: PageProps = data;
 </script>
 
 <Main className="user-page">
 	<div class="leaderboard">
-		<h1 class="title">Classifica</h1>
+		<PageTitle title="Classifica"/>
 
 		<TopThree {leaderboard} />
 
@@ -28,11 +30,11 @@
 			<ul>
 				{#each leaderboard as player, index}
 					<li>
-						<a href={`/player/${player.playerId}`}>
+						<a href={`/player-matches/${tournament.id}_${player.playerId}`}>
 							<span>{index + 1}</span>
 							<Avatar name={player.name} picture={player.picture} />
 							<strong>{player.name}</strong>
-							<span class="points">{player.sumPoints} punti</span>
+							<span class="points">{pluralizePoints(player.sumPoints)}</span>
 							<ArrowCircleRight size="20" class="arrow" />
 						</a>
 					</li>
@@ -113,13 +115,5 @@
 				margin-left: 0.5rem;
 			}
 		}
-	}
-
-	.title {
-		display: block;
-		margin: 1.5rem 0 2rem 0;
-		font-size: var(--text-scale-20);
-		text-align: center;
-		text-transform: uppercase;
 	}
 </style>
