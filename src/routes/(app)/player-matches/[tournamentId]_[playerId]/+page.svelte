@@ -8,9 +8,7 @@ import type { Player, Tournament } from '@prisma/client';
 import PageTitle from '$components/PageTitle.svelte';
 import { pluralizePoints } from '$lib/helpers';
 import {
-	LinkedChart,
-	LinkedLabel,
-	LinkedValue
+	LinkedChart
 } from 'svelte-tiny-linked-charts';
 
 type PageProps = {
@@ -21,7 +19,7 @@ type PageProps = {
 
 export let data: PageData;
 
-const { matches, tournament, player }: PageProps = data;
+const { matches, player }: PageProps = data;
 
 const chartLabels = matches.map(m => `${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(m.date)}`);
 const chartData = matches.map(m => m.points);
