@@ -111,7 +111,7 @@ export async function getTournaments(): Promise<Array<Tournament>> {
 	return prisma.tournament.findMany({
 		orderBy: [
 			{
-				title: 'asc'
+				title: 'desc'
 			}
 		]
 	});

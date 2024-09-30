@@ -3,8 +3,7 @@
 * refresh list dopo update
 
 * menu
-  * +admin
-  * normal pages
+  * desktop
   
 * Per Admin
   * check user logged!
@@ -14,7 +13,6 @@
       * edit match: date + players
 
 * Normal Users
-    * selezione torneo (default: current)
-    * view leaderboard
+    * fix mobilemenu on click (da chiudere menu)
     * view player + chart + history
     * view matches + details

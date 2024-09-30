@@ -1,13 +1,9 @@
 <script lang="ts">
-	import type { Player, Tournament } from '@prisma/client';
-	import type { PageData } from '../../../../../.svelte-kit/types/src/routes';
-	import type { PlayerLeaderboard } from '$types';
-	import Avatar from '$components/ui/Avatar/Avatar.svelte';
+	import type { Tournament } from '@prisma/client';
+	import type { PageData } from './$types';
 	import Main from '$components/Main.svelte';
-	import TopThree from '$components/TopThree.svelte';
-	import { ArrowCircleRight } from 'phosphor-svelte';
 	import PageTitle from '$components/PageTitle.svelte';
-	import { pluralizePoints } from '$lib/helpers';
+	import { ArrowCircleRight } from 'phosphor-svelte';
 
 	type PageProps = {
 		tournaments: Array<Tournament>;
@@ -16,100 +12,98 @@
 	export let data: PageData;
 
 	const { tournaments }: PageProps = data;
+
+	const activeTournament = tournaments.find(t => t.isActive);
+	const otherTournaments = tournaments.filter(t => t.id !== activeTournament?.id);
 </script>
 
 <Main className="user-page">
-	<div class="leaderboard">
-		<PageTitle title="Tornei"/>
+	<div class="tournaments">
+		<PageTitle title="Tornei" />
 
-<!--		<div class="leaderboard-wrapper full-bleed">-->
-<!--			<ul>-->
-<!--				{#each leaderboard as player, index}-->
-<!--					<li>-->
-<!--						<a href={`/player-matches/${tournament.id}_${player.playerId}`}>-->
-<!--							<span>{index + 1}</span>-->
-<!--							<Avatar name={player.name} picture={player.picture} />-->
-<!--							<strong>{player.name}</strong>-->
-<!--							<span class="points">{pluralizePoints(player.sumPoints)}</span>-->
-<!--							<ArrowCircleRight size="20" class="arrow" />-->
-<!--						</a>-->
-<!--					</li>-->
-<!--				{/each}-->
-<!--			</ul>-->
-<!--		</div>-->
+		<h2>Torneo attuale:</h2>
+
+		{#if activeTournament}
+			<ul>
+				<li>
+					<a href={`/leaderboard/${activeTournament.id}`}>
+						<strong>{activeTournament.title}</strong>
+						<ArrowCircleRight size="20" class="arrow" />
+					</a>
+				</li>
+			</ul>
+		{:else }
+			<p>Non c'è un torneo attivo</p>
+		{/if}
+
+
+		<h2>Tornei precedenti:</h2>
+		{#if otherTournaments && otherTournaments.length > 0}
+			<ul>
+				{#each otherTournaments as t}
+					<li>
+						<a href={`/leaderboard/${t.id}`}>
+							<strong>{t.title}</strong>
+							<ArrowCircleRight size="20" class="arrow" />
+						</a>
+					</li>
+				{/each}
+			</ul>
+		{:else}
+			<p>Non ci sono altri tornei.</p>
+		{/if}
 	</div>
 </Main>
 
 <style lang="scss">
-	@import '../../../../styles/shared';
+  .tournaments {
+    display: flex;
+    flex-direction: column;
 
-	.leaderboard {
-		display: flex;
-		flex-direction: column;
-	}
+    ul,
+    li {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
 
-	.leaderboard-wrapper {
-		@include layout-grid;
+    ul {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      width: 100%;
+    }
 
-		& {
-			min-height: auto;
-			padding: 1rem 0;
-			border-radius: var(--global-radius);
-			/* background-color: var(--color-light-gray); */
-		}
+    li {
+      width: 100%;
+    }
 
-		> * {
-			grid-column: 2;
-		}
+    a {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      width: 100%;
+      padding: 0.5rem;
+      border: 0;
+      border-radius: var(--global-radius);
+      background-color: var(--color-white);
+      text-decoration: none;
+      color: var(--color-dark);
 
-		ul,
-		li {
-			list-style-type: none;
-			margin: 0;
-			padding: 0;
-		}
+      span {
+        flex: 0;
+        margin-right: 1rem;
+      }
 
-		ul {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			gap: 1rem;
-			width: 100%;
-		}
+      strong {
+        flex: 1 1 auto;
+        text-align: left;
+      }
 
-		li {
-			width: 100%;
-		}
-
-		a {
-			display: flex;
-			justify-content: flex-start;
-			align-items: center;
-			width: 100%;
-			padding: 0.5rem;
-			border: 0;
-			border-radius: var(--global-radius);
-			background-color: var(--color-white);
-			text-decoration: none;
-			color: var(--color-dark);
-
-			span:not(.points) {
-				flex: 0;
-				margin-right: 1rem;
-			}
-
-			strong {
-				flex: 1 1 auto;
-				text-align: left;
-			}
-
-			:global(.avatar) {
-				margin-right: 1rem;
-			}
-
-			:global(.arrow) {
-				margin-left: 0.5rem;
-			}
-		}
-	}
+      :global(.arrow) {
+        margin-left: 0.5rem;
+      }
+    }
+  }
 </style>
