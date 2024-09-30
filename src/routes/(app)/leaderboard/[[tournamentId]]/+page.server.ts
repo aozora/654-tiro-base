@@ -1,7 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import type { PageServerLoad } from './$types';
-import type { Player } from '@prisma/client';
-import { getActiveTournament, getLeaderboard, getPlayers } from '$lib/server/repository';
+import type { Player, Tournament } from '@prisma/client';
+import {
+	getActiveTournament,
+	getLeaderboard,
+	getPlayers,
+	getTournament
+} from '$lib/server/repository';
 import { error } from '@sveltejs/kit';
 import type { PlayerLeaderboard } from '$types';
 
@@ -19,8 +24,14 @@ function sortPointsDesc(a: PlayerLeaderboard, b: PlayerLeaderboard) {
 /**
  * Page Load
  */
-export const load: PageServerLoad = async () => {
-	const tournament = await getActiveTournament();
+export const load: PageServerLoad = async ({ params }) => {
+	let tournament: Tournament;
+	if (params.tournamentId) {
+		tournament = await getTournament(String(params.tournamentId));
+	} else {
+		tournament = await getActiveTournament();
+	}
+
 	const players: Array<Player> = await getPlayers();
 
 	if (!tournament) {

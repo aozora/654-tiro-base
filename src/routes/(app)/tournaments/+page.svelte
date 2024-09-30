@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Player, Tournament } from '@prisma/client';
-	import type { PageData } from './$types';
+	import type { PageData } from '../../../../../.svelte-kit/types/src/routes';
 	import type { PlayerLeaderboard } from '$types';
 	import Avatar from '$components/ui/Avatar/Avatar.svelte';
 	import Main from '$components/Main.svelte';
@@ -10,42 +10,38 @@
 	import { pluralizePoints } from '$lib/helpers';
 
 	type PageProps = {
-		players: Array<Player>;
-		tournament: Tournament;
-		leaderboard: Array<PlayerLeaderboard>;
+		tournaments: Array<Tournament>;
 	};
 
 	export let data: PageData;
 
-	const { tournament, leaderboard }: PageProps = data;
+	const { tournaments }: PageProps = data;
 </script>
 
 <Main className="user-page">
 	<div class="leaderboard">
-		<PageTitle title="Classifica"/>
+		<PageTitle title="Tornei"/>
 
-		<TopThree {leaderboard} />
-
-		<div class="leaderboard-wrapper full-bleed">
-			<ul>
-				{#each leaderboard as player, index}
-					<li>
-						<a href={`/player-matches/${tournament.id}_${player.playerId}`}>
-							<span>{index + 1}</span>
-							<Avatar name={player.name} picture={player.picture} />
-							<strong>{player.name}</strong>
-							<span class="points">{pluralizePoints(player.sumPoints)}</span>
-							<ArrowCircleRight size="20" class="arrow" />
-						</a>
-					</li>
-				{/each}
-			</ul>
-		</div>
+<!--		<div class="leaderboard-wrapper full-bleed">-->
+<!--			<ul>-->
+<!--				{#each leaderboard as player, index}-->
+<!--					<li>-->
+<!--						<a href={`/player-matches/${tournament.id}_${player.playerId}`}>-->
+<!--							<span>{index + 1}</span>-->
+<!--							<Avatar name={player.name} picture={player.picture} />-->
+<!--							<strong>{player.name}</strong>-->
+<!--							<span class="points">{pluralizePoints(player.sumPoints)}</span>-->
+<!--							<ArrowCircleRight size="20" class="arrow" />-->
+<!--						</a>-->
+<!--					</li>-->
+<!--				{/each}-->
+<!--			</ul>-->
+<!--		</div>-->
 	</div>
 </Main>
 
 <style lang="scss">
-	@import '../../../styles/shared';
+	@import '../../../../styles/shared';
 
 	.leaderboard {
 		display: flex;
