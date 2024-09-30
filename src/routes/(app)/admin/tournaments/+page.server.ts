@@ -4,6 +4,7 @@ import type { Tournament } from '@prisma/client';
 import { message, superValidate, fail } from 'sveltekit-superforms';
 import { z } from 'zod';
 import { zod } from 'sveltekit-superforms/adapters';
+import { invalidate } from '$app/navigation';
 
 const schemaUpdateTemp = z.object({
 	id: z.string().nullable().optional(),
@@ -49,6 +50,7 @@ export const actions: Actions = {
 				form.data.isActive
 			);
 
+			await invalidate('admin:tournaments');
 			return message(form, 'success');
 		} catch (error: unknown) {
 			console.error(error);

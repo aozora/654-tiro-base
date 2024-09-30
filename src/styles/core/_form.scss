@@ -9,7 +9,7 @@ label {
   margin: 0 0 4px 0;
   font-size: var(--text-scale-18);
   line-height: 1.25;
-  color: var(--color-black);
+  color: var(--color-white);
 }
 
 form {
@@ -20,7 +20,7 @@ form {
     height: 36px;
     margin: 0;
     padding: 0 16px;
-    border: 1px solid var(--color-black);
+    border: 1px solid var(--color-white);
     font-size: var(--text-scale-18);
     line-height: 1.25;
     font-weight: 400;
@@ -37,7 +37,7 @@ form {
       line-height: 1.25;
       font-weight: 400;
       letter-spacing: 0;
-      color: var(--color-black);
+      color: var(--color-white);
     }
 
     &:focus, &:focus-visible {

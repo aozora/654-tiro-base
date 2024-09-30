@@ -67,7 +67,7 @@
 	};
 </script>
 
-<AdminPageTitle title="Gestione tornei" showBackButton={true}/>
+<AdminPageTitle title="Gestione tornei" showBackButton={true} />
 
 <Main className="admin-page">
 	<div>
@@ -135,7 +135,7 @@
 								 value={item?.title}
 			/>
 			<!--			<Toggle label='Is active' name='isActive' required={true} value={item?.isActive ?? false} />-->
-			<Checkbox label='Attivo' required={true} name='isActive'
+			<Checkbox label='Attivo' required={false} name='isActive'
 								errors={$errors.isActive}
 								constraints={$constraints.isActive}
 								checked={item?.isActive}

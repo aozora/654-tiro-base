@@ -37,11 +37,12 @@
     padding: 0;
     border: 0;
     background-color: transparent;
+		color: var(--color-white);
   }
 
   .page-title {
-    position: sticky;
-    top: 48px;
+    //position: sticky;
+    //top: 48px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -49,12 +50,13 @@
     min-height: 40px;
     margin: 0;
     padding: 0.5rem;
-    background-color: var(--color-light-gray);
+    background-color: var(--color-blue-star);
     z-index: 10;
 
     h1 {
 			flex: 1 1 auto;
       margin: 0;
+			padding: 0 33px 0 0;
       font-family: var(--variable-font-family-brutal);
       font-size: var(--text-scale-18);
       line-height: 1.2;

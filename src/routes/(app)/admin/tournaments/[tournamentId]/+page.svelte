@@ -13,6 +13,7 @@
 	import DateInput from '$components/ui/Form/DateInput.svelte';
 	import { Icons } from '$types';
 	import Icon from '$components/Icon/Icon.svelte';
+	import { invalidate } from '$app/navigation';
 
 	type PageProps = {
 		tournament: Tournament,
@@ -48,6 +49,8 @@
 					showTimestamp: true,
 					hideCloseButton: false
 				});
+
+				invalidate('admin:matches');
 			}
 		}
 	});

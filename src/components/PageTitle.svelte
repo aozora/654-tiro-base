@@ -32,6 +32,7 @@
     h1 {
 			flex: 1 1 auto;
       margin: 0;
+      padding: 0 33px 0 0;
       font-size: var(--text-scale-20);
       text-align: center;
       text-transform: uppercase;
