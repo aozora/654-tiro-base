@@ -30,7 +30,16 @@ const chartData = matches.map(m => m.points);
 		<PageTitle title={`Partite di ${player.name}`} showBackButton={true} />
 
 		<div class="chart">
-			<LinkedChart labels={chartLabels} data={chartData} scaleMin={0} grow/>
+			<LinkedChart labels={chartLabels}
+									 data={chartData}
+									 showValue
+									 valueDefault=""
+									 valueAppend=" punti"
+									 valuePosition="floating"
+									 scaleMin={0}
+									 barMinWidth={0}
+									 barMinHeight={5}
+									 grow />
 		</div>
 
 		<ul>
@@ -87,7 +96,12 @@ const chartData = matches.map(m => m.points);
     }
   }
 
-	.chart {
-		margin-bottom: 2rem;
-	}
+  .chart {
+    margin-bottom: 3rem;
+
+    :global(svg) {
+      width: 100%;
+      height: auto;
+    }
+  }
 </style>

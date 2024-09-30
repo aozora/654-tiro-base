@@ -8,6 +8,8 @@
 	import { ArrowCircleRight } from 'phosphor-svelte';
 	import PageTitle from '$components/PageTitle.svelte';
 	import { pluralizePoints } from '$lib/helpers';
+	import Icon from '$components/Icon/Icon.svelte';
+	import { Icons } from '$types';
 
 	type PageProps = {
 		players: Array<Player>;
@@ -22,7 +24,7 @@
 
 <Main className="user-page">
 	<div class="leaderboard">
-		<PageTitle title="Classifica"/>
+		<PageTitle title="Classifica" />
 
 		<TopThree {leaderboard} />
 
@@ -40,80 +42,90 @@
 					</li>
 				{/each}
 			</ul>
+
+			<a href={`/matches/${tournament.id}`} class="button">
+				<span>Tutte le partite</span>
+				<Icon id={Icons.TankBrand} />
+			</a>
+
 		</div>
 	</div>
 </Main>
 
 <style lang="scss">
-	@import '../../../../styles/shared';
+  @import '../../../../styles/shared';
 
-	.leaderboard {
-		display: flex;
-		flex-direction: column;
-	}
+  .leaderboard {
+    display: flex;
+    flex-direction: column;
+  }
 
-	.leaderboard-wrapper {
-		@include layout-grid;
+  .leaderboard-wrapper {
+    @include layout-grid;
 
-		& {
-			min-height: auto;
-			padding: 1rem 0;
-			border-radius: var(--global-radius);
-			/* background-color: var(--color-light-gray); */
-		}
+    & {
+      min-height: auto;
+      padding: 1rem 0;
+      border-radius: var(--global-radius);
+      /* background-color: var(--color-light-gray); */
+    }
 
-		> * {
-			grid-column: 2;
-		}
+    > * {
+      grid-column: 2;
+    }
 
-		ul,
-		li {
-			list-style-type: none;
-			margin: 0;
-			padding: 0;
-		}
+    ul,
+    li {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
 
-		ul {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			gap: 1rem;
-			width: 100%;
-		}
+    ul {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      width: 100%;
+    }
 
-		li {
-			width: 100%;
-		}
+    li {
+      width: 100%;
+    }
 
-		a {
-			display: flex;
-			justify-content: flex-start;
-			align-items: center;
-			width: 100%;
-			padding: 0.5rem;
-			border: 0;
-			border-radius: var(--global-radius);
-			background-color: var(--color-white);
-			text-decoration: none;
-			color: var(--color-dark);
+    a:not(.button) {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      width: 100%;
+      padding: 0.5rem;
+      border: 0;
+      border-radius: var(--global-radius);
+      background-color: var(--color-white);
+      text-decoration: none;
+      color: var(--color-dark);
 
-			span:not(.points) {
-				flex: 0;
-				margin-right: 1rem;
-			}
+      span:not(.points) {
+        flex: 0;
+        margin-right: 1rem;
+      }
 
-			strong {
-				flex: 1 1 auto;
-				text-align: left;
-			}
+      strong {
+        flex: 1 1 auto;
+        text-align: left;
+      }
 
-			:global(.avatar) {
-				margin-right: 1rem;
-			}
+      :global(.avatar) {
+        margin-right: 1rem;
+      }
 
-			:global(.arrow) {
-				margin-left: 0.5rem;
-			}
-		}
-	}
+      :global(.arrow) {
+        margin-left: 0.5rem;
+      }
+    }
+
+    .button {
+      margin: 2rem 0 0 0;
+    }
+  }
 </style>
