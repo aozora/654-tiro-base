@@ -9,17 +9,8 @@ import {
 } from '$lib/server/repository';
 import { error } from '@sveltejs/kit';
 import type { PlayerLeaderboard } from '$types';
+import { sortPointsDesc } from '$lib/helpers';
 
-function sortPointsDesc(a: PlayerLeaderboard, b: PlayerLeaderboard) {
-	if (a.sumPoints > b.sumPoints) {
-		return -1;
-	} else if (a.sumPoints < b.sumPoints) {
-		return 1;
-	}
-
-	// a must be equal to b
-	return 0;
-}
 
 /**
  * Page Load

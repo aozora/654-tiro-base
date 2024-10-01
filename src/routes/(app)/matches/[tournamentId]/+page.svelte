@@ -1,28 +1,28 @@
 <script lang="ts">
-	import type { Match } from '@prisma/client';
+	import type { Match, Tournament } from '@prisma/client';
 	import type { PageData } from './$types';
 	import Main from '$components/Main.svelte';
 	import PageTitle from '$components/PageTitle.svelte';
 	import { ArrowCircleRight } from 'phosphor-svelte';
 
 	type PageProps = {
-		matches: Array<Match>
+		matches: Array<Match>,
+		tournament: Tournament
 	};
 
 	export let data: PageData;
 
-	const { matches }: PageProps = data;
+	const { matches, tournament }: PageProps = data;
 </script>
 
 <Main className="user-page">
 	<div class="matches">
-		<PageTitle title={`Partite di`} />
-
+		<PageTitle title={`Cronologia partite`} showBackButton={true} />
 
 		<ul>
 			{#each matches as match}
 				<li>
-					<a href={`/`}>
+					<a href={`/matches/${tournament.id}/${match.id}`}>
 						<strong>{new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)}</strong>
 						<ArrowCircleRight size="20" class="arrow" />
 					</a>
