@@ -146,8 +146,8 @@
     position: absolute;
     top: -22%;
     left: 50%;
-    width: 80px;
-    height: 80px;
+    width: var(--size);
+    height: var(--size);
     transform: translate(-50%, -50%);
   }
 
@@ -156,6 +156,10 @@
     top: 130%;
     left: 50%;
     transform: translate(-50%, -50%);
+
+		@media (min-width: 64em){
+			font-size: var(--text-scale-24);
+		}
   }
 
   .position {
@@ -173,5 +177,10 @@
     font-weight: var(--font-weight-bold);
     font-variation-settings: 'wght' var(--font-weight-bold);
     color: var(--color-black);
+
+    @media (min-width: 64em){
+      width: 40px;
+      height: 40px;
+    }
   }
 </style>

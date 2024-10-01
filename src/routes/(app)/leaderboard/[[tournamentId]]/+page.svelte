@@ -62,12 +62,12 @@
 
   .leaderboard-wrapper {
     @include layout-grid;
+    justify-items: center;
 
     & {
       min-height: auto;
       padding: 1rem 0;
       border-radius: var(--global-radius);
-      /* background-color: var(--color-light-gray); */
     }
 
     > * {
@@ -87,6 +87,10 @@
       align-items: center;
       gap: 1rem;
       width: 100%;
+
+      @media (min-width: 64em) {
+        max-width: 60vw;
+      }
     }
 
     li {
@@ -104,6 +108,7 @@
       background-color: var(--color-white);
       text-decoration: none;
       color: var(--color-dark);
+			transition: all .35s ease-in-out;
 
       span:not(.points) {
         flex: 0;
@@ -122,6 +127,11 @@
       :global(.arrow) {
         margin-left: 0.5rem;
       }
+
+			&:hover, &:focus-visible{
+				background-color: var(--color-brand);
+				color: var(--color-white);
+			}
     }
 
     .button {

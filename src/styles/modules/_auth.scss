@@ -1,6 +1,7 @@
 .auth-page {
   /* background: transparent url('/img/risiko-challenge-tabellone.webp') no-repeat center center fixed; */
   background: transparent url('/img/frame6.webp') no-repeat 60% center fixed;
+  background-size: cover;
 
   &::before {
     content: '';
@@ -44,6 +45,7 @@
   h1,
   h2 {
     width: 100%;
+    max-width: 400px;
     font-family: var(--variable-font-family-brutal);
     line-height: 1.2;
     color: var(--color-brand);
