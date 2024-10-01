@@ -113,8 +113,8 @@
 					<tbody>
 						{#each $table as row}
 							<tr>
-								<td>
-									<Avatar picture={row.picture} name={row.name} />
+								<td class="player-info">
+									<Avatar picture={row.picture || ''} name={row.name} />
 									<span>{row.name}</span>
 								</td>
 								<td>
@@ -143,7 +143,7 @@
 								</td>
 								<td>
 									<form action="?/delete" method="POST" on:submit={(e) => onRemovePlayer(e, row)}>
-										<input type="hidden" name="id" value={item?.id} />
+										<input type="hidden" name="id" value={row.id} />
 										<input type="hidden" name="action" value="delete" />
 										<button type="submit" class="table-button">
 											<Trash size="20" />

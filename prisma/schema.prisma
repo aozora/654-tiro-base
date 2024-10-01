@@ -29,11 +29,12 @@ model Session {
 }
 
 model Player {
-  id       String             @id @default(uuid())
-  name     String
-  picture  String?
-  isActive Boolean            @default(true)
-  matches  PlayersOnMatches[]
+  id        String             @id @default(uuid())
+  name      String
+  picture   String?
+  isActive  Boolean            @default(true)
+  isDeleted Boolean            @default(false)
+  matches   PlayersOnMatches[]
 }
 
 model Tournament {
@@ -52,9 +53,9 @@ model Match {
 }
 
 model PlayersOnMatches {
-  player   Player @relation(fields: [playerId], references: [id])
+  player   Player @relation(fields: [playerId], references: [id], onUpdate: Cascade)
   playerId String
-  match    Match  @relation(fields: [matchId], references: [id])
+  match    Match  @relation(fields: [matchId], references: [id], onUpdate: Cascade)
   matchId  String
   points   Int
 

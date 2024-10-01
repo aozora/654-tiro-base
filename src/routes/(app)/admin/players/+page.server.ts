@@ -73,7 +73,7 @@ export const actions: Actions = {
 	delete: async ({ request }) => {
 		const form = await superValidate(request, zod(schemaDelete));
 
-		if (!form.valid) {
+		if (!form.valid || !form.data.id) {
 			// Again, always return form and things will just work.
 			console.error('Delete Form not valid', form);
 			return fail(400, { form });

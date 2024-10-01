@@ -1,8 +1,11 @@
 import prisma from '$lib/server/prisma';
-import type { Match, Player, PlayersOnMatches, Tournament } from '@prisma/client';
+import type { Match, Player, Tournament } from '@prisma/client';
 
 export async function getPlayers(): Promise<Array<Player>> {
 	return prisma.player.findMany({
+		where: {
+			isDeleted: false
+		},
 		orderBy: [
 			{
 				name: 'asc'
@@ -99,10 +102,18 @@ export async function updatePlayerPicture(
 	});
 }
 
-export async function deletePlayer(id: string): Promise<Player> {
-	return prisma.player.delete({
+/**
+ * Delete a player and all its matches
+ * @param id
+ */
+export async function deletePlayer(id: string) {
+	await prisma.player.update({
 		where: {
 			id: id
+		},
+		data: {
+			isDeleted: true,
+			isActive: false
 		}
 	});
 }
@@ -265,7 +276,7 @@ export async function getLeaderboard(tournamentId: string) {
 		}
 	});
 
-	const playersStatus = await prisma.playersOnMatches.groupBy({
+	return prisma.playersOnMatches.groupBy({
 		by: ['playerId'],
 		where: {
 			matchId: {
@@ -276,6 +287,4 @@ export async function getLeaderboard(tournamentId: string) {
 			points: true
 		}
 	});
-
-	return playersStatus;
 }

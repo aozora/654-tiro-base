@@ -22,7 +22,6 @@ const schema = z
 
 const schemaDelete = z
 	.object({
-		tournamentId: z.string(),
 		matchId: z.string()
 	})
 	.required();
@@ -90,7 +89,7 @@ export const actions: Actions = {
 		}
 
 		try {
-			await deleteMatchDeep(form.data.tournamentId);
+			await deleteMatchDeep(form.data.matchId);
 			return message(form, 'success');
 		} catch (error: unknown) {
 			console.error(error);

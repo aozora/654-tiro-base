@@ -3,7 +3,7 @@
 	import { Datatable, DataHandler } from '@vincjo/datatables';
 	import type { Match, Player, Tournament } from '@prisma/client';
 	import type { PageData } from './$types';
-	import { Ranking, Trash } from 'phosphor-svelte';
+	import { PencilCircle, PencilSimple, Ranking, Trash } from 'phosphor-svelte';
 	import Modal from '$components/ui/Modal/Modal.svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { page } from '$app/stores';
@@ -121,12 +121,12 @@
 						<td>{row.points}</td>
 						<td>
 							<button type="button" class="table-button" on:click={() => onEditPoints(row)}>
-								<Ranking size="20" />
+								<PencilSimple size="20" />
 							</button>
 						</td>
 						<td>
 							<form action="?/delete" method="POST" on:submit={(e) => onRemovePlayer(e, row)}>
-								<input type='hidden' name='playerId' value={item?.id} />
+								<input type='hidden' name='playerId' value={row.id} />
 								<input type='hidden' name='matchId' value={match.id} />
 								<button type="submit"
 												class="table-button">
