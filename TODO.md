@@ -2,5 +2,6 @@
 
 * > refresh list dopo update
 
-* menu
-  * desktop
+* desktop
+* gestione del pari merito
+* 
