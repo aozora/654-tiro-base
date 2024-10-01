@@ -54,8 +54,7 @@ export const actions = {
 				...sessionCookie.attributes
 			});
 
-			console.log('...redirecting to leaderboard');
-			redirect(302, '/leaderboard');
+			return { form };
 		} catch (e) {
 			console.error(e);
 			return fail(500, {
