@@ -8,9 +8,37 @@ import {
 	getTournament
 } from '$lib/server/repository';
 import { error } from '@sveltejs/kit';
-import type { PlayerLeaderboard } from '$types';
+import type { PlayerLeaderboard, PlayerLeaderboardWithNormalizedRanking } from '$types';
 import { sortPointsDesc } from '$lib/helpers';
 
+function normalizeLeaderboardRanking(
+	sortedLeaderboard: Array<PlayerLeaderboard>
+): Array<PlayerLeaderboardWithNormalizedRanking> {
+	const list: Array<PlayerLeaderboardWithNormalizedRanking> = [];
+	let previousRank = 0;
+	let previousPoints = 0;
+
+	for (let index = 0; index < sortedLeaderboard.length; index++) {
+		const current = sortedLeaderboard[index];
+		let currentRank = 0;
+		if (current.sumPoints === previousPoints) {
+			currentRank = previousRank;
+		} else {
+			currentRank = previousRank + 1;
+			previousRank += 1;
+		}
+
+		console.log(current.sumPoints, previousPoints, previousRank, currentRank);
+		list.push({
+			...current,
+			rank: currentRank
+		} as PlayerLeaderboardWithNormalizedRanking);
+
+		previousPoints = current.sumPoints;
+	}
+
+	return list;
+}
 
 /**
  * Page Load
@@ -47,6 +75,6 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	return {
 		tournament,
-		leaderboard
+		leaderboard: normalizeLeaderboardRanking(leaderboard)
 	};
 };

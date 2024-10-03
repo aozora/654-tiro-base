@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Player, Tournament } from '@prisma/client';
 	import type { PageData } from '../../../../../.svelte-kit/types/src/routes';
-	import type { PlayerLeaderboard } from '$types';
+	import type { PlayerLeaderboard, PlayerLeaderboardWithNormalizedRanking } from '$types';
 	import Avatar from '$components/ui/Avatar/Avatar.svelte';
 	import Main from '$components/Main.svelte';
 	import TopThree from '$components/TopThree.svelte';
@@ -14,12 +14,13 @@
 	type PageProps = {
 		players: Array<Player>;
 		tournament: Tournament;
-		leaderboard: Array<PlayerLeaderboard>;
+		leaderboard: Array<PlayerLeaderboardWithNormalizedRanking>;
 	};
 
 	export let data: PageData;
 
 	const { tournament, leaderboard }: PageProps = data;
+	console.log({leaderboard});
 </script>
 
 <Main className="user-page">
@@ -30,10 +31,10 @@
 
 		<div class="leaderboard-wrapper full-bleed">
 			<ul>
-				{#each leaderboard as player, index}
+				{#each leaderboard as player}
 					<li>
 						<a href={`/player-matches/${tournament.id}_${player.playerId}`}>
-							<span>{index + 1}</span>
+							<span>{player.rank}</span>
 							<Avatar name={player.name} picture={player.picture} />
 							<strong>{player.name}</strong>
 							<span class="points">{pluralizePoints(player.sumPoints)}</span>
@@ -62,9 +63,9 @@
 
   .leaderboard-wrapper {
     @include layout-grid;
-    justify-items: center;
 
     & {
+      justify-items: center;
       min-height: auto;
       padding: 1rem 0;
       border-radius: var(--global-radius);

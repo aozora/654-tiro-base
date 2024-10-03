@@ -9,7 +9,6 @@
 	// console.log($page.data.tournament);
 	const { user } = data;
 	const isDesktop = listen('(min-width: 64em)');
-	console.log({ $isDesktop });
 	let isOpen = false;
 
 	const onClose = () => {

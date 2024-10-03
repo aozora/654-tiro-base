@@ -6,7 +6,7 @@
 	const min = 1;
 	const max = 24;
 
-	function getRandom(max:number, min:number) {
+	function getRandom(max: number, min: number) {
 		return (Math.floor(Math.random() * (max - min)) + min) * 90;
 	}
 
@@ -18,8 +18,11 @@
 	}
 
 	onMount(() => {
-		console.log('rolling dice...');
-		roll();
+		console.log('rolling dice...', cube);
+
+		if (cube) {
+			roll();
+		}
 	});
 
 	const onClick = () => {
@@ -95,7 +98,7 @@
     height: 200px;
     position: relative;
     margin: 0 auto 40px;
-    border: 1px solid #FFF;
+    border: 0;
     perspective: 1000px;
     perspective-origin: 50% 100%;
   }

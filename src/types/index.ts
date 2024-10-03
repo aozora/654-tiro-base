@@ -14,3 +14,10 @@ export type PlayerLeaderboard = {
 	picture: string;
 	sumPoints: number;
 };
+export type PlayerLeaderboardWithNormalizedRanking = {
+	rank: number;
+	playerId: string;
+	name: string;
+	picture: string;
+	sumPoints: number;
+};
