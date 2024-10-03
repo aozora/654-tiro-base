@@ -3,5 +3,5 @@
 * > refresh list dopo update
 
 * desktop
-* gestione del pari merito
+* admin: edit player points, select non prende il valore corrente
 * 

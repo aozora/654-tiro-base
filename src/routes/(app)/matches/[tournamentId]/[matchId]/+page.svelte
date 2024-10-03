@@ -2,16 +2,16 @@
  * Display all the matches of the player
  */
 import type { PageData } from './$types';
-import type { PlayerExtended } from '$lib/server/repository';
 import Main from '$components/Main.svelte';
 import type { Match, Tournament } from '@prisma/client';
 import PageTitle from '$components/PageTitle.svelte';
 import { pluralizePoints } from '$lib/helpers';
+import type { PlayerLeaderboardWithNormalizedRanking } from '$types';
 
 type PageProps = {
 	tournament: Tournament
 	match: Match
-	matchPlayers: Array<PlayerExtended>
+	matchPlayers: Array<PlayerLeaderboardWithNormalizedRanking>
 };
 
 export let data: PageData;
@@ -28,11 +28,11 @@ const {
 							 showBackButton={true} />
 
 		<ul>
-			{#each matchPlayers as player, index}
+			{#each matchPlayers as player}
 				<li>
-					<span>{index + 1}</span>
+					<span>{player.rank}</span>
 					<span>{player.name}</span>
-					<span class="points">{pluralizePoints(player.points)}</span>
+					<span class="points">{pluralizePoints(player.sumPoints)}</span>
 				</li>
 			{/each}
 		</ul>
