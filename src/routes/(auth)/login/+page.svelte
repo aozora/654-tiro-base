@@ -5,10 +5,11 @@
 	import type { ActionData } from '../../../../.svelte-kit/types/src/routes/(auth)/login/$types';
 	import Icon from '$components/Icon/Icon.svelte';
 	import { Icons } from '$types';
+	import Loader from '$components/Loader.svelte';
 
 	export let data: ActionData;
 
-	const { form, errors, enhance, constraints, message } = superForm(data.form, {
+	const { delayed, form, errors, enhance, constraints, message } = superForm(data.form, {
 		validators: zod(authSchema),
 		//   field: (value) => string | string[] | null | undefined;
 		// },
@@ -55,3 +56,8 @@
 
 	<!--	<a href="/signup">Create an account</a>-->
 </div>
+
+
+{#if $delayed}
+	<Loader />
+{/if}

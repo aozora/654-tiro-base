@@ -2,12 +2,14 @@
 	import { DiceSix } from 'phosphor-svelte';
 	import MobileMenu from '$components/MobileMenu.svelte';
 	import { page } from '$app/stores';
+	import { listen } from 'svelte-mq-store';
 
 	export let data;
 
 	// console.log($page.data.tournament);
 	const { user } = data;
-
+	const isDesktop = listen('(min-width: 64em)');
+	console.log({ $isDesktop });
 	let isOpen = false;
 
 	const onClose = () => {
@@ -24,19 +26,42 @@
 		{/if}
 	</a>
 
-	<button
-		type="button"
-		class="toggle-menu"
-		aria-expanded={isOpen}
-		on:click={() => (isOpen = !isOpen)}
-	>
-		<DiceSix size="36" weight="fill" />
-	</button>
-	<MobileMenu open={isOpen} {user} {onClose} />
 
-	<nav class="menu">
-		<!--    <ul></ul>-->
-	</nav>
+	{#if $isDesktop}
+		<nav class="menu">
+			<ul>
+				<li>
+					<a href="/leaderboard">Classifica</a>
+				</li>
+				<li>
+					<a href="/tournaments">Tornei</a>
+				</li>
+
+				{#if user && user?.role === 'admin'}
+					<li>
+						<a href="/admin">Amministrazione</a>
+					</li>
+				{/if}
+
+				<li class="logout">
+					<form action="/logout" method="POST">
+						<button type="submit">Esci</button>
+					</form>
+				</li>
+			</ul>
+		</nav>
+	{:else}
+		<button
+			type="button"
+			class="toggle-menu"
+			aria-expanded={isOpen}
+			on:click={() => (isOpen = !isOpen)}
+		>
+			<DiceSix size="36" weight="fill" />
+		</button>
+
+		<MobileMenu open={isOpen} {user} {onClose} />
+	{/if}
 </header>
 
 <style lang="scss">
@@ -82,6 +107,34 @@
   }
 
   .menu {
-    display: none;
+    flex: 1 1 auto;
+
+    ul, li {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    ul {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    a, button {
+      margin: 0;
+      padding: 0 .5rem;
+      border: 0;
+      background-color: transparent;
+      font-size: 1rem;
+      text-decoration: none;
+      color: var(--color-white);
+      cursor: pointer;
+			transition: all .35s ease-in-out;
+
+      &:hover, &:focus-visible {
+        text-decoration: underline;
+      }
+    }
   }
 </style>

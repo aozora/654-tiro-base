@@ -48,7 +48,6 @@ const chartData = matches.map(m => m.points);
 				data={{
 					labels: chartLabels,
 					datasets: [{
-						label: 'Andamento',
 						fill: true,
 						backgroundColor: 'rgb(217,217,217)',
 						borderColor: 'rgb(250,250,250)',
@@ -70,7 +69,15 @@ const chartData = matches.map(m => m.points);
 				}}
 				width="100vw"
 				height={150}
-				options={{ responsive: true, maintainAspectRatio: false }}
+				options={{
+					responsive: true,
+					maintainAspectRatio: false,
+					plugins: {
+					legend:{
+							display: false,
+						}
+					}
+				}}
 			/>
 			<!--			<LinkedChart labels={chartLabels}-->
 			<!--									 data={chartData}-->

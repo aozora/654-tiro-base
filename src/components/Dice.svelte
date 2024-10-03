@@ -18,6 +18,7 @@
 	}
 
 	onMount(() => {
+		console.log('rolling dice...');
 		roll();
 	});
 
@@ -27,7 +28,7 @@
 </script>
 
 <section class="container">
-	<div id="cube" bind:this={cube} on:click={() => onClick()}>
+	<div id="cube" role="none" bind:this={cube} on:click={() => onClick()}>
 		<div class="front">
 			<span class="dot dot1"></span>
 		</div>
