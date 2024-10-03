@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { Player, Tournament } from '@prisma/client';
-	import type { PageData } from '../../../../../.svelte-kit/types/src/routes';
-	import type { PlayerLeaderboard, PlayerLeaderboardWithNormalizedRanking } from '$types';
+	import type { Tournament } from '@prisma/client';
+	import type { PageData } from './$types';
+	import type { PlayerLeaderboardWithNormalizedRanking } from '$types';
 	import Avatar from '$components/ui/Avatar/Avatar.svelte';
 	import Main from '$components/Main.svelte';
 	import TopThree from '$components/TopThree.svelte';
@@ -12,7 +12,7 @@
 	import { Icons } from '$types';
 
 	type PageProps = {
-		players: Array<Player>;
+		// players: Array<Player>;
 		tournament: Tournament;
 		leaderboard: Array<PlayerLeaderboardWithNormalizedRanking>;
 	};
@@ -20,7 +20,6 @@
 	export let data: PageData;
 
 	const { tournament, leaderboard }: PageProps = data;
-	console.log({leaderboard});
 </script>
 
 <Main className="user-page">
@@ -109,7 +108,7 @@
       background-color: var(--color-white);
       text-decoration: none;
       color: var(--color-dark);
-			transition: all .35s ease-in-out;
+      transition: all .35s ease-in-out;
 
       span:not(.points) {
         flex: 0;
@@ -129,10 +128,10 @@
         margin-left: 0.5rem;
       }
 
-			&:hover, &:focus-visible{
-				background-color: var(--color-brand);
-				color: var(--color-white);
-			}
+      &:hover, &:focus-visible {
+        background-color: var(--color-brand);
+        color: var(--color-white);
+      }
     }
 
     .button {

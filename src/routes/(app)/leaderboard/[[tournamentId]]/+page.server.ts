@@ -28,7 +28,7 @@ function normalizeLeaderboardRanking(
 			previousRank += 1;
 		}
 
-		console.log(current.sumPoints, previousPoints, previousRank, currentRank);
+		// console.log(current.sumPoints, previousPoints, previousRank, currentRank);
 		list.push({
 			...current,
 			rank: currentRank

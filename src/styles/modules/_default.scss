@@ -3,9 +3,5 @@
  */
 
 .user-page {
-	@include page-layout;
-
-	/* & {
-    background-color: var(--color-blue-star);
-  } */
+  @include page-layout;
 }

@@ -1,9 +1,17 @@
 <script>
 	import { page } from '$app/stores';
 	import { SmileyMelting } from 'phosphor-svelte';
+	import Main from '$components/Main.svelte';
+
+	import '$styles/app.scss';
 </script>
 
-<h1>{$page.status} {$page.error?.message}</h1>
-<span style="font-size: 10em">
-	<SmileyMelting size="24"/>
-</span>
+<Main className="error-page">
+	<div>
+		<h1>Porco Dio, c'è un errore...</h1>
+		<h2>{$page.status} {$page.error?.message}</h2>
+
+		<SmileyMelting size="64" />
+	</div>
+</Main>
+
