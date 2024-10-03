@@ -76,6 +76,17 @@ const chartData = matches.map(m => m.points);
 					legend:{
 							display: false,
 						}
+					},
+					scales: {
+						y: {
+							type: 'linear',
+							min: 0,
+        			// max: 100,
+        			ticks: {
+								// forces step size to be 1 units
+								stepSize: 1
+							}
+						}
 					}
 				}}
 			/>
