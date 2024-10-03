@@ -12,6 +12,10 @@
 		<h2>{$page.status} {$page.error?.message}</h2>
 
 		<SmileyMelting size="64" />
+
+		<br>
+
+		<a href="/leaderboard">Torna all'inizio</a>
 	</div>
 </Main>
 
