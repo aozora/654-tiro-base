@@ -13,6 +13,7 @@ import type { Player, Tournament } from '@prisma/client';
 import { message, superValidate, fail } from 'sveltekit-superforms';
 import { z } from 'zod';
 import { zod } from 'sveltekit-superforms/adapters';
+import { invalidate } from '$app/navigation';
 
 const schemaUpdate = z
 	.object({
@@ -66,6 +67,7 @@ export const actions: Actions = {
 		try {
 			await upsertMatchPlayer(form.data.matchId, form.data.playerId, form.data.points);
 
+			await invalidate('admin:tournaments:match');
 			return message(form, 'success');
 		} catch (error: unknown) {
 			console.error(error);

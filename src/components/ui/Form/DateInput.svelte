@@ -8,11 +8,12 @@
 	export let helperText: string | undefined = undefined;
 	export let errors: string[] | undefined = undefined;
 	export let constraints: InputConstraint | undefined = undefined;
+
+	console.log({value});
 </script>
 
 <label for={id}>
 	{label}
-	<!--{#if required}<span aria-label='required'>*</span>{/if}-->
 </label>
 
 <div class='form-field-wrapper'>

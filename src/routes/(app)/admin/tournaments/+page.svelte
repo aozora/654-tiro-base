@@ -83,6 +83,7 @@
 				<thead>
 				<tr>
 					<th>Titolo</th>
+					<th>Matches</th>
 					<th>Attivo</th>
 					<th></th>
 					<th></th>
@@ -93,6 +94,9 @@
 					<tr>
 						<td>
 							<span>{row.title}</span>
+						</td>
+						<td>
+							<span>{row.matches.length}</span>
 						</td>
 						<td>
 							{#if row.isActive}

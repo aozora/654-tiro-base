@@ -118,8 +118,12 @@ export async function deletePlayer(id: string) {
 	});
 }
 
+// export type
 export async function getTournaments(): Promise<Array<Tournament>> {
 	return prisma.tournament.findMany({
+		include:{
+			matches: true
+		},
 		orderBy: [
 			{
 				title: 'desc'

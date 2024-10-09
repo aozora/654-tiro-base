@@ -1,5 +1,4 @@
 import { Argon2id } from 'oslo/password';
-import { generateId } from 'lucia';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -30,6 +29,16 @@ async function seed() {
 		data: {
 			// id: generateId(15),
 			email: 'porco@dio.com',
+			role: 'user',
+			password: await new Argon2id().hash('654tirobase')
+		}
+	});
+
+	// create viewer user
+	await prisma.user.create({
+		data: {
+			// id: generateId(15),
+			email: 'test@654.it',
 			role: 'user',
 			password: await new Argon2id().hash('654tirobase')
 		}
