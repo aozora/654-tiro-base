@@ -11,7 +11,6 @@ import { message, superValidate, fail } from 'sveltekit-superforms';
 import { z } from 'zod';
 import { zod } from 'sveltekit-superforms/adapters';
 import { error } from '@sveltejs/kit';
-import { invalidate } from '$app/navigation';
 
 const schema = z
 	.object({
@@ -71,7 +70,6 @@ export const actions: Actions = {
 				new Date(form.data.date)
 			);
 
-			await invalidate('admin:tournaments:matches');
 			return message(form, 'success');
 		} catch (error: unknown) {
 			console.error(error);

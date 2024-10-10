@@ -50,7 +50,6 @@ export const actions: Actions = {
 				form.data.isActive
 			);
 
-			await invalidate('admin:tournaments');
 			return message(form, 'success');
 		} catch (error: unknown) {
 			console.error(error);

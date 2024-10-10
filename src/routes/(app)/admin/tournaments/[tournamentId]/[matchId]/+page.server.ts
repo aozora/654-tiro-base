@@ -67,7 +67,6 @@ export const actions: Actions = {
 		try {
 			await upsertMatchPlayer(form.data.matchId, form.data.playerId, form.data.points);
 
-			await invalidate('admin:tournaments:match');
 			return message(form, 'success');
 		} catch (error: unknown) {
 			console.error(error);

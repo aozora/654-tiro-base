@@ -13,7 +13,6 @@
 	import DateInput from '$components/ui/Form/DateInput.svelte';
 	import { Icons } from '$types';
 	import Icon from '$components/Icon/Icon.svelte';
-	import { invalidate } from '$app/navigation';
 
 	type PageProps = {
 		tournament: Tournament,
@@ -35,6 +34,7 @@
 		message,
 		constraints
 	} = superForm(data.form, {
+		invalidateAll: 'force',
 		onUpdated: ({ form }) => {
 			// When the form is successfully submitted close the modal and reset the item variable
 			if (form.valid && message && $page.status < 400) {
@@ -49,8 +49,6 @@
 					showTimestamp: true,
 					hideCloseButton: false
 				});
-
-				invalidate('admin:matches');
 			}
 		}
 	});
