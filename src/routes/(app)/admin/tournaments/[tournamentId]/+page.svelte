@@ -148,7 +148,7 @@
 	<Modal title={item === undefined ? 'Nuova partita':'Modifica partita'}
 				 bind:isOpen={isModalOpen}>
 		<svelte:fragment slot='modal-content'>
-			<form id="form-player" action="?/update" method="POST" use:enhance>
+			<form id="form-player" action="?/update" method="POST">
 				<input type='hidden' name='matchId' value={item?.id} />
 				<input type='hidden' name='tournamentId' value={tournament.id} />
 

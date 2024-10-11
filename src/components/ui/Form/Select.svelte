@@ -12,7 +12,6 @@
 
 <label for={id}>
 	{label}
-	<!--{#if required}<span aria-label='required'>*</span>{/if}-->
 </label>
 
 <div class='form-field-wrapper'>

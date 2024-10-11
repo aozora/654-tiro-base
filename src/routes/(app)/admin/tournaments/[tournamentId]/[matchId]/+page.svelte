@@ -149,7 +149,7 @@
 <Modal title={item === undefined ? 'Nuovo giocatore':'Modifica giocatore'}
 			 bind:isOpen={isModalOpen}>
 	<svelte:fragment slot='modal-content'>
-		<form id="form-player" action="?/update" method="POST" use:enhance>
+		<form id="form-player" action="?/update" method="POST">
 			<input type='hidden' name='matchId' value={match.id} />
 
 			<Select label='Giocatore' name='playerId'
@@ -157,9 +157,15 @@
 							constraints={$constraints.id}
 							value={item?.id}>
 				<option></option>
-				{#each allPlayers.filter(p => players.find(x => x.id === p.id) === undefined) as player}
-					<option value={player.id}>{player.name}</option>
-				{/each}
+				{#if item}
+					{#each allPlayers as player}
+						<option value={player.id}>{player.name}</option>
+					{/each}
+				{:else}
+					{#each allPlayers.filter(p => players.find(x => x.id === p.id) === undefined) as player}
+						<option value={player.id}>{player.name}</option>
+					{/each}
+				{/if}
 			</Select>
 
 			<NumberInput label='Punti' name='points'

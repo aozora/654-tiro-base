@@ -130,7 +130,7 @@
 <Modal title={item === undefined ? 'Nuovo torneo':'Modifica torneo'}
 			 bind:isOpen={isModalOpen}>
 	<svelte:fragment slot='modal-content'>
-		<form id="form-player" method="POST" use:enhance>
+		<form id="form-player" method="POST">
 			<input type='hidden' name='id' value={item?.id} />
 
 			<TextInput label='Titolo' name='title'
