@@ -13,6 +13,7 @@
 	import DateInput from '$components/ui/Form/DateInput.svelte';
 	import { Icons } from '$types';
 	import Icon from '$components/Icon/Icon.svelte';
+	import Select from '$components/ui/Form/Select.svelte';
 
 	type PageProps = {
 		tournament: Tournament,
@@ -151,6 +152,10 @@
 				<input type='hidden' name='matchId' value={item?.id} />
 				<input type='hidden' name='tournamentId' value={tournament.id} />
 
+<!--				<Select label='Data partita' name='date'errors={$errors.date}-->
+<!--								constraints={$constraints.date}-->
+<!--								value={item?.date}-->
+<!--				/>-->
 				<DateInput label='Data partita' name='date'
 									 errors={$errors.date}
 									 constraints={$constraints.date}

@@ -1,5 +1,7 @@
 <script lang='ts'>
 	import type { InputConstraint } from 'sveltekit-superforms';
+	import { DateField } from "bits-ui";
+	import { CalendarDate } from "@internationalized/date";
 
 	export let id: string = crypto.randomUUID();
 	export let label: string;
@@ -9,7 +11,11 @@
 	export let errors: string[] | undefined = undefined;
 	export let constraints: InputConstraint | undefined = undefined;
 
-	console.log({value});
+	let _value;
+	$:{
+		_value = value ? new CalendarDate(value.getFullYear(), value.getMonth() + 1, value.getDate()) :
+		new CalendarDate(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate());
+	}
 </script>
 
 <label for={id}>
@@ -17,15 +23,24 @@
 </label>
 
 <div class='form-field-wrapper'>
-	<input id={id}
-				 name={name}
-				 type="date"
-				 aria-invalid={errors ? 'true' : undefined}
-				 aria-describedby={errors ? `${name}-message` : helperText ? `${name}-helper`: undefined }
-				 bind:value
-				 {...constraints}
-				 {...$$props}
-	/>
+<!--	<input id={id}-->
+<!--				 name={name}-->
+<!--				 type="date"-->
+<!--				 aria-invalid={errors ? 'true' : undefined}-->
+<!--				 aria-describedby={errors ? `${name}-message` : helperText ? `${name}-helper`: undefined }-->
+<!--				 bind:value-->
+<!--				 {...constraints}-->
+<!--				 {...$$props}-->
+<!--	/>-->
+	<DateField.Root bind:value={_value} name={name} {...constraints} {...$$props} locale="it" class="date-input-wrapper">
+		<DateField.Input let:segments class="date-input-segments-wrapper">
+			{#each segments as { part, value }}
+				<DateField.Segment {part} class="date-input-segment">
+					{value}
+				</DateField.Segment>
+			{/each}
+		</DateField.Input>
+	</DateField.Root>
 
 	{#if helperText}
 		<p id={`${name}-helper`}>{helperText}</p>

@@ -203,6 +203,11 @@ form {
 .date-input-segment {
   display: inline-block;
   user-select: none;
+
+  &:hover,
+  &:focus-visible {
+    background-color: var(--color-brand);
+  }
 }
 
 .date-input-segment-literal {
