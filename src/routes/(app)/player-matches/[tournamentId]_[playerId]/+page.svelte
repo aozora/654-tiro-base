@@ -57,6 +57,7 @@
 			</LayerCake>
 		</div>
 
+		<h2>Partite:</h2>
 		<ul>
 			{#each stats.matchesDatesAndPoints as match}
 				<li>
@@ -77,6 +78,10 @@
     flex-direction: column;
     justify-items: center;
 
+    h2 {
+      margin-top: 0;
+    }
+
     ul, li {
       list-style-type: none;
       margin: 0;
@@ -95,12 +100,12 @@
       }
     }
 
-		li {
+    li {
       display: flex;
       justify-content: flex-start;
       align-items: center;
       width: 100%;
-		}
+    }
 
     a {
       display: flex;
