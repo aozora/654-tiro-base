@@ -1,113 +1,70 @@
-<script lang="ts">/**
- * Display all the matches of the player
- */
-import type { PageData } from './$types';
-import type { PlayerMatches } from '$lib/server/repository';
-import Main from '$components/Main.svelte';
-import type { Player, Tournament } from '@prisma/client';
-import PageTitle from '$components/PageTitle.svelte';
-import { pluralizePoints } from '$lib/helpers';
-import { Line } from 'svelte-chartjs';
-import {
-	Chart as ChartJS,
-	Title,
-	Tooltip,
-	Legend,
-	LineElement,
-	LinearScale,
-	PointElement,
-	CategoryScale
-} from 'chart.js';
+<script lang="ts">
+	/**
+	 * Display all the matches of the player
+	 */
+	import type { PageData } from './$types';
+	import type { PlayerMatches, PlayerStats } from '$lib/server/repository';
+	import Main from '$components/Main.svelte';
+	import type { Player, Tournament } from '@prisma/client';
+	import PageTitle from '$components/PageTitle.svelte';
+	import { pluralizePoints } from '$lib/helpers';
+	import PlayerProfile from '$components/PlayerProfile.svelte';
+	import { LayerCake, Svg } from 'layercake';
+	import AxisX from '$components/chart/AxisX.svelte';
+	import AxisY from '$components/chart/AxisY.svelte';
+	import Area from '$components/chart/Area.svelte';
+	import Line from '$components/chart/Line.svelte';
+	import { ArrowCircleRight } from 'phosphor-svelte';
 
-ChartJS.register(Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale);
+	type PageProps = {
+		tournament: Tournament
+		// matches: Array<PlayerMatches>
+		stats: PlayerStats
+		player: Player
+	};
 
-import {
-	LinkedChart
-} from 'svelte-tiny-linked-charts';
+	export let data: PageData;
 
-type PageProps = {
-	tournament: Tournament
-	matches: Array<PlayerMatches>
-	player: Player
-};
-
-export let data: PageData;
-
-const { matches, player }: PageProps = data;
-
-const chartLabels = matches.map(m => `${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(m.date)}`);
-const chartData = matches.map(m => m.points);
+	const { stats, player, tournament }: PageProps = data;
+	const points = stats.matchesDatesAndPoints.map(m => {
+		return {
+			x: m.date,
+			y: m.points
+		};
+	});
 </script>
 
 <Main className="user-page">
 	<div class="matches">
-		<PageTitle title={`Partite di ${player.name}`} showBackButton={true} />
+		<PageTitle title={`Profilo di ${player.name}`} showBackButton={true} />
+
+		<PlayerProfile player={player} stats={stats} />
 
 		<div class="chart">
-			<Line
-				data={{
-					labels: chartLabels,
-					datasets: [{
-						fill: true,
-						backgroundColor: 'rgb(217,217,217)',
-						borderColor: 'rgb(250,250,250)',
-						borderCapStyle: 'butt',
-						borderDash: [],
-						borderDashOffset: 0.0,
-						borderJoinStyle: 'miter',
-						pointBorderColor: 'rgb(230,121,90)',
-						pointBackgroundColor: 'rgb(255, 255, 255)',
-						pointBorderWidth: 10,
-						pointHoverRadius: 5,
-						pointHoverBackgroundColor: 'rgb(0, 0, 0)',
-						pointHoverBorderColor: 'rgba(220, 220, 220, 1)',
-						pointHoverBorderWidth: 2,
-						pointRadius: 1,
-						pointHitRadius: 10,
-						data: chartData
-					}]
-				}}
-				width="100vw"
-				height={150}
-				options={{
-					responsive: true,
-					maintainAspectRatio: false,
-					plugins: {
-					legend:{
-							display: false,
-						}
-					},
-					scales: {
-						y: {
-							type: 'linear',
-							min: 0,
-        			// max: 100,
-        			ticks: {
-								// forces step size to be 1 units
-								stepSize: 1
-							}
-						}
-					}
-				}}
-			/>
-			<!--			<LinkedChart labels={chartLabels}-->
-			<!--									 data={chartData}-->
-			<!--									 type="line"-->
-			<!--									 showValue-->
-			<!--									 valueDefault=""-->
-			<!--									 valueAppend=" punti"-->
-			<!--									 valuePosition="floating"-->
-			<!--									 scaleMin={0}-->
-			<!--									 barMinWidth={0}-->
-			<!--									 barMinHeight={5}-->
-			<!--									 grow />-->
+			<LayerCake
+				padding={{ top: 8, right: 10, bottom: 20, left: 25 }}
+				x="x"
+				y="y"
+				yDomain={[0, null]}
+				data={points}
+			>
+				<Svg>
+					<AxisX ticks={4} format={d => `${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(d)}`} />
+					<AxisY ticks={4} />
+					<Line stroke="#fff" />
+					<Area fill="#1a479550" />
+				</Svg>
+			</LayerCake>
 		</div>
 
 		<ul>
-			{#each matches as match}
+			{#each stats.matchesDatesAndPoints as match}
 				<li>
-					<span>{new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)}</span>
-					<span class="points">{pluralizePoints(match.points)}</span>
+					<a href={`/matches/${tournament.id}/${match.matchId}`}>
+						<span>{new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)}</span>
+						<span class="points">{pluralizePoints(match.points)}</span>
+						<ArrowCircleRight size="20" class="arrow" />
+					</a>
 				</li>
 			{/each}
 		</ul>
@@ -138,7 +95,14 @@ const chartData = matches.map(m => m.points);
       }
     }
 
-    li {
+		li {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      width: 100%;
+		}
+
+    a {
       display: flex;
       justify-content: flex-start;
       align-items: center;
@@ -159,15 +123,17 @@ const chartData = matches.map(m => m.points);
         flex: 0 0 auto;
         text-align: right;
       }
+
+      :global(.arrow) {
+        margin-left: 0.5rem;
+      }
     }
   }
 
   .chart {
+    display: flex;
+    width: 100%;
+    height: 200px;
     margin-bottom: 3rem;
-
-    //:global(svg) {
-    //  width: 100%;
-    //  height: auto;
-    //}
   }
 </style>

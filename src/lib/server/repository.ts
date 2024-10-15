@@ -23,14 +23,55 @@ export async function getPlayerById(id: string): Promise<Player> {
 }
 
 export type PlayerMatches = {
+	playerId: string;
+	matchId: string;
 	points: number;
 	date: Date;
 };
 
-export async function getPlayerWithMatchesById(
-	tournamentId: string,
-	playerId: string
-): Promise<Array<PlayerMatches>> {
+// export async function getPlayerWithMatchesById(
+// 	tournamentId: string,
+// 	playerId: string
+// ): Promise<Array<PlayerMatches>> {
+// 	const tournamentMatches = await prisma.playersOnMatches.findMany({
+// 		where: {
+// 			match: {
+// 				tournamentId
+// 			},
+// 			player: {
+// 				id: playerId
+// 			}
+// 		},
+// 		select: {
+// 			match: {
+// 				select: {
+// 					date: true
+// 				}
+// 			},
+// 			points: true
+// 		},
+// 		orderBy: {
+// 			match: {
+// 				date: 'asc'
+// 			}
+// 		}
+// 	});
+//
+// 	return tournamentMatches.map((m) => {
+// 		return {
+// 			date: m.match.date,
+// 			points: m.points
+// 		};
+// 	});
+// }
+
+export type PlayerStats = {
+	matchesDatesAndPoints: Array<PlayerMatches>;
+	matchesPlayedCount: number;
+	matchesWonCount: number;
+};
+
+export async function getPlayerStats(tournamentId: string, playerId: string): Promise<PlayerStats> {
 	const tournamentMatches = await prisma.playersOnMatches.findMany({
 		where: {
 			match: {
@@ -43,9 +84,11 @@ export async function getPlayerWithMatchesById(
 		select: {
 			match: {
 				select: {
-					date: true
+					date: true,
+					id: true
 				}
 			},
+			playerId: true,
 			points: true
 		},
 		orderBy: {
@@ -55,12 +98,67 @@ export async function getPlayerWithMatchesById(
 		}
 	});
 
-	return tournamentMatches.map((m) => {
+	// get the distinct list of all matches where player played
+	const distinctMatchesIds = await prisma.playersOnMatches.findMany({
+		where: {
+			playerId: playerId,
+			match: {
+				tournamentId
+			}
+		},
+		select: {
+			matchId: true
+		},
+		distinct: ['matchId']
+	});
+
+	const matchesPlayedCount = distinctMatchesIds.length;
+	let matchesWonCount = 0;
+
+	// get the match details for all players in the given list of matches
+	const distinctMatches = await prisma.playersOnMatches.findMany({
+		where: {
+			matchId: {
+				in: distinctMatchesIds.map((m) => m.matchId)
+			},
+			match: {
+				tournamentId
+			}
+		}
+	});
+
+	// console.log({ distinctMatchesIds });
+	// console.log({ distinctMatches });
+
+	distinctMatchesIds.forEach((distinctMatch) => {
+		const max = Math.max(
+			...distinctMatches.filter((x) => x.matchId === distinctMatch.matchId).map((x) => x.points)
+		);
+		const winner = distinctMatches
+			.filter(x => x.matchId === distinctMatch.matchId)
+			.find((x) => x.points === max);
+
+		// console.log({max, winner, playerId});
+
+		if (winner && winner.playerId === playerId) {
+			matchesWonCount += 1;
+		}
+	});
+
+	const matchesDatesAndPoints: Array<PlayerMatches> = tournamentMatches.map((m) => {
 		return {
+			playerId: m.playerId,
+			matchId: m.match.id,
 			date: m.match.date,
 			points: m.points
 		};
 	});
+
+	return {
+		matchesDatesAndPoints,
+		matchesPlayedCount,
+		matchesWonCount
+	};
 }
 
 export async function upsertPlayer(
@@ -121,7 +219,7 @@ export async function deletePlayer(id: string) {
 // export type
 export async function getTournaments(): Promise<Array<Tournament>> {
 	return prisma.tournament.findMany({
-		include:{
+		include: {
 			matches: true
 		},
 		orderBy: [

@@ -1,10 +1,9 @@
 import type { PageServerLoad } from './$types';
 import {
 	getPlayerById,
-	getPlayers,
-	getPlayerWithMatchesById,
+	getPlayerStats,
 	getTournament,
-	type PlayerMatches
+	type PlayerStats
 } from '$lib/server/repository';
 import type { Tournament } from '@prisma/client';
 
@@ -16,11 +15,12 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	const player = await getPlayerById(playerId);
 	const tournament: Tournament = await getTournament(tournamentId);
-	const matches: Array<PlayerMatches> = await getPlayerWithMatchesById(tournamentId, playerId);
+	const stats: PlayerStats = await getPlayerStats(tournamentId, playerId);
+	// console.log({ stats });
 
 	return {
 		player,
 		tournament,
-		matches
+		stats
 	};
 };
