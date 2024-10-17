@@ -1,59 +1,109 @@
-# Use the official OpenJDK image from Docker Hub
-FROM openjdk:11-jdk
+FROM rust:bookworm
 
-# Install necessary packages and dependencies
-RUN apt-get update && apt-get install -y \
-    wget \
-    unzip \
-    git \
-    && rm -rf /var/lib/apt/lists/* \
+# Arguments for setting up the SDK. Can be overridden in devcontainer.json but shouldn't be required
+ARG ANDROID_SDK_TOOLS_VERSION="9477386"
+ARG ANDROID_PLATFORM_VERSION="32"
+ARG ANDROID_BUILD_TOOLS_VERSION="30.0.3"
+ARG NDK_VERSION="25.0.8775105"
 
-# Set environment variables used by the Android SDK
-ENV ANDROID_SDK_HOME /opt/android-sdk
-ENV ANDROID_SDK_ROOT /opt/android-sdk
-ENV ANDROID_HOME /opt/android-sdk
-ENV ANDROID_SDK /opt/android-sdk
-ENV PATH ${PATH}:${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin:${ANDROID_SDK_ROOT}/platform-tools
+# Arguments related to setting up a non-root user for the container
+ARG USERNAME=vscode
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
 
-# Set Debian to not prompt for user input during package installation
-ENV DEBIAN_FRONTEND noninteractive
+# Install base utils
+RUN apt-get update
+RUN apt-get install -y \
+  curl \
+  psmisc
 
-# Download and install Android SDK command-line tools
-RUN mkdir -p ${ANDROID_SDK_ROOT}/cmdline-tools \
-    && cd ${ANDROID_SDK_ROOT}/cmdline-tools \
-    && wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O commandlinetools.zip \
-    && unzip commandlinetools.zip -d ${ANDROID_SDK_ROOT}/cmdline-tools \
-    && mv ${ANDROID_SDK_ROOT}/cmdline-tools/cmdline-tools ${ANDROID_SDK_ROOT}/cmdline-tools/latest \
-    && rm commandlinetools.zip
+# Install Node.js
+RUN curl -fsSL "https://deb.nodesource.com/setup_20.x" | bash -
+RUN apt-get install -y nodejs
 
-# Install SDK packages
-RUN yes | sdkmanager --licenses \
-    && sdkmanager "platform-tools" "platforms;android-32" "build-tools;32.0.0"
+# Install Yarn
+RUN corepack enable
+
+# Install Tarpaulin
+RUN cargo install cargo-tarpaulin
+
+# Install Tauri v2 dependencies
+# https://v2.tauri.app/start/prerequisites/#linux
+sudo apt install libwebkit2gtk-4.1-dev \
+  build-essential \
+  curl \
+  wget \
+  file \
+  libxdo-dev \
+  libssl-dev \
+  libayatana-appindicator3-dev \
+  librsvg2-dev
 
 
-# Set the system language to US English
-ENV LANG en_US.UTF-8
+# Install tauri-driver dependencies
+RUN apt-get install -y \
+  dbus-x11 \
+  webkit2gtk-4.0-dev \
+  webkit2gtk-driver \
+  xvfb
 
-# Create a new group and user with UID 1001
-RUN groupadd android && \
-    useradd -d /opt/android-sdk -g android -u 1001 android \
+## Install tauri-cli
+RUN cargo install tauri-cli
 
-# -----
 
-# Clone your Android project into the container
-#RUN git clone https://github.com/yourusername/your-android-project.git /usr/src/app
-COPY . /usr/src/app
+# Install Rust
+curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh
 
-# Set working directory
-WORKDIR /usr/src/app
 
-# Make the gradlew script executable
-RUN chmod +x ./gradlew
+# Install node
 
-# Pre-install project dependencies (Optional, but speeds up first build)
-RUN ./gradlew build --no-daemon || true
 
-# Default command to run when starting the container
-CMD ["./gradlew", "assembleDebug"]
+######################################
+## Android SDK
+## Downloading and installing
+######################################
+#FROM base_image as android_sdk
+WORKDIR /android_sdk
 
-# ----
+# Arguments are consumed by the first FROM they encounter, so we need to just explicitly tell Docker we need to use these again and again
+ARG ANDROID_SDK_TOOLS_VERSION
+ARG ANDROID_PLATFORM_VERSION
+ARG ANDROID_BUILD_TOOLS_VERSION
+ARG NDK_VERSION
+
+# Environment variables inside the android_sdk step to ensure the SDK is built properly
+ENV ANDROID_HOME="/android_sdk"
+ENV ANDROID_SDK_ROOT="$ANDROID_HOME"
+ENV NDK_HOME="${ANDROID_HOME}/ndk/${NDK_VERSION}"
+ENV PATH=${PATH}:/android_sdk/cmdline-tools/latest/bin
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+
+# Set up the SDK
+RUN curl -C - --output android-sdk-tools.zip "https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS_VERSION}_latest.zip" \
+    && mkdir -p /android_sdk/cmdline-tools/latest/ \
+    && unzip -q android-sdk-tools.zip -d /android_sdk/cmdline-tools/latest/ \
+    && mv /android_sdk/cmdline-tools/latest/cmdline-tools/* /android_sdk/cmdline-tools/latest \
+    && rm -r /android_sdk/cmdline-tools/latest/cmdline-tools \
+    && rm android-sdk-tools.zip \
+    && yes | sdkmanager --licenses \
+    && touch $HOME/.android/repositories.cfg \
+    && sdkmanager "cmdline-tools;latest" \
+    && sdkmanager "platform-tools" \
+    && sdkmanager "emulator" \
+    && sdkmanager "platforms;android-${ANDROID_PLATFORM_VERSION}" "build-tools;$ANDROID_BUILD_TOOLS_VERSION" \
+    && sdkmanager "ndk;${NDK_VERSION}" \
+    && sdkmanager "system-images;android-${ANDROID_PLATFORM_VERSION};google_apis;x86_64"
+
+# As an added bonus we set up a gradle.properties file that enhances Gradle performance
+RUN echo "org.gradle.daemon=true" >> "/gradle.properties" \
+    && echo "org.gradle.parallel=true" >> "/gradle.properties"
+
+#export JAVA_HOME=/opt/android-studio/jbr
+#export ANDROID_HOME="$HOME/Android/Sdk"
+#export NDK_HOME="$ANDROID_HOME/ndk/$(ls -1 $ANDROID_HOME/ndk)"
+
+
+# Add the Android targets with rustup
+rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android
+
+CMD ["/bin/bash"]
