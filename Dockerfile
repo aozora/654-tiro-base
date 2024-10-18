@@ -117,7 +117,9 @@ RUN echo "org.gradle.daemon=true" >> "/gradle.properties" \
 # Copy source code
 COPY . .
 
-#RUN cargo tauri android build --apk
+RUN tauri android init
+
+RUN cargo tauri android build --apk
 # cargo tauri android build --aab --target aarch64 --target armv7
 
 
