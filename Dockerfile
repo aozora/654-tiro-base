@@ -39,7 +39,7 @@ RUN apt-get install -y libwebkit2gtk-4.1-dev \
 ######################################
 # Install tauri-cli
 ######################################
-RUN cargo install tauri-cli
+RUN cargo install tauri-cli --version "^2.0.0" --locked
 
 
 #######################################
@@ -105,10 +105,6 @@ RUN curl -C - --output android-sdk-tools.zip "https://dl.google.com/android/repo
 RUN echo "org.gradle.daemon=true" >> "/gradle.properties" \
     && echo "org.gradle.parallel=true" >> "/gradle.properties"
 
-#export JAVA_HOME=/opt/android-studio/jbr
-#export ANDROID_HOME="$HOME/Android/Sdk"
-#export NDK_HOME="$ANDROID_HOME/ndk/$(ls -1 $ANDROID_HOME/ndk)"
-
 
 # Add the Android targets with rustup
 #rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android
@@ -117,7 +113,7 @@ RUN echo "org.gradle.daemon=true" >> "/gradle.properties" \
 # Copy source code
 COPY . .
 
-RUN tauri android init
+RUN cargo tauri android init
 
 RUN cargo tauri android build --apk
 # cargo tauri android build --aab --target aarch64 --target armv7
