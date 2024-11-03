@@ -15,7 +15,6 @@
 	import { Icons } from '$types';
 	import Loader from '$components/Loader.svelte';
 	import Checkbox from '$components/ui/Form/Checkbox.svelte';
-	import { CldUploadWidget } from 'svelte-cloudinary';
 
 	type PageProps = {
 		players: Array<Player>;
@@ -45,6 +44,7 @@
 	});
 
 	let isModalOpen = false;
+	let isUploadWidgetOpen = false;
 	let item: Player | undefined = undefined;
 
 	const tableHanlder = new DataHandler(players, { rowsPerPage: 10 });
@@ -66,7 +66,7 @@
 	};
 
 	const onEditPlayerPicture = async (results, row: Player) => {
-		// console.log({ row });
+		console.log({ row });
 		// console.log('Public ID', results.info.public_id);
 
 		const response = await fetch('/api/player', {
@@ -102,56 +102,43 @@
 			<Datatable handler={tableHanlder}>
 				<table class="table">
 					<thead>
-						<tr>
-							<th>Nome</th>
-							<th>Attivo</th>
-							<th></th>
-							<th></th>
-							<th></th>
-						</tr>
+					<tr>
+						<th>Nome</th>
+						<th>Attivo</th>
+						<th></th>
+						<th></th>
+					</tr>
 					</thead>
 					<tbody>
-						{#each $table as row}
-							<tr>
-								<td class="player-info">
-									<Avatar picture={row.picture || ''} name={row.name} />
-									<span>{row.name}</span>
-								</td>
-								<td>
-									{#if row.isActive}
-										<CheckCircle size="20" />
-									{:else}
-										<XCircle size="20" />
-									{/if}
-								</td>
-								<td>
-									<CldUploadWidget
-										uploadPreset="kfzhcgck"
-										onSuccess={(results) => onEditPlayerPicture(results, row)}
-										let:open
-										let:isLoading
-									>
-										<button type="button" class="table-button" on:click={open} disabled={isLoading}>
-											<UserSquare size="20" />
-										</button>
-									</CldUploadWidget>
-								</td>
-								<td>
-									<button type="button" class="table-button" on:click={() => onEditPlayer(row)}>
-										<PencilSimple size="20" />
+					{#each $table as row}
+						<tr>
+							<td class="player-info">
+								<Avatar picture={row.picture || ''} name={row.name} />
+								<span>{row.name}</span>
+							</td>
+							<td>
+								{#if row.isActive}
+									<CheckCircle size="20" />
+								{:else}
+									<XCircle size="20" />
+								{/if}
+							</td>
+							<td>
+								<button type="button" class="table-button" on:click={() => onEditPlayer(row)}>
+									<PencilSimple size="20" />
+								</button>
+							</td>
+							<td>
+								<form action="?/delete" method="POST" on:submit={(e) => onRemovePlayer(e, row)}>
+									<input type="hidden" name="id" value={row.id} />
+									<input type="hidden" name="action" value="delete" />
+									<button type="submit" class="table-button">
+										<Trash size="20" />
 									</button>
-								</td>
-								<td>
-									<form action="?/delete" method="POST" on:submit={(e) => onRemovePlayer(e, row)}>
-										<input type="hidden" name="id" value={row.id} />
-										<input type="hidden" name="action" value="delete" />
-										<button type="submit" class="table-button">
-											<Trash size="20" />
-										</button>
-									</form>
-								</td>
-							</tr>
-						{/each}
+								</form>
+							</td>
+						</tr>
+					{/each}
 					</tbody>
 				</table>
 			</Datatable>
@@ -177,6 +164,13 @@
 				errors={$errors.name}
 				constraints={$constraints.name}
 				value={item?.name}
+			/>
+			<TextInput
+				label="Foto (path)"
+				name="picture"
+				errors={$errors.name}
+				constraints={$constraints.name}
+				value={item?.picture}
 			/>
 			<!--			<Toggle label='Is active' name='isActive' required={true} value={item?.isActive ?? false} />-->
 			<Checkbox

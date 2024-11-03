@@ -135,7 +135,7 @@ export async function getPlayerStats(tournamentId: string, playerId: string): Pr
 			...distinctMatches.filter((x) => x.matchId === distinctMatch.matchId).map((x) => x.points)
 		);
 		const winner = distinctMatches
-			.filter(x => x.matchId === distinctMatch.matchId)
+			.filter((x) => x.matchId === distinctMatch.matchId)
 			.find((x) => x.points === max);
 
 		// console.log({max, winner, playerId});
@@ -164,8 +164,8 @@ export async function getPlayerStats(tournamentId: string, playerId: string): Pr
 export async function upsertPlayer(
 	id: undefined | string,
 	name: string,
+	picture: string,
 	isActive: boolean
-	// picture: string
 ): Promise<Player> {
 	// console.log({ id, name, isActive });
 
@@ -175,13 +175,13 @@ export async function upsertPlayer(
 		},
 		update: {
 			name,
-			isActive
-			// picture
+			isActive,
+			picture
 		},
 		create: {
 			name,
-			isActive
-			// picture
+			isActive,
+			picture
 		}
 	});
 }

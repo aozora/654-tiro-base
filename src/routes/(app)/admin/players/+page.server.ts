@@ -55,6 +55,7 @@ export const actions: Actions = {
 			await upsertPlayer(
 				form.data.id === 'undefined' ? '' : String(form.data.id),
 				form.data.name,
+				form.data.picture || '',
 				form.data.isActive
 			);
 

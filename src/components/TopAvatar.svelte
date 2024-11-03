@@ -1,7 +1,5 @@
 <script lang="ts">
 	// PROPS
-	import { getCldImageUrl } from 'svelte-cloudinary';
-
 	export let picture: string;
 	export let name: string;
 	export let className: string = '';
@@ -11,18 +9,11 @@
 	let initials: string;
 	$: initials = name[0] + name[1];
 
-	const getPictureUrl = (publicId: string) => {
-		return getCldImageUrl({
-			width: size + 3,
-			height: size + 3,
-			src: publicId
-		});
-	};
 </script>
 
 <div class="avatar" class:className style:--size={`${size}px`}>
 	{#if picture}
-		<img src={getPictureUrl(picture)} alt="" class="avatar-picture" />
+		<img src={picture} alt="" class="avatar-picture" />
 	{:else}
 		<span class="avatar-initials">{initials}</span>
 	{/if}

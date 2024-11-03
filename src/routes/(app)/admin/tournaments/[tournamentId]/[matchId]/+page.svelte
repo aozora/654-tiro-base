@@ -3,7 +3,7 @@
 	import { Datatable, DataHandler } from '@vincjo/datatables';
 	import type { Match, Player, Tournament } from '@prisma/client';
 	import type { PageData } from './$types';
-	import { PencilCircle, PencilSimple, Ranking, Trash } from 'phosphor-svelte';
+	import { PencilSimple, Ranking, Trash } from 'phosphor-svelte';
 	import Modal from '$components/ui/Modal/Modal.svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { page } from '$app/stores';
@@ -11,7 +11,6 @@
 	import Avatar from '$components/ui/Avatar/Avatar.svelte';
 	import AdminPageTitle from '$components/AdminPageTitle.svelte';
 	import Loader from '$components/Loader.svelte';
-	import { getCldImageUrl } from 'svelte-cloudinary';
 	import type { PlayerExtended } from '$lib/server/repository';
 	import Select from '$components/ui/Form/Select.svelte';
 	import NumberInput from '$components/ui/Form/NumberInput.svelte';
