@@ -78,13 +78,13 @@
 		isModalOpen = true;
 	};
 
-	const getPictureUrl = (publicId: string) => {
-		return getCldImageUrl({
-			width: 64,
-			height: 64,
-			src: publicId
-		});
-	};
+	// const getPictureUrl = (publicId: string) => {
+	// 	return getCldImageUrl({
+	// 		width: 64,
+	// 		height: 64,
+	// 		src: publicId
+	// 	});
+	// };
 </script>
 
 <AdminPageTitle title={`${tournament.title}`}
@@ -114,7 +114,7 @@
 				{#each $table as row}
 					<tr>
 						<td>
-							<Avatar picture={row.picture ? getPictureUrl(row.picture) : undefined} name={row.name} />
+							<Avatar picture={row.picture} name={row.name} />
 							<span>{row.name}</span>
 						</td>
 						<td>{row.points}</td>
