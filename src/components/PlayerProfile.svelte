@@ -14,7 +14,7 @@
 		<ul>
 			<li>Partite giocate: {stats.matchesPlayedCount}</li>
 			<li>Partite vinte: {stats.matchesWonCount}</li>
-			<li>% di vincita: {stats.matchesWonCount / stats.matchesPlayedCount * 100}%</li>
+			<li>% di vincita: {Math.round(stats.matchesWonCount / stats.matchesPlayedCount * 100)}%</li>
 		</ul>
 	</div>
 </header>
