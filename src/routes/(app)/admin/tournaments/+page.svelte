@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Main from '$components/Main.svelte';
-	import { Datatable, DataHandler } from '@vincjo/datatables';
+	import { Datatable, TableHandler } from '@vincjo/datatables';
 	import type { Tournament } from '@prisma/client';
 	import type { PageData } from './$types';
 	import { CheckCircle, DiceSix, PencilSimple, XCircle } from 'phosphor-svelte';
@@ -16,20 +16,13 @@
 	import Checkbox from '$components/ui/Form/Checkbox.svelte';
 
 	type PageProps = {
-		tournaments: Array<Tournament>
-	}
+		tournaments: Array<Tournament>;
+	};
 
 	export let data: PageData;
 
 	const { tournaments }: PageProps = data;
-	const {
-		form,
-		errors,
-		enhance,
-		delayed,
-		message,
-		constraints
-	} = superForm(data.form, {
+	const { form, errors, enhance, delayed, message, constraints } = superForm(data.form, {
 		// validationMethod: 'onsubmit', //'auto' | 'oninput' | 'onblur' | 'onsubmit' = 'auto',
 		onUpdated: ({ form }) => {
 			// When the form is successfully submitted close the modal and reset the item variable
@@ -52,7 +45,7 @@
 	let isModalOpen = false;
 	let item: Tournament | undefined = undefined;
 
-	const tableHanlder = new DataHandler(tournaments, { rowsPerPage: 10 });
+	const tableHanlder = new TableHandler(tournaments, { rowsPerPage: 10 });
 	const table = tableHanlder.getRows();
 
 	const onEditTournament = (row: Tournament) => {
@@ -78,45 +71,45 @@
 			</button>
 		</header>
 
-		<Datatable handler={tableHanlder}>
+		<Datatable table={tableHanlder}>
 			<table class="table">
 				<thead>
-				<tr>
-					<th>Titolo</th>
-					<th>Matches</th>
-					<th>Attivo</th>
-					<th></th>
-					<th></th>
-				</tr>
+					<tr>
+						<th>Titolo</th>
+						<th>Matches</th>
+						<th>Attivo</th>
+						<th></th>
+						<th></th>
+					</tr>
 				</thead>
 				<tbody>
-				{#each $table as row}
-					<tr>
-						<td>
-							<span>{row.title}</span>
-						</td>
-						<td>
-							<span>{row.matches.length}</span>
-						</td>
-						<td>
-							{#if row.isActive}
-								<CheckCircle size="20" />
-							{:else}
-								<XCircle size="20" />
-							{/if}
-						</td>
-						<td>
-							<button type="button" class="table-button" on:click={() => onEditTournament(row)}>
-								<PencilSimple size="20" />
-							</button>
-						</td>
-						<td>
-							<a href={`/admin/tournaments/${row.id}`} class="table-button">
-								<DiceSix size="20" />
-							</a>
-						</td>
-					</tr>
-				{/each}
+					{#each $table as row}
+						<tr>
+							<td>
+								<span>{row.title}</span>
+							</td>
+							<td>
+								<span>{row.matches.length}</span>
+							</td>
+							<td>
+								{#if row.isActive}
+									<CheckCircle size="20" />
+								{:else}
+									<XCircle size="20" />
+								{/if}
+							</td>
+							<td>
+								<button type="button" class="table-button" on:click={() => onEditTournament(row)}>
+									<PencilSimple size="20" />
+								</button>
+							</td>
+							<td>
+								<a href={`/admin/tournaments/${row.id}`} class="table-button">
+									<DiceSix size="20" />
+								</a>
+							</td>
+						</tr>
+					{/each}
 				</tbody>
 			</table>
 		</Datatable>
@@ -127,29 +120,32 @@
 	{/if}
 </Main>
 
-<Modal title={item === undefined ? 'Nuovo torneo':'Modifica torneo'}
-			 bind:isOpen={isModalOpen}>
-	<svelte:fragment slot='modal-content'>
+<Modal title={item === undefined ? 'Nuovo torneo' : 'Modifica torneo'} bind:isOpen={isModalOpen}>
+	<svelte:fragment slot="modal-content">
 		<form id="form-player" method="POST">
-			<input type='hidden' name='id' value={item?.id} />
+			<input type="hidden" name="id" value={item?.id} />
 
-			<TextInput label='Titolo' name='title'
-								 errors={$errors.title}
-								 constraints={$constraints.title}
-								 value={item?.title}
+			<TextInput
+				label="Titolo"
+				name="title"
+				errors={$errors.title}
+				constraints={$constraints.title}
+				value={item?.title}
 			/>
 			<!--			<Toggle label='Is active' name='isActive' required={true} value={item?.isActive ?? false} />-->
-			<Checkbox label='Attivo' required={false} name='isActive'
-								errors={$errors.isActive}
-								constraints={$constraints.isActive}
-								checked={item?.isActive}
+			<Checkbox
+				label="Attivo"
+				required={false}
+				name="isActive"
+				errors={$errors.isActive}
+				constraints={$constraints.isActive}
+				checked={item?.isActive}
 			/>
 
 			<div class="modal-actions">
-				<button type="button" class="button" on:click={()=>isModalOpen = false}>Annulla</button>
+				<button type="button" class="button" on:click={() => (isModalOpen = false)}>Annulla</button>
 				<button type="submit" class="button primary">Salva</button>
 			</div>
 		</form>
 	</svelte:fragment>
 </Modal>
-

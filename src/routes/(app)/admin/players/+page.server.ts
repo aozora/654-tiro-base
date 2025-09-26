@@ -1,5 +1,5 @@
-import { deletePlayer, getPlayers, upsertPlayer } from '$lib/server/repository';
-import type { Player } from '@prisma/client';
+import { deletePlayer, getPlayers, upsertPlayer } from '$lib/server/db/repository';
+import type { Player } from '$lib/server/db';
 import { fail, message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';

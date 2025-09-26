@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { lucia } from '$lib/server/auth';
+import { lucia } from '$lib/server/db/auth';
 import { fail, redirect } from '@sveltejs/kit';
 import { generateId } from 'lucia';
 import { Argon2id } from 'oslo/password';
 // import { SqliteError } from 'better-sqlite3';
 import type { Actions, PageServerLoad } from './$types';
-import prisma from '$lib/server/prisma';
+import { db, users } from '$lib/server/db';
 
 export const load: PageServerLoad = async (event) => {
 	// @ts-ignore
@@ -43,13 +43,11 @@ export const actions = {
 		const userId = generateId(15);
 
 		try {
-			await prisma.user.create({
-				// @ts-ignore
-				data: {
-					id: userId,
-					email: email,
-					password: hashedPassword
-				}
+			await db.insert(users).values({
+				id: userId,
+				email: email,
+				password: hashedPassword,
+				role: 'user'
 			});
 
 			const session = await lucia.createSession(userId, {});

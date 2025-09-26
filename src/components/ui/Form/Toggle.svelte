@@ -1,4 +1,4 @@
-<script lang='ts'>
+<script lang="ts">
 	import type { InputConstraint } from 'sveltekit-superforms';
 	import { Switch } from 'bits-ui';
 
@@ -18,26 +18,25 @@
 </script>
 
 <!--for={id}-->
-<label >
+<label>
 	{label}
-	{#if required}<span aria-label='required'>*</span>{/if}
+	{#if required}<span aria-label="required">*</span>{/if}
 </label>
 
-<div class='form-field-wrapper'>
+<div class="form-field-wrapper">
 	<Switch.Root
-		class="toggle" name={name}
+		class="toggle"
+		{name}
 		bind:checked={value}
 		aria-invalid={errors ? 'true' : undefined}
-		aria-describedby={errors ? `${name}-message` : helperText ? `${name}-helper`: undefined }
-		required={required}
-		disabled={disabled}
+		aria-describedby={errors ? `${name}-message` : helperText ? `${name}-helper` : undefined}
+		{required}
+		{disabled}
 		{...constraints}
 		{...$$props}
 	>
-		<Switch.Thumb
-			class="toggle-thumb"
-		/>
-		<Switch.Input id={id} />
+		<Switch.Thumb class="toggle-thumb" />
+		<input type="hidden" {name} value={value ? 'on' : ''} />
 	</Switch.Root>
 
 	{#if helperText}
@@ -45,6 +44,6 @@
 	{/if}
 
 	{#if errors}
-		<p id={`${name}-message`} role='alert'>{invalidMessage}</p>
+		<p id={`${name}-message`} role="alert">{invalidMessage}</p>
 	{/if}
 </div>

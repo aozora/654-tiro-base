@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { authSchema } from '$lib/schemas/auth-schema';
-import { lucia } from '$lib/server/auth';
-import prisma from '$lib/server/prisma';
+import { lucia } from '$lib/server/db/auth';
+import { db, users } from '$lib/server/db';
+import { eq } from 'drizzle-orm';
 import { fail, redirect } from '@sveltejs/kit';
 import { Argon2id } from 'oslo/password';
 import { message, superValidate } from 'sveltekit-superforms';
@@ -29,11 +30,13 @@ export const actions = {
 		}
 
 		try {
-			const user = await prisma.user.findUnique({
-				where: {
-					email: form.data.email
-				}
-			});
+			const userResults = await db
+				.select()
+				.from(users)
+				.where(eq(users.email, form.data.email))
+				.limit(1);
+
+			const user = userResults[0];
 
 			if (!user) {
 				console.log('no user');

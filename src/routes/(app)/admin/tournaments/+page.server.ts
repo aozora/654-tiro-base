@@ -1,6 +1,6 @@
 import type { Actions, PageServerLoad } from './$types';
-import { getTournaments, upsertTournament } from '$lib/server/repository';
-import type { Tournament } from '@prisma/client';
+import { getTournaments, upsertTournament } from '$lib/server/db/repository';
+import type { Tournament } from '$lib/server/db';
 import { message, superValidate, fail } from 'sveltekit-superforms';
 import { z } from 'zod';
 import { zod } from 'sveltekit-superforms/adapters';

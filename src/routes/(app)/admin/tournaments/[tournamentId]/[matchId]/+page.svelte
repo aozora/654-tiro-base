@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Main from '$components/Main.svelte';
-	import { Datatable, DataHandler } from '@vincjo/datatables';
+	import { Datatable, TableHandler } from '@vincjo/datatables';
 	import type { Match, Player, Tournament } from '@prisma/client';
 	import type { PageData } from './$types';
 	import { PencilSimple, Ranking, Trash } from 'phosphor-svelte';
@@ -17,22 +17,15 @@
 
 	type PageProps = {
 		match: Match;
-		allPlayers: Array<Player>
-		players: Array<PlayerExtended>
-		tournament: Tournament
-	}
+		allPlayers: Array<Player>;
+		players: Array<PlayerExtended>;
+		tournament: Tournament;
+	};
 
 	export let data: PageData;
 
 	const { match, allPlayers, tournament, players }: PageProps = data;
-	const {
-		form,
-		errors,
-		enhance,
-		delayed,
-		message,
-		constraints
-	} = superForm(data.form, {
+	const { form, errors, enhance, delayed, message, constraints } = superForm(data.form, {
 		onUpdated: ({ form }) => {
 			// When the form is successfully submitted close the modal and reset the item variable
 			if (form.valid && message && $page.status < 400) {
@@ -54,7 +47,7 @@
 	let isModalOpen = false;
 	let item: Player | undefined = undefined;
 
-	const tableHanlder = new DataHandler(players, { rowsPerPage: 10 });
+	const tableHanlder = new TableHandler(players, { rowsPerPage: 10 });
 	const table = tableHanlder.getRows();
 
 	const onEditPoints = (row: Player) => {
@@ -70,7 +63,6 @@
 			e.preventDefault();
 			return;
 		}
-
 	};
 
 	const addPlayer = () => {
@@ -87,9 +79,11 @@
 	// };
 </script>
 
-<AdminPageTitle title={`${tournament.title}`}
-								subtitle={`Gestione punteggi per la partita del ${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)}`}
-								showBackButton={true} />
+<AdminPageTitle
+	title={`${tournament.title}`}
+	subtitle={`Gestione punteggi per la partita del ${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)}`}
+	showBackButton={true}
+/>
 
 <Main className="admin-page">
 	<div>
@@ -100,41 +94,40 @@
 			</button>
 		</header>
 
-		<Datatable handler={tableHanlder}>
+		<Datatable table={tableHanlder}>
 			<table class="table">
 				<thead>
-				<tr>
-					<th>Giocatore</th>
-					<th>Punti</th>
-					<th></th>
-					<th></th>
-				</tr>
+					<tr>
+						<th>Giocatore</th>
+						<th>Punti</th>
+						<th></th>
+						<th></th>
+					</tr>
 				</thead>
 				<tbody>
-				{#each $table as row}
-					<tr>
-						<td>
-							<Avatar picture={row.picture} name={row.name} />
-							<span>{row.name}</span>
-						</td>
-						<td>{row.points}</td>
-						<td>
-							<button type="button" class="table-button" on:click={() => onEditPoints(row)}>
-								<PencilSimple size="20" />
-							</button>
-						</td>
-						<td>
-							<form action="?/delete" method="POST" on:submit={(e) => onRemovePlayer(e, row)}>
-								<input type='hidden' name='playerId' value={row.id} />
-								<input type='hidden' name='matchId' value={match.id} />
-								<button type="submit"
-												class="table-button">
-									<Trash size="20" />
+					{#each $table as row}
+						<tr>
+							<td>
+								<Avatar picture={row.picture} name={row.name} />
+								<span>{row.name}</span>
+							</td>
+							<td>{row.points}</td>
+							<td>
+								<button type="button" class="table-button" on:click={() => onEditPoints(row)}>
+									<PencilSimple size="20" />
 								</button>
-							</form>
-						</td>
-					</tr>
-				{/each}
+							</td>
+							<td>
+								<form action="?/delete" method="POST" on:submit={(e) => onRemovePlayer(e, row)}>
+									<input type="hidden" name="playerId" value={row.id} />
+									<input type="hidden" name="matchId" value={match.id} />
+									<button type="submit" class="table-button">
+										<Trash size="20" />
+									</button>
+								</form>
+							</td>
+						</tr>
+					{/each}
 				</tbody>
 			</table>
 		</Datatable>
@@ -145,40 +138,47 @@
 	{/if}
 </Main>
 
-<Modal title={item === undefined ? 'Nuovo giocatore':'Modifica giocatore'}
-			 bind:isOpen={isModalOpen}>
-	<svelte:fragment slot='modal-content'>
+<Modal
+	title={item === undefined ? 'Nuovo giocatore' : 'Modifica giocatore'}
+	bind:isOpen={isModalOpen}
+>
+	<svelte:fragment slot="modal-content">
 		<form id="form-player" action="?/update" method="POST">
-			<input type='hidden' name='matchId' value={match.id} />
+			<input type="hidden" name="matchId" value={match.id} />
 
-			<Select label='Giocatore' name='playerId'
-							errors={$errors.id}
-							constraints={$constraints.id}
-							value={item?.id}>
+			<Select
+				label="Giocatore"
+				name="playerId"
+				errors={$errors.id}
+				constraints={$constraints.id}
+				value={item?.id}
+			>
 				<option></option>
 				{#if item}
 					{#each allPlayers as player}
 						<option value={player.id}>{player.name}</option>
 					{/each}
 				{:else}
-					{#each allPlayers.filter(p => players.find(x => x.id === p.id) === undefined) as player}
+					{#each allPlayers.filter((p) => players.find((x) => x.id === p.id) === undefined) as player}
 						<option value={player.id}>{player.name}</option>
 					{/each}
 				{/if}
 			</Select>
 
-			<NumberInput label='Punti' name='points'
-									 min={0}
-									 max={100}
-									 errors={$errors.points}
-									 constraints={$constraints.points}
-									 value={item?.points} />
+			<NumberInput
+				label="Punti"
+				name="points"
+				min={0}
+				max={100}
+				errors={$errors.points}
+				constraints={$constraints.points}
+				value={item?.points}
+			/>
 
 			<div class="modal-actions">
-				<button type="button" class="button" on:click={()=>isModalOpen = false}>Annulla</button>
+				<button type="button" class="button" on:click={() => (isModalOpen = false)}>Annulla</button>
 				<button type="submit" class="button primary">Salva</button>
 			</div>
 		</form>
 	</svelte:fragment>
 </Modal>
-

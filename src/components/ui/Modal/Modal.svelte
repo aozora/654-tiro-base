@@ -1,4 +1,4 @@
-<script lang='ts'>
+<script lang="ts">
 	import { Dialog } from 'bits-ui';
 	import { fade } from 'svelte/transition';
 	import { flyAndScale } from '$lib/transitions';
@@ -11,23 +11,19 @@
 
 <Dialog.Root open={isOpen} on:close={() => (isOpen = false)}>
 	<Dialog.Portal>
-		<Dialog.Overlay
-			transition={fade}
-			transitionConfig={{ duration: 150 }}
-			class="modal-overlay"
-		/>
-		<Dialog.Content transition={flyAndScale} class="modal-content">
+		<Dialog.Overlay class="modal-overlay" />
+		<Dialog.Content class="modal-content">
 			<Dialog.Title>{title}</Dialog.Title>
 
 			<div class="modal-body">
-				<slot name='modal-content' />
+				<slot name="modal-content" />
 			</div>
 
-<!--			<div class="modal-actions">-->
-<!--				<slot name='modal-actions' />-->
-<!--			</div>-->
+			<!--			<div class="modal-actions">-->
+			<!--				<slot name='modal-actions' />-->
+			<!--			</div>-->
 
-			<Dialog.Close class="modal-close" on:click={() => (isOpen = false)}>
+			<Dialog.Close class="modal-close" onclick={() => (isOpen = false)}>
 				<div>
 					<X size="24" />
 				</div>
@@ -35,4 +31,3 @@
 		</Dialog.Content>
 	</Dialog.Portal>
 </Dialog.Root>
-

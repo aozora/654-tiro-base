@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Main from '$components/Main.svelte';
-	import { Datatable, DataHandler } from '@vincjo/datatables';
+	import { Datatable, TableHandler } from '@vincjo/datatables';
 	import type { Player } from '@prisma/client';
 	import type { PageData } from './$types';
 	import { CheckCircle, PencilSimple, Trash, UserSquare, XCircle } from 'phosphor-svelte';
@@ -47,7 +47,7 @@
 	let isUploadWidgetOpen = false;
 	let item: Player | undefined = undefined;
 
-	const tableHanlder = new DataHandler(players, { rowsPerPage: 10 });
+	const tableHanlder = new TableHandler(players, { rowsPerPage: 10 });
 	const table = tableHanlder.getRows();
 
 	const onEditPlayer = (row: Player) => {
@@ -99,46 +99,46 @@
 		</header>
 
 		{#if table}
-			<Datatable handler={tableHanlder}>
+			<Datatable table={tableHanlder}>
 				<table class="table">
 					<thead>
-					<tr>
-						<th>Nome</th>
-						<th>Attivo</th>
-						<th></th>
-						<th></th>
-					</tr>
+						<tr>
+							<th>Nome</th>
+							<th>Attivo</th>
+							<th></th>
+							<th></th>
+						</tr>
 					</thead>
 					<tbody>
-					{#each $table as row}
-						<tr>
-							<td class="player-info">
-								<Avatar picture={row.picture || ''} name={row.name} />
-								<span>{row.name}</span>
-							</td>
-							<td>
-								{#if row.isActive}
-									<CheckCircle size="20" />
-								{:else}
-									<XCircle size="20" />
-								{/if}
-							</td>
-							<td>
-								<button type="button" class="table-button" on:click={() => onEditPlayer(row)}>
-									<PencilSimple size="20" />
-								</button>
-							</td>
-							<td>
-								<form action="?/delete" method="POST" on:submit={(e) => onRemovePlayer(e, row)}>
-									<input type="hidden" name="id" value={row.id} />
-									<input type="hidden" name="action" value="delete" />
-									<button type="submit" class="table-button">
-										<Trash size="20" />
+						{#each $table as row}
+							<tr>
+								<td class="player-info">
+									<Avatar picture={row.picture || ''} name={row.name} />
+									<span>{row.name}</span>
+								</td>
+								<td>
+									{#if row.isActive}
+										<CheckCircle size="20" />
+									{:else}
+										<XCircle size="20" />
+									{/if}
+								</td>
+								<td>
+									<button type="button" class="table-button" on:click={() => onEditPlayer(row)}>
+										<PencilSimple size="20" />
 									</button>
-								</form>
-							</td>
-						</tr>
-					{/each}
+								</td>
+								<td>
+									<form action="?/delete" method="POST" on:submit={(e) => onRemovePlayer(e, row)}>
+										<input type="hidden" name="id" value={row.id} />
+										<input type="hidden" name="action" value="delete" />
+										<button type="submit" class="table-button">
+											<Trash size="20" />
+										</button>
+									</form>
+								</td>
+							</tr>
+						{/each}
 					</tbody>
 				</table>
 			</Datatable>

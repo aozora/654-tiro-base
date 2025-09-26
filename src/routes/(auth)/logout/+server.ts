@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { lucia } from '$lib/server/auth';
+import { lucia } from '$lib/server/db/auth';
 import { fail, redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 

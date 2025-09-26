@@ -1,55 +1,82 @@
-<script lang='ts'>
-	import type { InputConstraint } from 'sveltekit-superforms';
+<script lang="ts">
 	import { DateField } from 'bits-ui';
 	import { CalendarDate, getLocalTimeZone } from '@internationalized/date';
 
-	export let id: string = crypto.randomUUID();
-	export let label: string;
-	export let name: string;
-	export let value: Date;
-	export let helperText: string | undefined = undefined;
-	export let errors: string[] | undefined = undefined;
-	export let constraints: InputConstraint | undefined = undefined;
+	export let label = '';
+	export let name = '';
+	export let required = false;
+	export let errors: string[] = [];
+	export let constraints: any = {};
+	export let value: Date | undefined = undefined;
 
-	let _value: CalendarDate;
-	$:{
-		_value = value ? new CalendarDate(value.getFullYear(), value.getMonth() + 1, value.getDate()) :
-			new CalendarDate(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate());
+	let _value = value ? CalendarDate.fromDate(value) : new CalendarDate(2023, 1, 1);
 
-		console.log({ _value });
+	$: if (value) {
+		_value = CalendarDate.fromDate(value);
 	}
 </script>
 
-<label for={id}>
-	{label}
-</label>
+<div class="form-group">
+	{#if label}
+		<label for={name}>
+			{label}
+			{#if required}<span aria-label="required">*</span>{/if}
+		</label>
+	{/if}
 
-<div class='form-field-wrapper'>
-	<!--	<input id={id}-->
-	<!--				 name={name}-->
-	<!--				 type="date"-->
-	<!--				 aria-invalid={errors ? 'true' : undefined}-->
-	<!--				 aria-describedby={errors ? `${name}-message` : helperText ? `${name}-helper`: undefined }-->
-	<!--				 bind:value-->
-	<!--				 {...constraints}-->
-	<!--				 {...$$props}-->
-	<!--	/>-->
-	<DateField.Root bind:value={_value} {...constraints} {...$$props} locale="it" class="date-input-wrapper">
-		<input type="hidden" name={name} value={_value.toDate(getLocalTimeZone())} />
-		<DateField.Input let:segments class="date-input-segments-wrapper">
+	<DateField.Root bind:value={_value} {...constraints} {...$$restProps} locale="it">
+		<input type="hidden" {name} value={_value.toDate(getLocalTimeZone())} />
+		<DateField.Input let:segments class="date-input">
 			{#each segments as { part, value }}
-				<DateField.Segment {part} class="date-input-segment">
+				<DateField.Segment {part} class="date-segment">
 					{value}
 				</DateField.Segment>
 			{/each}
 		</DateField.Input>
 	</DateField.Root>
 
-	{#if helperText}
-		<p id={`${name}-helper`}>{helperText}</p>
-	{/if}
-
-	{#if errors}
-		<p id={`${name}-message`} role='alert'>{errors}</p>
+	{#if errors && errors.length > 0}
+		<div class="form-errors">
+			{#each errors as error}
+				<span class="form-error">{error}</span>
+			{/each}
+		</div>
 	{/if}
 </div>
+
+<style lang="scss">
+	.form-group {
+		margin-bottom: 1rem;
+	}
+
+	label {
+		display: block;
+		margin-bottom: 0.25rem;
+		font-weight: 500;
+	}
+
+	.date-input {
+		display: flex;
+		align-items: center;
+		padding: 0.5rem;
+		border: 1px solid #d1d5db;
+		border-radius: 0.375rem;
+		background-color: white;
+	}
+
+	.date-segment {
+		padding: 0.125rem 0.25rem;
+		border-radius: 0.25rem;
+		outline: none;
+	}
+
+	.form-errors {
+		margin-top: 0.25rem;
+	}
+
+	.form-error {
+		display: block;
+		color: #dc2626;
+		font-size: 0.875rem;
+	}
+</style>
