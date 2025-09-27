@@ -4,8 +4,8 @@ import {
 	getPlayerStats,
 	getTournament,
 	type PlayerStats
-} from '$lib/server/repository';
-import type { Tournament } from '@prisma/client';
+} from '$lib/server/db/repository';
+import type { Tournament } from '$lib/server/db';
 
 /**
  * Page Load

@@ -1,69 +1,48 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { authSchema } from '$lib/schemas/auth-schema';
-import { lucia } from '$lib/server/db/auth';
-import { db, users } from '$lib/server/db';
-import { eq } from 'drizzle-orm';
+import { auth } from '$lib/server/auth';
 import { fail, redirect } from '@sveltejs/kit';
-import { Argon2id } from 'oslo/password';
 import { message, superValidate } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
+import { zod4 } from 'sveltekit-superforms/adapters';
 import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals }) => {
-	// @ts-ignore
-	if (locals.user) {
+export const load: PageServerLoad = async (event) => {
+	const session = await auth.api.getSession({
+		headers: event.request.headers
+	});
+
+	if (session) {
 		redirect(302, '/leaderboard');
 	}
 
-	const form = await superValidate(zod(authSchema));
+	const form = await superValidate(zod4(authSchema));
 	return { form };
 };
 
 export const actions = {
-	default: async ({ request, cookies }) => {
-		const form = await superValidate(request, zod(authSchema));
-		// console.log(`Form is valid: ${form.valid}`);
+	default: async ({ request }) => {
+		const form = await superValidate(request, zod4(authSchema));
 
 		if (!form.valid) {
-			// Again, return { form } and things will just work.
 			return fail(400, { form });
 		}
 
 		try {
-			const userResults = await db
-				.select()
-				.from(users)
-				.where(eq(users.email, form.data.email))
-				.limit(1);
-
-			const user = userResults[0];
-
-			if (!user) {
-				console.log('no user');
-				return message(form, 'Incorrect username or password', { status: 400 });
-			}
-
-			const validPassword = await new Argon2id().verify(user.password, form.data.password);
-
-			if (!validPassword) {
-				console.log('no valid pwd');
-				return message(form, 'Incorrect username or password', { status: 400 });
-			}
-
-			const session = await lucia.createSession(user.id, []);
-			const sessionCookie = lucia.createSessionCookie(session.id);
-			cookies.set(sessionCookie.name, sessionCookie.value, {
-				path: '.',
-				...sessionCookie.attributes
+			const result = await auth.api.signInEmail({
+				body: {
+					email: form.data.email,
+					password: form.data.password
+				},
+				headers: request.headers
 			});
+
+			if (!result) {
+				return message(form, 'Incorrect username or password', { status: 400 });
+			}
 
 			return { form };
 		} catch (e) {
 			console.error(e);
-			return fail(500, {
-				message: 'An unknown error occurred',
-				form
-			});
+			return message(form, 'Incorrect username or password', { status: 400 });
 		}
 	}
 } satisfies Actions;

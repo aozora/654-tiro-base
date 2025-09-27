@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import type { PageServerLoad } from './$types';
-import type { Player, Tournament } from '@prisma/client';
+import type { Player, Tournament } from '$lib/server/db';
 import {
 	getActiveTournament,
 	getLeaderboard,
 	getPlayers,
 	getTournament
-} from '$lib/server/repository';
+} from '$lib/server/db/repository';
 import { error } from '@sveltejs/kit';
 import type { PlayerLeaderboard, PlayerLeaderboardWithNormalizedRanking } from '$types';
 import { sortPointsDesc } from '$lib/helpers';

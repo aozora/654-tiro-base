@@ -9,27 +9,25 @@
 // Dependencies
 //@import '../../node_modules/include-media/dist/include-media';
 
-@import 'variables';
-@import 'shared';
+@use 'variables' as *;
+@use 'shared' as *;
 //@import 'mixins/mixins';
 //@import './core/check-contrast';
-@import 'core/fonts';
-@import 'core/themes';
-@import 'core/base';
-@import 'core/layout';
-@import 'core/states';
-@import 'core/form';
-@import 'core/buttons';
-@import 'core/animations';
-@import 'core/error';
-
+@use 'core/fonts' as *;
+@use 'core/themes' as *;
+@use 'core/base' as *;
+@use 'core/layout' as *;
+@use 'core/states' as *;
+@use 'core/form' as *;
+@use 'core/buttons' as *;
+@use 'core/animations' as *;
+@use 'core/error' as *;
 
 // Application Components
-@import 'modules/error';
-@import 'modules/admin';
-@import 'modules/default';
-@import 'modules/auth';
-@import 'modules/modal';
-@import 'modules/table';
-@import 'modules/alerts';
-
+@use 'modules/error' as *;
+@use 'modules/admin' as *;
+@use 'modules/default' as *;
+@use 'modules/auth' as *;
+@use 'modules/modal' as *;
+@use 'modules/table' as *;
+@use 'modules/alerts' as *;

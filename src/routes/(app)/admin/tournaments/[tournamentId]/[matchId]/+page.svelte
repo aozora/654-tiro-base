@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Main from '$components/Main.svelte';
 	import { Datatable, TableHandler } from '@vincjo/datatables';
-	import type { Match, Player, Tournament } from '@prisma/client';
+	import type { Match, Player, Tournament } from '$lib/server/db';
 	import type { PageData } from './$types';
 	import { PencilSimple, Ranking, Trash } from 'phosphor-svelte';
 	import Modal from '$components/ui/Modal/Modal.svelte';
@@ -11,7 +11,7 @@
 	import Avatar from '$components/ui/Avatar/Avatar.svelte';
 	import AdminPageTitle from '$components/AdminPageTitle.svelte';
 	import Loader from '$components/Loader.svelte';
-	import type { PlayerExtended } from '$lib/server/repository';
+	import type { PlayerExtended } from '$lib/server/db/repository';
 	import Select from '$components/ui/Form/Select.svelte';
 	import NumberInput from '$components/ui/Form/NumberInput.svelte';
 

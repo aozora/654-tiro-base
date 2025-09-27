@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Main from '$components/Main.svelte';
 	import { Datatable, TableHandler } from '@vincjo/datatables';
-	import type { Player } from '@prisma/client';
+	import type { Player } from '$lib/server/db';
 	import type { PageData } from './$types';
 	import { CheckCircle, PencilSimple, Trash, UserSquare, XCircle } from 'phosphor-svelte';
 	import Modal from '$components/ui/Modal/Modal.svelte';

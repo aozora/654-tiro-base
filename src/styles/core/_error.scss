@@ -1,27 +1,29 @@
-.error-page{
-  @include container;
+@use '../shared' as *;
 
-  h1 {
-    svg {
-      display: block;
-      width: 80px;
-      height:95px;
-      margin: 0 auto;
-    }
-  }
+.error-page {
+	@include container;
 
-  .hero {
-    margin-bottom: 10rem;
-  }
+	h1 {
+		svg {
+			display: block;
+			width: 80px;
+			height: 95px;
+			margin: 0 auto;
+		}
+	}
 
-  nav {
-    display: flex;
-    justify-content: center;
-    align-content: center;
+	.hero {
+		margin-bottom: 10rem;
+	}
 
-    a {
-      //display: inline-block;
-      margin: 0 auto;
-    }
-  }
+	nav {
+		display: flex;
+		justify-content: center;
+		align-content: center;
+
+		a {
+			//display: inline-block;
+			margin: 0 auto;
+		}
+	}
 }

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { superForm } from 'sveltekit-superforms';
-	import { authSchema } from '$lib/schemas/auth-schema';
-	import { zod } from 'sveltekit-superforms/adapters';
+	// import { authSchema } from '$lib/schemas/auth-schema';
 	import type { ActionData } from '../../../../.svelte-kit/types/src/routes/(auth)/login/$types';
 	import Icon from '$components/Icon/Icon.svelte';
 	import { Icons } from '$types';
@@ -9,12 +8,12 @@
 
 	export let data: ActionData;
 
-	const { delayed, form, errors, enhance, constraints, message } = superForm(data?.form, {
-		validators: zod(authSchema),
-		//   field: (value) => string | string[] | null | undefined;
-		// },
-		validationMethod: 'submit-only' //  | 'oninput' | 'onblur' | 'submit-only' = 'auto',
-	});
+	const { delayed, form, errors, enhance, constraints, message } = superForm(data?.form);
+	// 	validators: ,
+	// 	//   field: (value) => string | string[] | null | undefined;
+	// 	// },
+	// 	validationMethod: 'submit-only' //  | 'oninput' | 'onblur' | 'submit-only' = 'auto',
+	// });
 	// console.log({$form}, {$message})
 </script>
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Tournament } from '@prisma/client';
+	import type { Tournament } from '$lib/server/db';
 	import type { PageData } from './$types';
 	import Main from '$components/Main.svelte';
 	import PageTitle from '$components/PageTitle.svelte';
@@ -13,8 +13,8 @@
 
 	const { tournaments }: PageProps = data;
 
-	const activeTournament = tournaments.find(t => t.isActive);
-	const otherTournaments = tournaments.filter(t => t.id !== activeTournament?.id);
+	const activeTournament = tournaments.find((t) => t.isActive);
+	const otherTournaments = tournaments.filter((t) => t.id !== activeTournament?.id);
 </script>
 
 <Main className="user-page">
@@ -32,10 +32,9 @@
 					</a>
 				</li>
 			</ul>
-		{:else }
+		{:else}
 			<p>Non c'è un torneo attivo</p>
 		{/if}
-
 
 		<h2>Tornei precedenti:</h2>
 		{#if otherTournaments && otherTournaments.length > 0}
@@ -56,54 +55,54 @@
 </Main>
 
 <style lang="scss">
-  .tournaments {
-    display: flex;
-    flex-direction: column;
+	.tournaments {
+		display: flex;
+		flex-direction: column;
 
-    ul,
-    li {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-    }
+		ul,
+		li {
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+		}
 
-    ul {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      width: 100%;
-    }
+		ul {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 1rem;
+			width: 100%;
+		}
 
-    li {
-      width: 100%;
-    }
+		li {
+			width: 100%;
+		}
 
-    a {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      width: 100%;
-      padding: 0.5rem;
-      border: 0;
-      border-radius: var(--global-radius);
-      background-color: var(--color-white);
-      text-decoration: none;
-      color: var(--color-dark);
+		a {
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+			width: 100%;
+			padding: 0.5rem;
+			border: 0;
+			border-radius: var(--global-radius);
+			background-color: var(--color-white);
+			text-decoration: none;
+			color: var(--color-dark);
 
-      span {
-        flex: 0;
-        margin-right: 1rem;
-      }
+			span {
+				flex: 0;
+				margin-right: 1rem;
+			}
 
-      strong {
-        flex: 1 1 auto;
-        text-align: left;
-      }
+			strong {
+				flex: 1 1 auto;
+				text-align: left;
+			}
 
-      :global(.arrow) {
-        margin-left: 0.5rem;
-      }
-    }
-  }
+			:global(.arrow) {
+				margin-left: 0.5rem;
+			}
+		}
+	}
 </style>

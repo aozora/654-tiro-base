@@ -1,8 +1,8 @@
 declare global {
 	namespace App {
 		interface Locals {
-			user: import("lucia").User | null;
-			session: import("lucia").Session | null;
+			user: import('better-auth/types').User | null;
+			session: import('better-auth/types').Session | null;
 		}
 		// interface Error {}
 		// interface Locals {}

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Main from '$components/Main.svelte';
 	import { Datatable, TableHandler } from '@vincjo/datatables';
-	import type { Match, Player, Tournament } from '@prisma/client';
+	import type { Match, Player, Tournament } from '$lib/server/db';
 	import type { PageData } from './$types';
 	import { DiceThree, PencilSimple, Trash } from 'phosphor-svelte';
 	import { superForm } from 'sveltekit-superforms/client';
