@@ -57,6 +57,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.1.9
         version: 19.1.9(@types/react@19.1.14)
+      dotenv:
+        specifier: ^17.2.2
+        version: 17.2.2
       drizzle-kit:
         specifier: ^0.31.5
         version: 0.31.5
@@ -1247,6 +1250,10 @@ packages:
   detect-libc@2.1.1:
     resolution: {integrity: sha512-ecqj/sy1jcK1uWrwpR67UhYrIFQ+5WlGxth34WquCbamhFA6hkkwiu37o6J5xCHdo1oixJRfVRw+ywV+Hq/0Aw==}
     engines: {node: '>=8'}
+
+  dotenv@17.2.2:
+    resolution: {integrity: sha512-Sf2LSQP+bOlhKWWyhFsn0UsfdK/kCWRv1iuA2gXAwt3dyNabr6QSj00I2V10pidqz69soatm9ZwZvpQMTIOd5Q==}
+    engines: {node: '>=12'}
 
   drizzle-kit@0.31.5:
     resolution: {integrity: sha512-+CHgPFzuoTQTt7cOYCV6MOw2w8vqEn/ap1yv4bpZOWL03u7rlVRQhUY0WYT3rHsgVTXwYQDZaSUJSQrMBUKuWg==}
@@ -3309,6 +3316,8 @@ snapshots:
   detect-libc@2.0.2: {}
 
   detect-libc@2.1.1: {}
+
+  dotenv@17.2.2: {}
 
   drizzle-kit@0.31.5:
     dependencies:
