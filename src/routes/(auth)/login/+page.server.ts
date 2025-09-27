@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { authSchema } from '$lib/schemas/auth-schema';
-import { lucia } from '$lib/server/auth';
+import { auth } from '$lib/server/better-auth';
 import prisma from '$lib/server/prisma';
 import { fail, redirect } from '@sveltejs/kit';
 import { Argon2id } from 'oslo/password';
@@ -47,11 +47,18 @@ export const actions = {
 				return message(form, 'Incorrect username or password', { status: 400 });
 			}
 
-			const session = await lucia.createSession(user.id, []);
-			const sessionCookie = lucia.createSessionCookie(session.id);
-			cookies.set(sessionCookie.name, sessionCookie.value, {
-				path: '.',
-				...sessionCookie.attributes
+			// const session = await lucia.createSession(user.id, []);
+			// const sessionCookie = lucia.createSessionCookie(session.id);
+			// cookies.set(sessionCookie.name, sessionCookie.value, {
+			// 	path: '.',
+			// 	...sessionCookie.attributes
+			// });
+			const result = await auth.api.signUpEmail({
+				body: {
+					name: user.email,
+					email: user.email,
+					password: user.password
+				}
 			});
 
 			return { form };

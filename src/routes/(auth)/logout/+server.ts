@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { lucia } from '$lib/server/auth';
+import { auth } from '$lib/server/better-auth';
 import { fail, redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
@@ -10,12 +10,9 @@ export const POST: RequestHandler = async (event) => {
 		return fail(401);
 	}
 
-	// @ts-ignore
-	await lucia.invalidateSession(event.locals.session.id);
-	const sessionCookie = lucia.createBlankSessionCookie();
-	event.cookies.set(sessionCookie.name, sessionCookie.value, {
-		path: '.',
-		...sessionCookie.attributes
+	await auth.api.signOut({
+		request: event.request,
+		headers: event.request.headers
 	});
 
 	redirect(302, '/login');

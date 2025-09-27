@@ -1,30 +1,28 @@
-import { lucia } from '$lib/server/auth';
+import { auth } from '$lib/server/better-auth';
+import { svelteKitHandler } from 'better-auth/svelte-kit';
+import { building } from '$app/environment';
 import type { Handle } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve }) => {
-	const sessionId = event.cookies.get(lucia.sessionCookieName);
-	if (!sessionId) {
+	// Get session from better-auth
+	const session = await auth.api.getSession({
+		headers: event.request.headers
+	});
+
+	// Populate event.locals for server-side access
+	if (session) {
+		event.locals.user = session.user;
+		event.locals.session = session.session;
+	} else {
 		event.locals.user = null;
 		event.locals.session = null;
-		return resolve(event);
 	}
 
-	const { session, user } = await lucia.validateSession(sessionId);
-	if (session && session.fresh) {
-		const sessionCookie = lucia.createSessionCookie(session.id);
-		event.cookies.set(sessionCookie.name, sessionCookie.value, {
-			path: '.',
-			...sessionCookie.attributes
-		});
-	}
-	if (!session) {
-		const sessionCookie = lucia.createBlankSessionCookie();
-		event.cookies.set(sessionCookie.name, sessionCookie.value, {
-			path: '.',
-			...sessionCookie.attributes
-		});
-	}
-	event.locals.user = user;
-	event.locals.session = session;
-	return resolve(event);
+	// Handle better-auth routes
+	return svelteKitHandler({
+		event,
+		resolve,
+		auth,
+		building
+	});
 };

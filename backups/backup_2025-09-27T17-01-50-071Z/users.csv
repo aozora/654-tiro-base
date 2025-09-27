@@ -1,0 +1,4 @@
+id,email,password,role
+0f94e20a-4f4d-4e55-bd34-9c10dc7f4ad6,marcello.kot@yandex.com,"$argon2id$v=19$m=19456,t=2,p=1$8mTyXwR+ICyolk3dCkPBig$nZJzkiSAATe/TVMpVTpQ1uPGhWr+KsCFP4on+QB+1Wg",admin
+c7798192-bb3a-4095-b73c-98fcb4dacb58,test@654.it,"$argon2id$v=19$m=19456,t=2,p=1$5bAI1co815MMVdrTrc1ADQ$GtrRuv5aAGV6aHH/1tAPPmHgtMgWRSLCmAs+a2WFRXg",user
+cd21bc28-2504-498c-9e1c-f93fcb960ff1,porco@dio.com,"$argon2id$v=19$m=19456,t=2,p=1$M5LUaxQNoA8Gz0eDLlRBjQ$RMh9+HEXzKfr9qO3or1C1YciGOuByYcYSRDB+NMAyC0",user

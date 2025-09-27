@@ -59,7 +59,7 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	const leaderboardData = await getLeaderboard(tournament.id);
 	const leaderboard: Array<PlayerLeaderboard> = leaderboardData
-		.map((x) => {
+		.map((x: any) => {
 			const player = players.find((p) => p.id === x.playerId);
 
 			return {

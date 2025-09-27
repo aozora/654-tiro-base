@@ -119,7 +119,7 @@ export async function getPlayerStats(tournamentId: string, playerId: string): Pr
 	const distinctMatches = await prisma.playersOnMatches.findMany({
 		where: {
 			matchId: {
-				in: distinctMatchesIds.map((m) => m.matchId)
+				in: distinctMatchesIds.map((m: any) => m.matchId)
 			},
 			match: {
 				tournamentId
@@ -130,13 +130,15 @@ export async function getPlayerStats(tournamentId: string, playerId: string): Pr
 	// console.log({ distinctMatchesIds });
 	// console.log({ distinctMatches });
 
-	distinctMatchesIds.forEach((distinctMatch) => {
+	distinctMatchesIds.forEach((distinctMatch: any) => {
 		const max = Math.max(
-			...distinctMatches.filter((x) => x.matchId === distinctMatch.matchId).map((x) => x.points)
+			...distinctMatches
+				.filter((x: any) => x.matchId === distinctMatch.matchId)
+				.map((x: any) => x.points)
 		);
 		const winner = distinctMatches
-			.filter((x) => x.matchId === distinctMatch.matchId)
-			.find((x) => x.points === max);
+			.filter((x: any) => x.matchId === distinctMatch.matchId)
+			.find((x: any) => x.points === max);
 
 		// console.log({max, winner, playerId});
 
@@ -145,7 +147,7 @@ export async function getPlayerStats(tournamentId: string, playerId: string): Pr
 		}
 	});
 
-	const matchesDatesAndPoints: Array<PlayerMatches> = tournamentMatches.map((m) => {
+	const matchesDatesAndPoints: Array<PlayerMatches> = tournamentMatches.map((m: any) => {
 		return {
 			playerId: m.playerId,
 			matchId: m.match.id,
@@ -338,7 +340,7 @@ export async function getMatchPlayers(matchId: string): Promise<Array<PlayerExte
 		// }
 	});
 
-	return data.map((x) => {
+	return data.map((x: any) => {
 		return {
 			...x.player,
 			points: x.points
@@ -382,7 +384,7 @@ export async function getLeaderboard(tournamentId: string) {
 		by: ['playerId'],
 		where: {
 			matchId: {
-				in: matches.map((m) => m.id)
+				in: matches.map((m: any) => m.id)
 			}
 		},
 		_sum: {
