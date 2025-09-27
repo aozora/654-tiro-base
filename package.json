@@ -46,10 +46,12 @@
     "zod": "^3.23.8"
   },
   "dependencies": {
+    "@internationalized/date": "^3.9.0",
     "@lucia-auth/adapter-prisma": "^4.0.1",
     "@prisma/client": "^5.20.0",
     "bits-ui": "^0.21.13",
     "chart.js": "^4.4.4",
+    "kartochki-marcellop.turso.io": "link:\u001b[200~libsql:/kartochki-marcellop.turso.io",
     "layercake": "^8.4.0-beta.1",
     "lucia": "^3.2.0",
     "oslo": "^1.2.1",
