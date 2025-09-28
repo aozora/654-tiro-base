@@ -31,8 +31,10 @@
 }
 
 @theme inline {
-	--font-serif: "Inter var", Helvetica, Roboto, Arial, sans-serif;
-	--font-sans: "Bodoni Moda", Helvetica, Roboto, Arial, sans-serif;
+	--font-serif: "Bodoni Moda", Helvetica, Roboto, Arial, sans-serif;
+	--font-sans: "Inter var", Helvetica, Roboto, Arial, sans-serif;
+	--font-brutal: "annonce", Roboto, Helvetica, Arial, sans-serif;
+	--color-brand: #e6795a;
 
 	--radius-sm: calc(var(--radius) - 4px);
 	--radius-md: calc(var(--radius) - 2px);
@@ -145,6 +147,7 @@
 	* {
 		@apply border-border outline-ring/50;
 	}
+
 	body {
 		@apply bg-background text-foreground;
 	}
