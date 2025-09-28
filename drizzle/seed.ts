@@ -19,6 +19,7 @@ async function seed() {
 		email,
 		password,
 		name: 'Marcello',
+		// @ts-expect-error
 		role: 'admin',
 	});
 
@@ -32,6 +33,7 @@ async function seed() {
 		email: 'porco@dio.com',
 		password: '654tirobase',
 		name: 'Marcello',
+		// @ts-expect-error
 		role: 'user',
 	});
 
