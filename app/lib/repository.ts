@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, inArray, sum } from 'drizzle-orm';
+import { and, asc, desc, eq, inArray, sql, sum } from 'drizzle-orm';
 import {
 	type Match,
 	matches,
@@ -432,7 +432,8 @@ export async function getLeaderboard(tournamentId: string) {
 	return db
 		.select({
 			playerId: playersOnMatches.playerId,
-			totalPoints: sum(playersOnMatches.points),
+			// totalPoints: sum(playersOnMatches.points),
+			totalPoints: sql<number>`sum(${playersOnMatches.points})`,
 		})
 		.from(playersOnMatches)
 		.where(inArray(playersOnMatches.matchId, matchesIds))

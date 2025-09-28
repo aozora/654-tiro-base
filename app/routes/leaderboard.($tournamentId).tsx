@@ -1,5 +1,9 @@
 import { data, redirect } from 'react-router';
+import Header from '@/components/Header';
 import LeaderboardComponent from '@/components/leaderboard/Leaderboard';
+import Main from '@/components/Main';
+import PageTitle from '@/components/PageTitle';
+import TopThree from '@/components/TopThree';
 import { isUserAuthenticated } from '@/lib/auth';
 import type { Player, Tournament } from '@/lib/database/schema';
 import { sortPointsDesc } from '@/lib/helpers';
@@ -64,8 +68,6 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 	}
 
 	const leaderboardData = await getLeaderboard(tournament.id);
-	console.log(`🍄🍄🍄 DEBUG leaderboardData: `, leaderboardData);
-	console.log(`🍄🍄🍄 DEBUG tournament.id: `, tournament.id);
 
 	const leaderboard: Array<PlayerLeaderboard> = leaderboardData
 		.map((x: { playerId: string; totalPoints: number }) => {
@@ -91,8 +93,19 @@ export default function LeaderboardPage({ loaderData }: Route.ComponentProps) {
 	const { tournament, leaderboard } = loaderData;
 
 	return (
-		<div>
-			<LeaderboardComponent tournament={tournament} leaderboard={leaderboard} />
-		</div>
+		<>
+			<Header tournament={tournament} />
+
+			<Main>
+				<PageTitle title="Classifica" />
+
+				<TopThree leaderboard={leaderboard} />
+
+				<LeaderboardComponent
+					tournament={tournament}
+					leaderboard={leaderboard}
+				/>
+			</Main>
+		</>
 	);
 }

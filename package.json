@@ -8,7 +8,11 @@
 		"start": "react-router-serve ./build/server/index.js",
 		"typecheck": "react-router typegen && tsc",
 		"seed": "tsx drizzle/seed.ts",
-		"import-csv": "tsx drizzle/import-csv.ts"
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate",
+		"db:push": "drizzle-kit push",
+		"db:studio": "drizzle-kit studio",
+		"auth:generate": "better-auth generate"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^5.2.2",
@@ -22,6 +26,7 @@
 		"@radix-ui/react-select": "^2.2.6",
 		"@radix-ui/react-slot": "^1.2.3",
 		"@radix-ui/react-switch": "^1.2.6",
+		"@react-hookz/web": "^25.1.1",
 		"@react-router/fs-routes": "^7.9.3",
 		"@react-router/node": "^7.9.2",
 		"@react-router/serve": "^7.9.2",
