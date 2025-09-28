@@ -1,4 +1,8 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import type React from 'react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import {
 	Card,
@@ -7,34 +11,48 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { authClient } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
+
+const formSchema = z.object({
+	email: z.email(),
+	password: z.string().min(6),
+});
 
 export function LoginForm({
 	className,
 	...props
 }: React.ComponentProps<'div'>) {
-	// const signIn = async () => {
-	// 	await authClient.signIn.email(
-	// 		{
-	// 			email,
-	// 			password,
-	// 		},
-	// 		{
-	// 			onRequest: (ctx) => {
-	// 				// show loading state
-	// 			},
-	// 			onSuccess: (ctx) => {
-	// 				// redirect to home
-	// 			},
-	// 			onError: (ctx) => {
-	// 				alert(ctx.error);
-	// 			},
-	// 		},
-	// 	);
-	// };
+	const [error, setError] = useState(false);
+	const form = useForm<z.infer<typeof formSchema>>({
+		resolver: zodResolver(formSchema),
+		defaultValues: {
+			email: '',
+			password: '',
+		},
+	});
+
+	async function onSubmit(values: z.infer<typeof formSchema>) {
+		console.log(values);
+
+		const { data, error } = await authClient.signIn.email({
+			email: values.email,
+			password: values.password,
+		});
+
+		if (error) {
+			setError(true);
+		}
+	}
 
 	return (
 		<div
@@ -51,48 +69,46 @@ export function LoginForm({
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<form>
-						<div className="flex flex-col gap-6">
-							<div className="grid gap-3">
-								<Label htmlFor="email" className="font-sans">
-									Email
-								</Label>
-								{/** biome-ignore lint/correctness/useUniqueElementIds: <explanation> */}
-								<Input
-									id="email"
-									type="email"
-									placeholder="m@example.com"
-									required
-									className="font-sans"
+					<Form {...form}>
+						<form onSubmit={form.handleSubmit(onSubmit)}>
+							<div className="flex flex-col gap-6">
+								<FormField
+									control={form.control}
+									name="email"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Email:</FormLabel>
+											<FormControl>
+												<Input placeholder="la tua email" {...field} />
+											</FormControl>
+										</FormItem>
+									)}
 								/>
-							</div>
-							<div className="grid gap-3">
-								<div className="flex items-center">
-									<Label htmlFor="password" className="font-sans">
-										Password
-									</Label>
-									{/*<a*/}
-									{/*	href="#"*/}
-									{/*	className="ml-auto inline-block text-sm underline-offset-4 hover:underline"*/}
-									{/*>*/}
-									{/*	Forgot your password?*/}
-									{/*</a>*/}
+								<FormField
+									control={form.control}
+									name="password"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Password:</FormLabel>
+											<FormControl>
+												<Input placeholder="la tua password" {...field} />
+											</FormControl>
+										</FormItem>
+									)}
+								/>
+
+								{error && (
+									<FormMessage>Email o password non validi</FormMessage>
+								)}
+
+								<div className="flex flex-col gap-3">
+									<Button type="submit" className="w-full">
+										Entra
+									</Button>
 								</div>
-								{/** biome-ignore lint/correctness/useUniqueElementIds: <explanation> */}
-								<Input
-									id="password"
-									type="password"
-									required
-									className="font-sans"
-								/>
 							</div>
-							<div className="flex flex-col gap-3">
-								<Button type="submit" className="w-full">
-									Entra
-								</Button>
-							</div>
-						</div>
-					</form>
+						</form>
+					</Form>
 				</CardContent>
 			</Card>
 		</div>

@@ -1,17 +1,15 @@
 import { redirect } from 'react-router';
-import { auth } from '@/lib/auth';
+import { isUserAuthenticated } from '@/lib/auth';
 import type { Route } from './+types/_index';
 
 export async function loader({ request }: Route.LoaderArgs) {
-	const session = await auth.api.getSession({
-		headers: request.headers,
-	});
+	const user = await isUserAuthenticated(request);
 
-	if (!session?.user) {
+	if (!user) {
 		return redirect('/signin');
 	}
 
-	return { user: session.user };
+	return redirect('/leaderboard');
 }
 
 export default function Home() {

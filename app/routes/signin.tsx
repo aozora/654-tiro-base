@@ -1,5 +1,33 @@
+import { redirect } from 'react-router';
 import { LoginForm } from '@/components/auth/LoginForm';
+import { auth } from '@/lib/auth';
 import { cn } from '@/lib/utils';
+import type { Route } from './+types/signin';
+
+export async function loader({ request }: Route.LoaderArgs) {
+	const session = await auth.api.getSession({
+		headers: request.headers,
+	});
+
+	if (session?.user) {
+		console.log(`loader: redirect to leaderboard`);
+		return redirect('/leaderboard');
+	}
+
+	return {};
+}
+
+export async function action({ request }: Route.ActionArgs) {
+	const formData = await request.formData();
+	// let title = formData.get("title");
+
+	if (!formData) {
+		console.error('error');
+	}
+
+	console.log(`action: redirect to leaderboard`);
+	return redirect('/leaderboard');
+}
 
 export default function SignIn() {
 	return (

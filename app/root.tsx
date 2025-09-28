@@ -81,13 +81,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
 												height="1"
 												x="0"
 												y="0"
-												color-interpolation-filters="sRGB"
+												colorInterpolationFilters="sRGB"
 												filterUnits="objectBoundingBox"
 											>
-												<feFlood
-													flood-opacity="0"
-													result="BackgroundImageFix"
-												/>
+												<feFlood floodOpacity="0" result="BackgroundImageFix" />
 												<feBlend
 													in="SourceGraphic"
 													in2="BackgroundImageFix"
@@ -160,13 +157,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
 												height="1"
 												x="0"
 												y="0"
-												color-interpolation-filters="sRGB"
+												colorInterpolationFilters="sRGB"
 												filterUnits="objectBoundingBox"
 											>
-												<feFlood
-													flood-opacity="0"
-													result="BackgroundImageFix"
-												/>
+												<feFlood floodOpacity="0" result="BackgroundImageFix" />
 												<feBlend
 													in="SourceGraphic"
 													in2="BackgroundImageFix"
@@ -213,13 +207,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
 												height="1"
 												x="0"
 												y="0"
-												color-interpolation-filters="sRGB"
+												colorInterpolationFilters="sRGB"
 												filterUnits="objectBoundingBox"
 											>
-												<feFlood
-													flood-opacity="0"
-													result="BackgroundImageFix"
-												/>
+												<feFlood floodOpacity="0" result="BackgroundImageFix" />
 												<feBlend
 													in="SourceGraphic"
 													in2="BackgroundImageFix"
@@ -272,13 +263,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
 												height="1"
 												x="0"
 												y="0"
-												color-interpolation-filters="sRGB"
+												colorInterpolationFilters="sRGB"
 												filterUnits="objectBoundingBox"
 											>
-												<feFlood
-													flood-opacity="0"
-													result="BackgroundImageFix"
-												/>
+												<feFlood floodOpacity="0" result="BackgroundImageFix" />
 												<feBlend
 													in="SourceGraphic"
 													in2="BackgroundImageFix"
@@ -326,13 +314,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
 												height="1"
 												x="0"
 												y="0"
-												color-interpolation-filters="sRGB"
+												colorInterpolationFilters="sRGB"
 												filterUnits="objectBoundingBox"
 											>
-												<feFlood
-													flood-opacity="0"
-													result="BackgroundImageFix"
-												/>
+												<feFlood floodOpacity="0" result="BackgroundImageFix" />
 												<feBlend
 													in="SourceGraphic"
 													in2="BackgroundImageFix"
@@ -426,10 +411,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
 									height="31"
 									x="6"
 									y="23"
-									color-interpolation-filters="sRGB"
+									colorInterpolationFilters="sRGB"
 									filterUnits="userSpaceOnUse"
 								>
-									<feFlood flood-opacity="0" result="BackgroundImageFix" />
+									<feFlood floodOpacity="0" result="BackgroundImageFix" />
 									<feBlend
 										in="SourceGraphic"
 										in2="BackgroundImageFix"
@@ -463,10 +448,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
 									height="20"
 									x="18"
 									y="-3"
-									color-interpolation-filters="sRGB"
+									colorInterpolationFilters="sRGB"
 									filterUnits="userSpaceOnUse"
 								>
-									<feFlood flood-opacity="0" result="BackgroundImageFix" />
+									<feFlood floodOpacity="0" result="BackgroundImageFix" />
 									<feBlend
 										in="SourceGraphic"
 										in2="BackgroundImageFix"
@@ -495,10 +480,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
 									height="6"
 									x="84"
 									y="15"
-									color-interpolation-filters="sRGB"
+									colorInterpolationFilters="sRGB"
 									filterUnits="userSpaceOnUse"
 								>
-									<feFlood flood-opacity="0" result="BackgroundImageFix" />
+									<feFlood floodOpacity="0" result="BackgroundImageFix" />
 									<feBlend
 										in="SourceGraphic"
 										in2="BackgroundImageFix"
@@ -532,10 +517,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
 									height="8"
 									x="84"
 									y="7"
-									color-interpolation-filters="sRGB"
+									colorInterpolationFilters="sRGB"
 									filterUnits="userSpaceOnUse"
 								>
-									<feFlood flood-opacity="0" result="BackgroundImageFix" />
+									<feFlood floodOpacity="0" result="BackgroundImageFix" />
 									<feBlend
 										in="SourceGraphic"
 										in2="BackgroundImageFix"
@@ -564,10 +549,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
 									height="14"
 									x="53"
 									y="3"
-									color-interpolation-filters="sRGB"
+									colorInterpolationFilters="sRGB"
 									filterUnits="userSpaceOnUse"
 								>
-									<feFlood flood-opacity="0" result="BackgroundImageFix" />
+									<feFlood floodOpacity="0" result="BackgroundImageFix" />
 									<feBlend
 										in="SourceGraphic"
 										in2="BackgroundImageFix"

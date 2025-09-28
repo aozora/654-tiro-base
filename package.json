@@ -7,7 +7,8 @@
 		"dev": "react-router dev",
 		"start": "react-router-serve ./build/server/index.js",
 		"typecheck": "react-router typegen && tsc",
-		"seed": "tsx drizzle/seed.ts"
+		"seed": "tsx drizzle/seed.ts",
+		"import-csv": "tsx drizzle/import-csv.ts"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^5.2.2",
@@ -28,6 +29,7 @@
 		"better-auth": "^1.3.18",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
+		"csv-parse": "^6.1.0",
 		"date-fns": "^4.1.0",
 		"drizzle-orm": "^0.44.5",
 		"isbot": "^5.1.31",

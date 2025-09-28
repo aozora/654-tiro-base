@@ -25,3 +25,11 @@ export const auth = betterAuth({
 	trustedOrigins: ['http://localhost:5173'],
 	debug: process.env.NODE_ENV === 'development',
 });
+
+export const isUserAuthenticated = async (request: Request) => {
+	const session = await auth.api.getSession({
+		headers: request.headers,
+	});
+
+	return session?.user;
+};
