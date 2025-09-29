@@ -2,7 +2,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type React from 'react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { useNavigate } from 'react-router';
+import type { z } from 'zod';
+import { formSchema } from '@/components/auth/schema';
 import { Button } from '@/components/ui/button';
 import {
 	Card,
@@ -23,16 +25,13 @@ import { Input } from '@/components/ui/input';
 import { authClient } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
 
-const formSchema = z.object({
-	email: z.email(),
-	password: z.string().min(6),
-});
-
 export function LoginForm({
 	className,
 	...props
 }: React.ComponentProps<'div'>) {
-	const [error, setError] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+	const [isLoading, setIsLoading] = useState(false);
+	const navigate = useNavigate();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -41,16 +40,34 @@ export function LoginForm({
 		},
 	});
 
+	// Clear errors when user starts typing
+	const clearError = () => {
+		if (error) setError(null);
+	};
+
 	async function onSubmit(values: z.infer<typeof formSchema>) {
-		console.log(values);
+		setError(null);
+		setIsLoading(true);
 
-		const { data, error } = await authClient.signIn.email({
-			email: values.email,
-			password: values.password,
-		});
+		try {
+			const { data, error } = await authClient.signIn.email({
+				email: values.email,
+				password: values.password,
+			});
 
-		if (error) {
-			setError(true);
+			if (error) {
+				setError(error.message || 'Invalid email or password');
+				return;
+			}
+
+			if (data) {
+				// Successfully signed in - redirect to leaderboard
+				navigate('/leaderboard');
+			}
+		} catch (_err) {
+			setError('An unexpected error occurred. Please try again.');
+		} finally {
+			setIsLoading(false);
 		}
 	}
 
@@ -79,7 +96,14 @@ export function LoginForm({
 										<FormItem>
 											<FormLabel>Email:</FormLabel>
 											<FormControl>
-												<Input placeholder="la tua email" {...field} />
+												<Input
+													placeholder="la tua email"
+													{...field}
+													onChange={(e) => {
+														field.onChange(e);
+														clearError();
+													}}
+												/>
 											</FormControl>
 										</FormItem>
 									)}
@@ -91,19 +115,25 @@ export function LoginForm({
 										<FormItem>
 											<FormLabel>Password:</FormLabel>
 											<FormControl>
-												<Input placeholder="la tua password" {...field} />
+												<Input
+													type="password"
+													placeholder="la tua password"
+													{...field}
+													onChange={(e) => {
+														field.onChange(e);
+														clearError();
+													}}
+												/>
 											</FormControl>
 										</FormItem>
 									)}
 								/>
 
-								{error && (
-									<FormMessage>Email o password non validi</FormMessage>
-								)}
+								{error && <FormMessage>{error}</FormMessage>}
 
 								<div className="flex flex-col gap-3">
-									<Button type="submit" className="w-full">
-										Entra
+									<Button type="submit" className="w-full" disabled={isLoading}>
+										{isLoading ? 'Accesso in corso...' : 'Entra'}
 									</Button>
 								</div>
 							</div>

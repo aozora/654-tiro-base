@@ -25,6 +25,12 @@ export const auth = betterAuth({
 	//if all of them are just using plural form, you can just pass the option below
 	usePlural: false,
 	trustedOrigins: ['http://localhost:5173', 'https://654-tiro-base.vercel.app'],
+	session: {
+		cookieCache: {
+			enabled: true,
+			maxAge: 5 * 60, // Cache duration in seconds
+		},
+	},
 	debug: process.env.NODE_ENV === 'development',
 });
 

@@ -9,3 +9,11 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 	return redirect(`/signin`);
 }
+
+export async function action({ request }: Route.ActionArgs) {
+	await auth.api.signOut({
+		headers: request.headers,
+	});
+
+	return redirect(`/signin`);
+}

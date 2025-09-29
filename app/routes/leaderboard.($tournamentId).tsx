@@ -51,6 +51,7 @@ function normalizeLeaderboardRanking(
 export async function loader({ request, params }: Route.LoaderArgs) {
 	const user = await isUserAuthenticated(request);
 	if (!user) {
+		console.log(`🍄 loader: user not authenticated, redirect to signin...`);
 		return redirect('/signin');
 	}
 

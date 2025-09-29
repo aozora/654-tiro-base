@@ -10,23 +10,10 @@ export async function loader({ request }: Route.LoaderArgs) {
 	});
 
 	if (session?.user) {
-		console.log(`loader: redirect to leaderboard`);
 		return redirect('/leaderboard');
 	}
 
 	return {};
-}
-
-export async function action({ request }: Route.ActionArgs) {
-	const formData = await request.formData();
-	// let title = formData.get("title");
-
-	if (!formData) {
-		console.error('error');
-	}
-
-	console.log(`action: redirect to leaderboard`);
-	return redirect('/leaderboard');
 }
 
 export default function SignIn() {

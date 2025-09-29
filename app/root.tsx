@@ -1,29 +1,28 @@
 import {
+	data,
 	isRouteErrorResponse,
 	Links,
 	Meta,
 	Outlet,
 	Scripts,
 	ScrollRestoration,
+	useLoaderData,
 } from 'react-router';
 
+import { HoneypotProvider } from 'remix-utils/honeypot/react';
 import type { Route } from './+types/root';
 import './styles/tailwind.css';
 import type React from 'react';
-// import './styles/app.scss';
+import { honeypot } from '@/lib/honeypot.server';
 
-// export const links: Route.LinksFunction = () => [
-// { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-// {
-// 	rel: 'preconnect',
-// 	href: 'https://fonts.gstatic.com',
-// 	crossOrigin: 'anonymous',
-// },
-// {
-// 	rel: 'stylesheet',
-// 	href: 'https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap',
-// },
-// ];
+export const links: Route.LinksFunction = () => [
+	{
+		rel: 'icon',
+		href: '/favicon.ico',
+		sizes: '32x32',
+	},
+	{ rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+];
 
 export function meta() {
 	return [
@@ -32,7 +31,15 @@ export function meta() {
 	];
 }
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export async function loader({ request }: Route.LoaderArgs) {
+	const honeyProps = await honeypot.getInputProps();
+
+	return data({
+		honeyProps,
+	});
+}
+
+export async function Layout({ children }: { children: React.ReactNode }) {
 	return (
 		<html lang="en" className="dark">
 			<head>
@@ -588,7 +595,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-	return <Outlet />;
+	const data = useLoaderData<typeof loader>();
+
+	return (
+		// <HoneypotProvider {...data.honeyProps}>
+		<Outlet />
+		// </HoneypotProvider>
+	);
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
