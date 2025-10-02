@@ -1,20 +1,12 @@
-import {
-	FormProvider,
-	getFormProps,
-	getInputProps,
-	useForm,
-} from '@conform-to/react';
-import { parseWithZod } from '@conform-to/zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Shell } from 'lucide-react';
-import {
-	type ActionFunctionArgs,
-	Form,
-	redirect,
-	useActionData,
-	useNavigation,
-} from 'react-router';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { redirect } from 'react-router';
+import { toast } from 'sonner';
+import type { z } from 'zod';
 import { formSchema } from '@/components/auth/schema';
-import ErrorList from '@/components/form/ErrorList';
+import { PasswordInput } from '@/components/form/PasswordInput';
 import { Button } from '@/components/ui/button';
 import {
 	Card,
@@ -23,10 +15,21 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { auth } from '@/lib/auth';
+import { authClient } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
 import type { Route } from './+types/signin';
+
+type FormValues = z.infer<typeof formSchema>;
 
 export async function loader({ request }: Route.LoaderArgs) {
 	const session = await auth.api.getSession({
@@ -40,63 +43,50 @@ export async function loader({ request }: Route.LoaderArgs) {
 	return {};
 }
 
-export async function action({ request }: ActionFunctionArgs) {
-	const formData = await request.formData();
-
-	// Construct an object using `Object.fromEntries`
-	const submission = parseWithZod(formData, { schema: formSchema });
-	// Then parse it with zod
-	if (submission.status !== 'success') {
-		return submission.reply();
-	}
-
-	console.log('All ok!!!');
-
-	return redirect('/leaderboard');
-}
-
-// export async function clientAction({ request }: Route.ClientActionArgs) {
-//   const formData = await request.clone().formData();
-//   const submission = parseWithZod(formData, { schema: formSchema });
-
-//   if (submission.status !== "success") {
-//     return toast.error("Invalid form data.");
-//   }
-
-//   const { email, password } = submission.value;
-//   const { error } = await authClient.signIn.email({
-//     email,
-//     password,
-//   });
-
-//   if (error) {
-//     return toast.error(error.message || "Sign in failed.");
-//   }
-
-//   return redirect("/leaderboard");
-// }
-
 export default function SignIn() {
-	const lastResult = useActionData<typeof action>();
+	const [isSignInPending, setIsSignInPending] = useState(false);
+	const [serverError, setServerError] = useState<string | null>(null);
 
-	const [form, fields] = useForm({
-		// constraint: getZodConstraint(formSchema),
-		id: 'signin',
-		lastResult,
-		shouldValidate: 'onBlur',
-		shouldRevalidate: 'onInput',
-		onValidate({ formData }) {
-			return parseWithZod(formData, { schema: formSchema });
-		},
-		defaultValue: {
+	const form = useForm<FormValues>({
+		resolver: zodResolver(formSchema),
+		mode: 'onBlur',
+		reValidateMode: 'onChange',
+		defaultValues: {
 			email: '',
 			password: '',
 		},
 	});
 
-	const navigation = useNavigation();
-	const isPending = () => navigation.state !== 'idle';
-	const isSignInPending = isPending();
+	const onSubmit = async (data: FormValues) => {
+		console.log(`??🍉🍉 onsubmit`);
+		setIsSignInPending(true);
+		setServerError(null);
+
+		try {
+			const { error } = await authClient.signIn.email({
+				email: data.email,
+				password: data.password,
+			});
+
+			if (error) {
+				const errorMessage = error.message || 'Accesso fallito.';
+				console.log(`🍉🍉🍉 onsubmit`, errorMessage);
+				setServerError(errorMessage);
+				toast.error(errorMessage);
+				setIsSignInPending(false);
+				return;
+			}
+
+			// Use window.location for full page navigation after auth
+			window.location.href = '/leaderboard';
+		} catch (_err) {
+			const errorMessage = 'Si è verificato un errore. Riprova.';
+			console.log(`🍉🍉🍉 onsubmit`, errorMessage);
+			setServerError(errorMessage);
+			toast.error(errorMessage);
+			setIsSignInPending(false);
+		}
+	};
 
 	return (
 		<div
@@ -105,7 +95,6 @@ export default function SignIn() {
 				'bg-[url("/img/frame6.webp")] bg-cover bg-position-[60%_100%] bg-no-repeat',
 			)}
 		>
-			{/*<LoginForm className="mx-auto max-w-7xl" />*/}
 			<div
 				className={cn(
 					'flex min-w-80 flex-col gap-6 lg:min-w-100',
@@ -124,34 +113,57 @@ export default function SignIn() {
 						</CardDescription>
 					</CardHeader>
 					<CardContent>
-						<FormProvider context={form.context}>
-							<Form {...getFormProps(form)} method="post">
+						<Form {...form}>
+							<form onSubmit={form.handleSubmit(onSubmit)}>
 								<div className="flex flex-col gap-2">
-									<label htmlFor={fields.email.id}>Email:</label>
-									<Input
-										placeholder="la tua email"
-										{...getInputProps(fields.email, { type: 'email' })}
-									/>
-									{fields.email.errors?.length ? (
-										<ErrorList
-											id={fields.email.errorId}
-											errors={fields.email.errors}
-										/>
-									) : null}
+									{serverError && (
+										<div className="rounded-md border border-red-500/20 bg-red-500/10 p-3 text-red-500 text-sm">
+											{serverError}
+										</div>
+									)}
 
-									<label htmlFor={fields.password.id}>Password:</label>
-									<Input
-										placeholder="la tua password"
-										{...getInputProps(fields.password, {
-											type: 'password',
-										})}
+									<FormField
+										control={form.control}
+										name="email"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Email:</FormLabel>
+												<FormControl>
+													<Input
+														type="email"
+														placeholder="la tua email"
+														{...field}
+													/>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
 									/>
-									{fields.password.errors?.length ? (
-										<ErrorList
-											id={fields.password.errorId}
-											errors={fields.password.errors}
-										/>
-									) : null}
+
+									<FormField
+										control={form.control}
+										name="password"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Password:</FormLabel>
+												<FormControl>
+													{/*<Input*/}
+													{/*	type="password"*/}
+													{/*	placeholder="la tua password"*/}
+													{/*	{...field}*/}
+													{/*/>*/}
+													<PasswordInput
+														id="password"
+														{...field}
+														// onChange={(e) => setPassword(e.target.value)}
+														autoComplete="password"
+														placeholder="Password"
+													/>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
 
 									<div className="flex flex-col gap-3">
 										<Button
@@ -166,8 +178,8 @@ export default function SignIn() {
 										</Button>
 									</div>
 								</div>
-							</Form>
-						</FormProvider>
+							</form>
+						</Form>
 					</CardContent>
 				</Card>
 			</div>
