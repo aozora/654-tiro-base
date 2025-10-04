@@ -1,12 +1,10 @@
-import { zodResolver } from '@hookform/resolvers/zod';
+import { arktypeResolver } from '@hookform/resolvers/arktype';
 import { Shell } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { redirect } from 'react-router';
 import { toast } from 'sonner';
-import type { z } from 'zod';
-import { formSchema } from '@/components/auth/schema';
-import { PasswordInput } from '@/components/form/PasswordInput';
+import { type LoginData, LoginSchema } from '@/components/auth/schema';
 import { Button } from '@/components/ui/button';
 import {
 	Card,
@@ -29,8 +27,6 @@ import { authClient } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
 import type { Route } from './+types/signin';
 
-type FormValues = z.infer<typeof formSchema>;
-
 export async function loader({ request }: Route.LoaderArgs) {
 	const session = await auth.api.getSession({
 		headers: request.headers,
@@ -46,18 +42,11 @@ export async function loader({ request }: Route.LoaderArgs) {
 export default function SignIn() {
 	const [isSignInPending, setIsSignInPending] = useState(false);
 	const [serverError, setServerError] = useState<string | null>(null);
-
-	const form = useForm<FormValues>({
-		resolver: zodResolver(formSchema),
-		mode: 'onBlur',
-		reValidateMode: 'onChange',
-		defaultValues: {
-			email: '',
-			password: '',
-		},
+	const form = useForm<LoginData>({
+		resolver: arktypeResolver(LoginSchema),
 	});
 
-	const onSubmit = async (data: FormValues) => {
+	const onSubmit = async (data: LoginData) => {
 		console.log(`??🍉🍉 onsubmit`);
 		setIsSignInPending(true);
 		setServerError(null);
@@ -113,14 +102,28 @@ export default function SignIn() {
 						</CardDescription>
 					</CardHeader>
 					<CardContent>
+						{/*<form onSubmit={handleSubmit(onSubmit)}>*/}
+						{/*	<div className="flex flex-col">*/}
+						{/*		<label>Email</label>*/}
+						{/*		<input {...register('email')} />*/}
+						{/*		{errors.email && <p>{errors.email.message}</p>}*/}
+						{/*	</div>*/}
+						{/*	<div style={{ marginBottom: 10 }} className="flex flex-col">*/}
+						{/*		<label>Password</label>*/}
+						{/*		<input {...register('password')} />*/}
+						{/*		{errors.password && <p>{errors.password.message}</p>}*/}
+						{/*	</div>*/}
+
+						{/*	<input type="submit" />*/}
+						{/*</form>*/}
 						<Form {...form}>
 							<form onSubmit={form.handleSubmit(onSubmit)}>
 								<div className="flex flex-col gap-2">
-									{serverError && (
-										<div className="rounded-md border border-red-500/20 bg-red-500/10 p-3 text-red-500 text-sm">
-											{serverError}
-										</div>
-									)}
+									{/*{serverError && (*/}
+									{/*	<div className="rounded-md border border-red-500/20 bg-red-500/10 p-3 text-red-500 text-sm">*/}
+									{/*		{serverError}*/}
+									{/*	</div>*/}
+									{/*)}*/}
 
 									<FormField
 										control={form.control}
@@ -147,17 +150,10 @@ export default function SignIn() {
 											<FormItem>
 												<FormLabel>Password:</FormLabel>
 												<FormControl>
-													{/*<Input*/}
-													{/*	type="password"*/}
-													{/*	placeholder="la tua password"*/}
-													{/*	{...field}*/}
-													{/*/>*/}
-													<PasswordInput
-														id="password"
+													<Input
+														type="password"
+														placeholder="la tua password"
 														{...field}
-														// onChange={(e) => setPassword(e.target.value)}
-														autoComplete="password"
-														placeholder="Password"
 													/>
 												</FormControl>
 												<FormMessage />
