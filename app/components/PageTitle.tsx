@@ -1,4 +1,5 @@
 import { ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router';
 import { Button } from '@/components/ui/button';
 
 type PageTitleProps = {
@@ -10,8 +11,9 @@ export default function PageTitle({
 	title,
 	showBackButton = false,
 }: PageTitleProps) {
+	const navigate = useNavigate();
 	const goBack = () => {
-		window.history.back();
+		navigate(-1);
 	};
 
 	return (

@@ -24,7 +24,7 @@ export default function MatchesPage({ loaderData }: Route.ComponentProps) {
 	const { tournament, matches } = loaderData;
 
 	return (
-		<div className={cn('relative')}>
+		<div className={cn('relative min-h-screen')}>
 			<img
 				src="/img/risiko-challenge-tabellone.webp"
 				className="-z-1 absolute top-0 left-0 h-full w-full object-cover blur-xs"
@@ -38,6 +38,10 @@ export default function MatchesPage({ loaderData }: Route.ComponentProps) {
 					<PageTitle title={`Cronologia partite`} showBackButton={true} />
 
 					<div className="matches-wrapper mx-auto w-full max-w-3xl">
+						<h2 className="h-12 w-full text-center">
+							{matches.length} partite giocate.
+						</h2>
+
 						<ul className="flex flex-col gap-5">
 							{matches?.map((match) => (
 								<li key={match.id} className="h-12">
