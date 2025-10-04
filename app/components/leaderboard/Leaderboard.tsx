@@ -31,7 +31,7 @@ export default function Leaderboard({
 						>
 							<Link
 								prefetch="none"
-								to={`/player-matches/${tournament.id}_${player.playerId}`}
+								to={`/player/${tournament.id}/${player.playerId}`}
 								className="flex items-center justify-between gap-4"
 							>
 								<span className="flex-0">{player.rank}</span>

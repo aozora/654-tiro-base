@@ -96,11 +96,11 @@ export default function TournamentMatchPage({
 						showBackButton={true}
 					/>
 
-					<div className="matches-wrapper mx-auto w-full max-w-3xl">
+					<div className="matches-wrapper mx-auto w-full max-w-lg">
 						<ul className="flex flex-col gap-5">
 							{matchPlayers?.map((player) => (
 								<li key={player.playerId} className="h-12">
-									<Button asChild variant="ghost" className="">
+									<Button asChild variant="default" className="justify-between">
 										<div className="h-12 w-full">
 											<span>{player.rank}</span>
 											<span>{player.name}</span>

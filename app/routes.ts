@@ -18,4 +18,5 @@ export default [
 		'matches/:tournamentId/:matchId',
 		'./routes/matches/matches.$tournamentId.$matchId.tsx',
 	),
+	route('player/:tournamentId/:playerId', './routes/player/route.tsx'),
 ] satisfies RouteConfig;
