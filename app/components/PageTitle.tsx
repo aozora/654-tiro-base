@@ -15,9 +15,14 @@ export default function PageTitle({
 	};
 
 	return (
-		<div className="mb-9 flex w-full cursor-pointer items-center justify-center">
+		<div className="mb-9 flex w-full items-center justify-center">
 			{showBackButton && (
-				<Button type="button" className="flex-0" onClick={goBack}>
+				<Button
+					type="button"
+					variant="outline"
+					className="mr-8 flex-0 cursor-pointer"
+					onClick={goBack}
+				>
 					<ArrowLeft size="20" />
 				</Button>
 			)}

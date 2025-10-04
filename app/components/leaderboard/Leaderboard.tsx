@@ -23,7 +23,7 @@ export default function Leaderboard({
 		<div className="leaderboard-wrapper mx-auto w-full max-w-3xl">
 			<ul className="flex flex-col gap-5">
 				{leaderboard?.map((player) => (
-					<li key={player.playerId}>
+					<li key={player.playerId} className="h-12">
 						<Button
 							asChild
 							variant="secondary"

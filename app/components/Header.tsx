@@ -16,7 +16,7 @@ export default function Header({ tournament }: HeaderProps) {
 	const [isOpen, setIsOpen] = useState(false);
 
 	return (
-		<header className="header sticky top-0 z-10 flex h-12 items-center justify-between px-4">
+		<header className="header sticky top-0 z-10 flex h-16 items-center justify-between p-4 px-4">
 			<NavLink to="/" className="logo font-brutal text-white text-xl">
 				{tournament && <span>{tournament.title}</span>}
 				{!tournament && <span>654 tiro base</span>}
@@ -28,7 +28,7 @@ export default function Header({ tournament }: HeaderProps) {
 						<li>
 							<NavLink
 								to="/leaderboard"
-								className="cursor-pointer text-base text-foreground transition"
+								className="cursor-pointer text-base text-foreground transition hover:underline"
 							>
 								Classifica
 							</NavLink>
@@ -36,7 +36,7 @@ export default function Header({ tournament }: HeaderProps) {
 						<li>
 							<NavLink
 								to="/tournaments"
-								className="cursor-pointer text-base text-foreground transition"
+								className="cursor-pointer text-base text-foreground transition hover:underline"
 							>
 								Tornei
 							</NavLink>
@@ -46,7 +46,7 @@ export default function Header({ tournament }: HeaderProps) {
 							<li>
 								<NavLink
 									to="/admin"
-									className="cursor-pointer text-base text-foreground transition"
+									className="cursor-pointer text-base text-foreground transition hover:underline"
 								>
 									Amministrazione
 								</NavLink>
@@ -57,7 +57,7 @@ export default function Header({ tournament }: HeaderProps) {
 							<form action="/logout" method="POST">
 								<button
 									type="submit"
-									className="cursor-pointer text-base text-foreground transition"
+									className="cursor-pointer text-base text-foreground transition hover:underline"
 								>
 									Esci
 								</button>

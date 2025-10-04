@@ -17,6 +17,7 @@ import type {
 	PlayerLeaderboard,
 	PlayerLeaderboardWithNormalizedRanking,
 } from '@/lib/types';
+import { cn } from '@/lib/utils';
 import type { Route } from './+types/leaderboard.($tournamentId)';
 
 function normalizeLeaderboardRanking(
@@ -94,10 +95,16 @@ export default function LeaderboardPage({ loaderData }: Route.ComponentProps) {
 	const { tournament, leaderboard } = loaderData;
 
 	return (
-		<>
+		<div className={cn('relative')}>
+			<img
+				src="/img/risiko-challenge-tabellone.webp"
+				className="-z-1 absolute top-0 left-0 h-full w-full object-cover blur-xs"
+				alt=""
+			/>
+
 			<Header tournament={tournament} />
 
-			<Main>
+			<Main className="flex flex-col pb-10">
 				<PageTitle title="Classifica" />
 
 				<TopThree leaderboard={leaderboard} />
@@ -107,6 +114,6 @@ export default function LeaderboardPage({ loaderData }: Route.ComponentProps) {
 					leaderboard={leaderboard}
 				/>
 			</Main>
-		</>
+		</div>
 	);
 }

@@ -102,20 +102,6 @@ export default function SignIn() {
 						</CardDescription>
 					</CardHeader>
 					<CardContent>
-						{/*<form onSubmit={handleSubmit(onSubmit)}>*/}
-						{/*	<div className="flex flex-col">*/}
-						{/*		<label>Email</label>*/}
-						{/*		<input {...register('email')} />*/}
-						{/*		{errors.email && <p>{errors.email.message}</p>}*/}
-						{/*	</div>*/}
-						{/*	<div style={{ marginBottom: 10 }} className="flex flex-col">*/}
-						{/*		<label>Password</label>*/}
-						{/*		<input {...register('password')} />*/}
-						{/*		{errors.password && <p>{errors.password.message}</p>}*/}
-						{/*	</div>*/}
-
-						{/*	<input type="submit" />*/}
-						{/*</form>*/}
 						<Form {...form}>
 							<form onSubmit={form.handleSubmit(onSubmit)}>
 								<div className="flex flex-col gap-2">
@@ -161,7 +147,7 @@ export default function SignIn() {
 										)}
 									/>
 
-									<div className="flex flex-col gap-3">
+									<div className="mt-6 flex flex-col gap-3">
 										<Button
 											type="submit"
 											className="w-full"

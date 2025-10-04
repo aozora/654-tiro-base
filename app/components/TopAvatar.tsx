@@ -38,7 +38,7 @@ export default function TopAvatar({ player, index }: TopAvatarProps) {
 			>
 				<div
 					className={cn(
-						'flex h-5 w-5 items-center justify-center rounded-full bg-[#c7f064] text-center font-bold text-2xl text-black md:h-10 md:w-10',
+						'flex h-5 w-5 items-center justify-center rounded-full bg-[#c7f064] text-center font-bold text-black text-md md:h-10 md:w-10 md:text-2xl',
 					)}
 				>
 					{index + 1}
