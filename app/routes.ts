@@ -21,12 +21,17 @@ export default [
 	route('player/:tournamentId/:playerId', './routes/player/route.tsx'),
 
 	// admin
-	route('admin/', './routes/admin/index.tsx', [
+	route('admin', './routes/admin.tsx', [
+		index('./routes/admin/index.tsx'),
 		route('players', './routes/admin/players.tsx'),
+		route('tournaments', './routes/admin/tournaments.tsx'),
+		route(
+			'tournaments/:tournamentId',
+			'./routes/admin/tournament.$tournamentId.tsx',
+		),
 		route(
 			'tournaments/:tournamentId/:matchId',
 			'./routes/admin/tournamentMatches.tsx',
 		),
-		route('tournaments/:tournamentId', './routes/admin/tournaments.tsx'),
 	]),
 ] satisfies RouteConfig;

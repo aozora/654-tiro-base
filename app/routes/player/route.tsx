@@ -1,11 +1,19 @@
 import { ChevronRight } from 'lucide-react';
 import { data, Link } from 'react-router';
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
+import {
+	CartesianGrid,
+	Line,
+	LineChart,
+	ResponsiveContainer,
+	XAxis,
+	YAxis,
+} from 'recharts';
 import Header from '@/components/Header';
 import Main from '@/components/Main';
 import PageTitle from '@/components/PageTitle';
 import PlayerProfile from '@/components/PlayerProfile';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import {
 	type ChartConfig,
 	ChartContainer,
@@ -24,9 +32,9 @@ import { cn } from '@/lib/utils';
 import type { Route } from './+types/route';
 
 const chartConfig = {
-	matches: {
-		label: 'Partite',
-		color: '#2563eb',
+	y: {
+		label: 'Punti',
+		color: 'hsl(var(--chart-1))',
 	},
 } satisfies ChartConfig;
 
@@ -43,6 +51,23 @@ export async function loader({ params }: Route.LoaderArgs) {
 		stats,
 	});
 }
+
+// const CustomXAxisTick = ({ x, y, stroke, payload }) => {
+// 	return (
+// 		<g transform={`translate(${x},${y})`}>
+// 			<text
+// 				x={0}
+// 				y={0}
+// 				dy={16}
+// 				textAnchor="end"
+// 				fill="#666"
+// 				transform="rotate(-35)"
+// 			>
+// 				{payload.value}
+// 			</text>
+// 		</g>
+// 	);
+// };
 
 export default function TournamentPlayerMatchesPage({
 	loaderData,
@@ -75,51 +100,38 @@ export default function TournamentPlayerMatchesPage({
 
 					<PlayerProfile player={player} stats={stats} />
 
-					<div className="chart mb-12 h-50 w-full">
-						<ChartContainer
-							config={chartConfig}
-							className="h-50 w-full bg-neutral-500"
-						>
-							<LineChart accessibilityLayer data={points}>
-								<CartesianGrid vertical={false} />
-								<XAxis
-									dataKey="x"
-									tickLine={true}
-									tickMargin={10}
-									axisLine={true}
-									tickFormatter={(value) =>
-										`${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(value)}`
-									}
-								/>
-								<YAxis
-									width="auto"
-									label={{ value: 'y', position: 'insideLeft' }}
-								/>
-								{/*<Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />*/}
-								{/*<Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />*/}
-
-								<Line dataKey="matches" type="monotone" />
-								<ChartTooltip content={<ChartTooltipContent />} />
-							</LineChart>
-						</ChartContainer>
-						{/*<LayerCake*/}
-						{/*	padding={{ top: 8, right: 10, bottom: 20, left: 25 }}*/}
-						{/*	x="x"*/}
-						{/*	y="y"*/}
-						{/*	yDomain={[0, null]}*/}
-						{/*	data={points}*/}
-						{/*>*/}
-						{/*	<Svg>*/}
-						{/*		<AxisX ticks={4} format={d => `${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(d)}`} />*/}
-						{/*		<AxisY ticks={4} />*/}
-						{/*		<Line stroke="#fff" />*/}
-						{/*		<Area fill="#1a479550" />*/}
-						{/*	</Svg>*/}
-						{/*</LayerCake>*/}
-					</div>
+					<Card className="chart mb-12 h-50 w-full">
+						<CardContent>
+							<ChartContainer config={chartConfig} className="h-50 w-full">
+								<LineChart
+									accessibilityLayer
+									margin={{
+										top: 20,
+										right: 10,
+										left: 10,
+										bottom: 20,
+									}}
+									data={points}
+								>
+									<CartesianGrid vertical={false} />
+									<XAxis
+										dataKey="x"
+										tickFormatter={(value) =>
+											`${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(value)}`
+										}
+									/>
+									<YAxis dataKey="y" />
+									<Line type="monotone" dataKey="y" activeDot={{ r: 8 }} />
+									<ChartTooltip content={<ChartTooltipContent />} />
+								</LineChart>
+							</ChartContainer>
+						</CardContent>
+					</Card>
 
 					<div className="matches-wrapper mx-auto w-full max-w-3xl">
-						<h2 className="h-20 w-full text-center text-2xl">Partite:</h2>
+						<h2 className="h-20 w-full text-center text-2xl">
+							Partite giocate: {stats.matchesDatesAndPoints.length}
+						</h2>
 						<ul className="flex flex-col gap-5">
 							{stats.matchesDatesAndPoints?.map((match) => (
 								<li key={match.matchId} className="h-12">
