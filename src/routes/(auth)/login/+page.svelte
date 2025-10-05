@@ -5,6 +5,7 @@
 	import { formSchema, type FormSchema } from './schema';
 	import { superForm } from 'sveltekit-superforms';
 	import { valibotClient } from 'sveltekit-superforms/adapters';
+	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import type { PageData } from './$types';
 	import { Button } from '$lib/components/ui/button';
 	import { Shell } from '@lucide/svelte';
@@ -14,6 +15,7 @@
 	let form = $derived(
 		superForm(data.form, {
 			validators: valibotClient(formSchema),
+			// validators: zod4Client(formSchema),
 			dataType: 'json'
 		})
 	);
@@ -21,6 +23,10 @@
 	let errors = $derived(form.errors);
 	let submitting = $derived(form.submitting);
 	let enhance = $derived(form.enhance);
+
+	$effect(() => {
+		console.log({$formData});
+	});
 </script>
 
 <div
@@ -57,11 +63,11 @@
 									{...props}
 									bind:value={$formData.email}
 									type="email"
-									placeholder="Enter your email"
+									placeholder="Inserisci l'email..."
 								/>
 							{/snippet}
 						</Form.Control>
-						<Form.FieldErrors />
+						<Form.FieldErrors class="mb-4 *:mb-2" />
 					</Form.Field>
 
 					<Form.Field {form} name="password">
@@ -71,12 +77,14 @@
 								<Input type="password" bind:value={$formData.password} {props} />
 							{/snippet}
 						</Form.Control>
-						<Form.FieldErrors />
+						<Form.FieldErrors class="mb-4 *:mb-2" />
 					</Form.Field>
 
 					<Form.Button disabled={$submitting} class="w-full">
 						{$submitting ? 'Submitting...' : 'Submit'}
 					</Form.Button>
+
+					{JSON.stringify(errors, null, 2)}
 
 					{#if $errors?._errors}
 						<div class="mt-3 rounded-md text-red-700">

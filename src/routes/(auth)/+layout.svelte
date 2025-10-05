@@ -189,7 +189,7 @@
 	</svg>
 </div>
 
-<Main className="auth-page">
+<Main className="px-0 md:px-0 lg:px-0">
 	<slot></slot>
 </Main>
 
