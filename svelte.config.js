@@ -20,7 +20,6 @@ const config = {
 		}),
 
 		alias: {
-			"@/*": "./src/lib/*", // required by shadcn
 			$components: 'src/components',
 			$styles: 'src/styles',
 			$types: 'src/types',

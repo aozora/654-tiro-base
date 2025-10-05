@@ -14,7 +14,7 @@
 	import AxisY from '$components/chart/AxisY.svelte';
 	import Area from '$components/chart/Area.svelte';
 	import Line from '$components/chart/Line.svelte';
-	import { ArrowCircleRight } from 'phosphor-svelte';
+	// import { ArrowCircleRight } from 'phosphor-svelte';
 
 	type PageProps = {
 		tournament: Tournament;

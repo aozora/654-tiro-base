@@ -3,7 +3,7 @@
 	import type { PageData } from './$types';
 	import Main from '$components/Main.svelte';
 	import PageTitle from '$components/PageTitle.svelte';
-	import { ArrowCircleRight } from 'phosphor-svelte';
+	// import { ArrowCircleRight } from 'phosphor-svelte';
 
 	type PageProps = {
 		tournaments: Array<Tournament>;

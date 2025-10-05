@@ -3,7 +3,7 @@
 	import { Datatable, TableHandler } from '@vincjo/datatables';
 	import type { Match, Player, Tournament } from '$lib/server/db';
 	import type { PageData } from './$types';
-	import { PencilSimple, Ranking, Trash } from 'phosphor-svelte';
+	// import { PencilSimple, Ranking, Trash } from 'phosphor-svelte';
 	import Modal from '$components/ui/Modal/Modal.svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { page } from '$app/stores';

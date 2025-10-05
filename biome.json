@@ -38,6 +38,9 @@
       "source": {
         "organizeImports": "on"
       }
+    },
+    "source": {
+      "organizeImports": "off"
     }
   },
   "overrides": [

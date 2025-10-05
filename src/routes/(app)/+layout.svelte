@@ -399,7 +399,6 @@
 	</svg>
 </div>
 
-<SkipLink />
 <Header {data} />
 
 <SvelteToast />

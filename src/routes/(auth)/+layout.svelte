@@ -1,13 +1,5 @@
 <script lang="ts">
-	import SkipLink from '$components/SkipLink.svelte';
-	import type { LayoutData } from '../$types';
-	import { page } from '$app/stores';
 	import Main from '$components/Main.svelte';
-
-	export let data: LayoutData;
-
-	// console.log($page.data.user);
-	// console.log($data.user.email)
 </script>
 
 <!-- svg-sprite -->
@@ -197,11 +189,7 @@
 	</svg>
 </div>
 
-<SkipLink />
-
 <Main className="auth-page">
 	<slot></slot>
 </Main>
 
-<!--<img src="/img/risiko-challenge-tabellone.webp" alt="" />-->
-<!--<Footer />-->

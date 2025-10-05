@@ -5,7 +5,7 @@
 	import Avatar from '$components/ui/Avatar/Avatar.svelte';
 	import Main from '$components/Main.svelte';
 	import TopThree from '$components/TopThree.svelte';
-	import { ArrowCircleRight } from 'phosphor-svelte';
+	// import { ArrowCircleRight } from 'phosphor-svelte';
 	import PageTitle from '$components/PageTitle.svelte';
 	import { pluralizePoints } from '$lib/helpers';
 	import Icon from '$components/Icon/Icon.svelte';

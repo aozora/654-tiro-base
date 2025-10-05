@@ -3,7 +3,7 @@
 	import { Datatable, TableHandler } from '@vincjo/datatables';
 	import type { Tournament } from '$lib/server/db';
 	import type { PageData } from './$types';
-	import { CheckCircle, DiceSix, PencilSimple, XCircle } from 'phosphor-svelte';
+	// import { CheckCircle, DiceSix, PencilSimple, XCircle } from 'phosphor-svelte';
 	import Modal from '$components/ui/Modal/Modal.svelte';
 	import TextInput from '$components/ui/Form/TextInput.svelte';
 	import { superForm } from 'sveltekit-superforms/client';

@@ -1,6 +1,9 @@
 <script>
+	import '$styles/app.css';
+	import { Toaster } from "$lib/components/ui/sonner/index.js";
+
 	let { children } = $props();
-	import '../styles/tailwind.css';
 </script>
 
+<Toaster/>
 {@render children()}
