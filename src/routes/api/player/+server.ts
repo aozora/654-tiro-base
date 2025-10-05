@@ -1,4 +1,4 @@
-import { updatePlayerPicture } from '$lib/server/db/repository';
+import { updatePlayerPicture } from '$lib/server/repository';
 import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 

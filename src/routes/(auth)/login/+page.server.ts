@@ -1,5 +1,5 @@
 import { authSchema } from '$lib/schemas/auth-schema';
-import { auth } from '$lib/server/auth';
+import { auth } from '$lib/auth.server';
 import { fail, redirect } from '@sveltejs/kit';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';

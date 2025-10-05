@@ -5,7 +5,7 @@ import {
 	getPlayers,
 	getTournament,
 	upsertMatch
-} from '$lib/server/db/repository';
+} from '$lib/server/repository';
 import type { Match, Player, Tournament } from '$lib/server/db';
 import { message, superValidate, fail } from 'sveltekit-superforms';
 import { z } from 'zod';

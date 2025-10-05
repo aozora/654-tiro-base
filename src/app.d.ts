@@ -1,9 +1,13 @@
+import type { Session } from '$lib/server/session';
+import type { User } from '$lib/server/user';
+
 declare global {
 	namespace App {
 		interface Locals {
-			user: import('better-auth/types').User | null;
-			session: import('better-auth/types').Session | null;
+			user: User | null;
+			session: Session | null;
 		}
+
 		// interface Error {}
 		// interface Locals {}
 		// interface PageData {}

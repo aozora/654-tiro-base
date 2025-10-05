@@ -4,7 +4,7 @@ import {
 	getMatchPlayers,
 	getTournament,
 	type PlayerExtended
-} from '$lib/server/db/repository';
+} from '$lib/server/repository';
 import type { Match, Tournament } from '$lib/server/db';
 import type { PlayerLeaderboardWithNormalizedRanking } from '$types';
 

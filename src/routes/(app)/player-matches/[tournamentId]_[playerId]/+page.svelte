@@ -3,7 +3,7 @@
 	 * Display all the matches of the player
 	 */
 	import type { PageData } from './$types';
-	import type { PlayerMatches, PlayerStats } from '$lib/server/db/repository';
+	import type { PlayerMatches, PlayerStats } from '$lib/server/repository';
 	import Main from '$components/Main.svelte';
 	import type { Player, Tournament } from '$lib/server/db';
 	import PageTitle from '$components/PageTitle.svelte';

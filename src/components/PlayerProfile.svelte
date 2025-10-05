@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Player } from '$lib/server/db';
 	import Avatar from '$components/ui/Avatar/Avatar.svelte';
-	import type { PlayerStats } from '$lib/server/db/repository';
+	import type { PlayerStats } from '$lib/server/repository';
 
 	export let player: Player;
 	export let stats: PlayerStats;

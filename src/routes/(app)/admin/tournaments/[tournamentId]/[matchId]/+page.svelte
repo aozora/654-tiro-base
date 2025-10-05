@@ -11,7 +11,7 @@
 	import Avatar from '$components/ui/Avatar/Avatar.svelte';
 	import AdminPageTitle from '$components/AdminPageTitle.svelte';
 	import Loader from '$components/Loader.svelte';
-	import type { PlayerExtended } from '$lib/server/db/repository';
+	import type { PlayerExtended } from '$lib/server/repository';
 	import Select from '$components/ui/Form/Select.svelte';
 	import NumberInput from '$components/ui/Form/NumberInput.svelte';
 

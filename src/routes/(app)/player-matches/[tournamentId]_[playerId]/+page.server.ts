@@ -4,7 +4,7 @@ import {
 	getPlayerStats,
 	getTournament,
 	type PlayerStats
-} from '$lib/server/db/repository';
+} from '$lib/server/repository';
 import type { Tournament } from '$lib/server/db';
 
 /**

@@ -3,7 +3,6 @@
 	import Header from '$components/Header.svelte';
 	import type { LayoutData } from './$types';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
-	import '$styles/app.scss';
 
 	export let data: LayoutData;
 </script>

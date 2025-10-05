@@ -3,7 +3,6 @@
 	import type { LayoutData } from '../$types';
 	import { page } from '$app/stores';
 	import Main from '$components/Main.svelte';
-	import '$styles/app.scss';
 
 	export let data: LayoutData;
 

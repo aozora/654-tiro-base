@@ -8,7 +8,7 @@ import {
 	type PlayerExtended,
 	removePlayerFromMatch,
 	upsertMatchPlayer
-} from '$lib/server/db/repository';
+} from '$lib/server/repository';
 import type { Player, Tournament } from '$lib/server/db';
 import { message, superValidate, fail } from 'sveltekit-superforms';
 import { z } from 'zod';

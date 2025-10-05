@@ -6,7 +6,7 @@ import {
 	getLeaderboard,
 	getPlayers,
 	getTournament
-} from '$lib/server/db/repository';
+} from '$lib/server/repository';
 import { error } from '@sveltejs/kit';
 import type { PlayerLeaderboard, PlayerLeaderboardWithNormalizedRanking } from '$types';
 import { sortPointsDesc } from '$lib/helpers';

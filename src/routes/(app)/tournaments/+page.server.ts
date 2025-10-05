@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { getTournaments } from '$lib/server/db/repository';
+import { getTournaments } from '$lib/server/repository';
 
 /**
  * Page Load
