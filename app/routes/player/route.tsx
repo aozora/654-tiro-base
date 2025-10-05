@@ -1,10 +1,17 @@
 import { ChevronRight } from 'lucide-react';
 import { data, Link } from 'react-router';
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
 import Header from '@/components/Header';
 import Main from '@/components/Main';
 import PageTitle from '@/components/PageTitle';
 import PlayerProfile from '@/components/PlayerProfile';
 import { Button } from '@/components/ui/button';
+import {
+	type ChartConfig,
+	ChartContainer,
+	ChartTooltip,
+	ChartTooltipContent,
+} from '@/components/ui/chart';
 import type { Tournament } from '@/lib/database/schema';
 import { pluralizePoints } from '@/lib/helpers';
 import {
@@ -15,6 +22,13 @@ import {
 } from '@/lib/repository';
 import { cn } from '@/lib/utils';
 import type { Route } from './+types/route';
+
+const chartConfig = {
+	matches: {
+		label: 'Partite',
+		color: '#2563eb',
+	},
+} satisfies ChartConfig;
 
 export async function loader({ params }: Route.LoaderArgs) {
 	const { tournamentId, playerId } = params;
@@ -35,6 +49,13 @@ export default function TournamentPlayerMatchesPage({
 }: Route.ComponentProps) {
 	const { player, tournament, stats } = loaderData;
 
+	const points = stats.matchesDatesAndPoints.map((m) => {
+		return {
+			x: m.date,
+			y: m.points,
+		};
+	});
+
 	return (
 		<div className={cn('relative min-h-screen')}>
 			<img
@@ -54,7 +75,33 @@ export default function TournamentPlayerMatchesPage({
 
 					<PlayerProfile player={player} stats={stats} />
 
-					<div className="chart">
+					<div className="chart mb-12 h-50 w-full">
+						<ChartContainer
+							config={chartConfig}
+							className="h-50 w-full bg-neutral-500"
+						>
+							<LineChart accessibilityLayer data={points}>
+								<CartesianGrid vertical={false} />
+								<XAxis
+									dataKey="x"
+									tickLine={true}
+									tickMargin={10}
+									axisLine={true}
+									tickFormatter={(value) =>
+										`${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(value)}`
+									}
+								/>
+								<YAxis
+									width="auto"
+									label={{ value: 'y', position: 'insideLeft' }}
+								/>
+								{/*<Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />*/}
+								{/*<Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />*/}
+
+								<Line dataKey="matches" type="monotone" />
+								<ChartTooltip content={<ChartTooltipContent />} />
+							</LineChart>
+						</ChartContainer>
 						{/*<LayerCake*/}
 						{/*	padding={{ top: 8, right: 10, bottom: 20, left: 25 }}*/}
 						{/*	x="x"*/}
