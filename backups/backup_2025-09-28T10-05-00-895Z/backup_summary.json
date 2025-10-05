@@ -1,0 +1,15 @@
+{
+  "backupDate": "2025-09-28T10:05:02.846Z",
+  "backupDirectory": "/home/marcello/projects/654-tiro-base/backups/backup_2025-09-28T10-05-00-895Z",
+  "format": "csv",
+  "includeRelations": false,
+  "tables": {
+    "users": 3,
+    "sessions": 25,
+    "players": 10,
+    "tournaments": 2,
+    "matches": 29,
+    "playersOnMatches": 128
+  },
+  "totalRecords": 197
+}

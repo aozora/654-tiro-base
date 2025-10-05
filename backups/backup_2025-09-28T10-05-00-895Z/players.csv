@@ -1,0 +1,11 @@
+id,name,picture,isActive,isDeleted
+10194f2a-3811-4d8b-add8-cef101a2ab4e,Marcello,/img/players/marcello1.jpeg,true,false
+2be40553-2876-49a4-b188-6af7b59575d5,test33,,false,true
+4358c76a-cfb8-4df4-9aa7-fda10e78502b,pippo,,false,true
+4b49fe3e-b341-4414-b19e-925c162fa081,Pino,,false,true
+5e80266a-f676-41fb-94fe-da4b528ea58e,Luca,/img/players/luca.jpeg,true,false
+a6edc6cc-a4b3-48c1-afae-0095f2c548bc,Marco,/img/players/marco1.jpeg,true,false
+bbcd1f20-3561-4ded-87dd-82e86cb483d3,Ale,/img/players/ale1.jpeg,true,false
+ce453c56-2060-4e03-8471-ada961cc6510,Ivan,/img/players/ivan.JPG,true,false
+dc0c5575-80fd-4c62-988b-c7cf0b915172,Davide,/img/players/davide.jpeg,true,false
+e6867f8a-f64e-4a32-a897-17e916c92193,Gino,,false,true
