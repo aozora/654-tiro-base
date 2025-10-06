@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { getMatches, getTournament } from '$lib/server/repository';
-import type { Match, Tournament } from '$lib/server/db';
+import type { Match, Tournament } from '$lib/server/database/schema';
 
 /**
  * Page Load

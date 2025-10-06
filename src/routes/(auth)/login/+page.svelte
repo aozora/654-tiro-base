@@ -5,7 +5,6 @@
 	import { formSchema, type FormSchema } from './schema';
 	import { superForm } from 'sveltekit-superforms';
 	import { valibotClient } from 'sveltekit-superforms/adapters';
-	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import type { PageData } from './$types';
 	import { Button } from '$lib/components/ui/button';
 	import { Shell } from '@lucide/svelte';
@@ -15,7 +14,6 @@
 	let form = $derived(
 		superForm(data.form, {
 			validators: valibotClient(formSchema),
-			// validators: zod4Client(formSchema),
 			dataType: 'json'
 		})
 	);

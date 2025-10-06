@@ -1,88 +1,43 @@
 <script lang="ts">
-	import type { Match, Tournament } from '$lib/server/db';
-	import type { PageData } from './$types';
+	import type { Match, Tournament } from '$lib/server/database/schema';
 	import Main from '$components/Main.svelte';
 	import PageTitle from '$components/PageTitle.svelte';
-	// import { ArrowCircleRight } from 'phosphor-svelte';
+	import { Button } from '$lib/components/ui/button';
+	import { ChevronRight } from 'lucide-svelte';
 
 	type PageProps = {
 		matches: Array<Match>;
 		tournament: Tournament;
 	};
 
-	export let data: PageData;
-
-	const { matches, tournament }: PageProps = data;
+	const { matches, tournament }: PageProps = $props();
 </script>
 
-<Main className="user-page">
+<Main className="matches-page">
 	<div class="matches">
 		<PageTitle title={`Cronologia partite`} showBackButton={true} />
 
-		<ul>
-			{#each matches as match}
-				<li>
-					<a href={`/matches/${tournament.id}/${match.id}`}>
-						<strong
-							>{new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)}</strong
+		<div class="matches-wrapper mx-auto w-full max-w-3xl">
+			<h2 class="h-12 w-full text-center">
+				{#if matches}
+					{matches.length} partite giocate.
+				{/if}
+			</h2>
+
+			<ul class="flex flex-col gap-5">
+				{#each matches as match}
+					<li class="h-12">
+						<Button
+							href={`/matches/${tournament.id}/${match.id}`}
+							variant="secondary"
+							class="flex items-center justify-between gap-4 h-12 w-full bg-indigo-500 hover:bg-indigo-700"
 						>
-						<ArrowCircleRight size="20" class="arrow" />
-					</a>
-				</li>
-			{/each}
-		</ul>
+							<strong>{new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)}</strong>
+							<ChevronRight size={24} />
+						</Button>
+					</li>
+				{/each}
+			</ul>
+		</div>
 	</div>
 </Main>
-
-<style lang="scss">
-	.matches {
-		display: flex;
-		flex-direction: column;
-
-		ul,
-		li {
-			list-style-type: none;
-			margin: 0;
-			padding: 0;
-		}
-
-		ul {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			gap: 1rem;
-			width: 100%;
-		}
-
-		li {
-			width: 100%;
-		}
-
-		a {
-			display: flex;
-			justify-content: flex-start;
-			align-items: center;
-			width: 100%;
-			padding: 0.5rem;
-			border: 0;
-			border-radius: var(--global-radius);
-			background-color: var(--color-white);
-			text-decoration: none;
-			color: var(--color-dark);
-
-			span {
-				flex: 0;
-				margin-right: 1rem;
-			}
-
-			strong {
-				flex: 1 1 auto;
-				text-align: left;
-			}
-
-			:global(.arrow) {
-				margin-left: 0.5rem;
-			}
-		}
-	}
-</style>

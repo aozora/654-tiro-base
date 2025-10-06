@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import type { PageServerLoad } from './$types';
-import type { Player, Tournament } from '$lib/server/db';
 import {
 	getActiveTournament,
 	getLeaderboard,
@@ -10,6 +9,7 @@ import {
 import { error } from '@sveltejs/kit';
 import type { PlayerLeaderboard, PlayerLeaderboardWithNormalizedRanking } from '$types';
 import { sortPointsDesc } from '$lib/helpers';
+import type { Player, Tournament } from '$lib/server/database/schema';
 
 function normalizeLeaderboardRanking(
 	sortedLeaderboard: Array<PlayerLeaderboard>
@@ -68,7 +68,7 @@ export const load: PageServerLoad = async ({ params }) => {
 				name: player.name,
 				// @ts-ignore
 				picture: player.picture || '',
-				sumPoints: x._sum.points || 0
+				sumPoints: x.totalPoints || 0
 			} satisfies PlayerLeaderboard;
 		})
 		.sort(sortPointsDesc);
