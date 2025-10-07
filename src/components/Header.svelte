@@ -3,7 +3,7 @@
 	import MobileMenu from '$components/MobileMenu.svelte';
 	import { page } from '$app/state';
 	import { MediaQuery } from 'svelte/reactivity';
-	import { Dices } from 'lucide-svelte';
+	import { Dices } from '@lucide/svelte';
 	import { cn } from '$lib/utils';
 
 	export let data;

@@ -2,7 +2,7 @@
 	import Main from '$components/Main.svelte';
 	import PageTitle from '$components/PageTitle.svelte';
 	import { Button } from '$lib/components/ui/button';
-	import { ChevronRight } from 'lucide-svelte';
+	import { ChevronRight } from '@lucide/svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();

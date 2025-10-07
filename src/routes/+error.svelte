@@ -3,7 +3,7 @@
 	import Main from '$components/Main.svelte';
 
 	import '$styles/app.css';
-	import { Bug } from 'lucide-svelte';
+	import { Bug } from '@lucide/svelte';
 </script>
 
 <Main className="error-page w-full h-full flex items-center justify-center">

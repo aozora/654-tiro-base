@@ -2,7 +2,6 @@
 	/**
 	 * Display all the matches of the player
 	 */
-	import type { PlayerStats } from '$lib/server/repository';
 	import Main from '$components/Main.svelte';
 	import PageTitle from '$components/PageTitle.svelte';
 	import { pluralizePoints } from '$lib/helpers';
@@ -14,9 +13,9 @@
 	import Line from '$components/chart/Line.svelte';
 	import { Card, CardContent } from '$lib/components/ui/card';
 	import { Button } from '$lib/components/ui/button';
-	import { ChevronRight } from 'lucide-svelte';
-
+	import { ChevronRight } from '@lucide/svelte';
 	import type { PageProps } from './$types';
+
 	let { data }: PageProps = $props();
 	let { stats, player, tournament } = data;
 
@@ -24,12 +23,12 @@
 	console.log({ stats, player, tournament });
 
 	$effect(() => {
-		points = stats.matchesDatesAndPoints.map((m) => {
+		points = stats ? stats.matchesDatesAndPoints.map((m) => {
 			return {
 				x: m.date,
 				y: m.points
 			};
-		});
+		}) : [];
 	});
 </script>
 
@@ -40,11 +39,13 @@
 			showBackButton={true}
 		/>
 
-		<PlayerProfile {player} {stats} />
+		{#if player && stats}
+			<PlayerProfile {player} {stats} />
+		{/if}
 
-		<Card class="chart mb-12 h-50 w-full">
+		<Card class="chart mb-12 w-full">
 			<CardContent>
-				<div class="chart">
+				<div class="chart h-50 pb-6 w-full">
 					<LayerCake
 						padding={{ top: 8, right: 10, bottom: 20, left: 25 }}
 						x="x"
@@ -59,7 +60,7 @@
 							/>
 							<AxisY ticks={4} />
 							<Line stroke="#fff" />
-							<Area fill="#1a479550" />
+							<Area/>
 						</Svg>
 					</LayerCake>
 				</div>
@@ -72,19 +73,21 @@
 			</h2>
 
 			<ul class="flex flex-col gap-5">
-				{#each stats.matchesDatesAndPoints as match}
-					<li class="h-12">
-						<Button
-							href={`/matches/${tournament.id}/${match.matchId}`}
-							variant="secondary"
-							class="h-12 w-full bg-indigo-500 hover:bg-indigo-700"
-						>
-							<span>{new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)}</span>
-							<span class="points">{pluralizePoints(match.points)}</span>
-							<ChevronRight size="24" />
-						</Button>
-					</li>
-				{/each}
+				{#if stats}
+					{#each stats.matchesDatesAndPoints as match}
+						<li class="h-12">
+							<Button
+								href={`/matches/${tournament.id}/${match.matchId}`}
+								variant="secondary"
+								class="h-12 w-full bg-indigo-500 hover:bg-indigo-700"
+							>
+								<span>{new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)}</span>
+								<span class="points">{pluralizePoints(match.points)}</span>
+								<ChevronRight size="24" />
+							</Button>
+						</li>
+					{/each}
+				{/if}
 			</ul>
 		</div>
 	</div>

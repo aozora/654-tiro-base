@@ -1,20 +1,15 @@
 import type { Actions, PageServerLoad } from './$types';
 import { getTournaments, upsertTournament } from '$lib/server/repository';
-import type { Tournament } from '$lib/server/db';
 import { message, superValidate, fail } from 'sveltekit-superforms';
-import { z } from 'zod';
-import { zod } from 'sveltekit-superforms/adapters';
+import { valibot } from 'sveltekit-superforms/adapters';
 import { invalidate } from '$app/navigation';
+import type { Tournament } from '$lib/server/database/schema';
+import * as v from 'valibot';
 
-const schemaUpdateTemp = z.object({
-	id: z.string().nullable().optional(),
-	title: z.string().min(2),
-	isActive: z.boolean()
-});
-const schemaUpdate = schemaUpdateTemp.required({
-	// id is false to allow new items
-	title: true,
-	isActive: true
+const schema = v.object({
+	id: v.optional(v.string()),
+	title: v.pipe(v.string(),v.minLength(2)),
+	isActive: v.boolean()
 });
 
 /**
@@ -22,7 +17,7 @@ const schemaUpdate = schemaUpdateTemp.required({
  */
 export const load: PageServerLoad = async () => {
 	const tournaments: Array<Tournament> = await getTournaments();
-	const form = await superValidate(zod(schemaUpdate));
+	const form = await superValidate(valibot(schema));
 
 	return {
 		tournaments,
@@ -33,28 +28,28 @@ export const load: PageServerLoad = async () => {
 /**
  * Page Action
  */
-export const actions: Actions = {
-	default: async ({ request }) => {
-		const form = await superValidate(request, zod(schemaUpdate));
-
-		if (!form.valid) {
-			// Again, always return form and things will just work.
-			console.error('Form not valid', form);
-			return fail(400, { form });
-		}
-
-		try {
-			await upsertTournament(
-				form.data.id === 'undefined' ? '' : String(form.data.id),
-				form.data.title,
-				form.data.isActive
-			);
-
-			return message(form, 'success');
-		} catch (error: unknown) {
-			console.error(error);
-
-			return fail(500);
-		}
-	}
-};
+// export const actions: Actions = {
+// 	default: async ({ request }) => {
+// 		const form = await superValidate(request, zod(schemaUpdate));
+//
+// 		if (!form.valid) {
+// 			// Again, always return form and things will just work.
+// 			console.error('Form not valid', form);
+// 			return fail(400, { form });
+// 		}
+//
+// 		try {
+// 			await upsertTournament(
+// 				form.data.id === 'undefined' ? '' : String(form.data.id),
+// 				form.data.title,
+// 				form.data.isActive
+// 			);
+//
+// 			return message(form, 'success');
+// 		} catch (error: unknown) {
+// 			console.error(error);
+//
+// 			return fail(500);
+// 		}
+// 	}
+// };

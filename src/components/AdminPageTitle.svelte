@@ -1,5 +1,5 @@
 <script lang="ts">
-	// import { ArrowLeft } from 'phosphor-svelte';
+	import { ArrowLeft } from '@lucide/svelte';
 
 	export let title: string;
 	export let subtitle: string | undefined = undefined;
@@ -10,18 +10,17 @@
 	};
 </script>
 
-<div class="page-title full-bleed" class:with-subtitle={subtitle !== undefined} class:with-back={showBackButton}>
+<div class="mb-9 flex h-12 w-full cursor-pointer items-center justify-center">
 	{#if showBackButton}
 		<button type="button" class="back-button" on:click={()=> goBack()}>
 			<ArrowLeft size="20" />
 		</button>
 	{/if}
 
-	<h1>
+	<h1 class="font-serif text-4xl text-brand">
 		{title}
 		{#if subtitle}
-			<br />
-			{subtitle}
+			<span>{subtitle}</span>
 		{/if}
 	</h1>
 </div>
