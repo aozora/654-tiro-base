@@ -1,16 +1,12 @@
 <script lang="ts">
-	import type { Match, Tournament } from '$lib/server/database/schema';
 	import Main from '$components/Main.svelte';
 	import PageTitle from '$components/PageTitle.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { ChevronRight } from 'lucide-svelte';
+	import type { PageProps } from './$types';
 
-	type PageProps = {
-		matches: Array<Match>;
-		tournament: Tournament;
-	};
-
-	const { matches, tournament }: PageProps = $props();
+	let { data }: PageProps = $props();
+	const { matches, tournament } = data;
 </script>
 
 <Main className="matches-page">

@@ -1,5 +1,4 @@
 <script lang="ts">
-
 	import Main from '$components/Main.svelte';
 	import AdminPageTitle from '$components/AdminPageTitle.svelte';
 </script>

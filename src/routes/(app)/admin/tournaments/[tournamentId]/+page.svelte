@@ -14,15 +14,10 @@
 	import { Icons } from '$types';
 	import Icon from '$components/Icon/Icon.svelte';
 	import Select from '$components/ui/Form/Select.svelte';
+	import type { PageProps } from './$types';
 
-	type PageProps = {
-		tournament: Tournament;
-		players: Array<Player>;
-		matches: Array<Match>;
-	};
-
-	export let data: PageData;
-	const { tournament, players, matches }: PageProps = data;
+	let { data }: PageProps = $props();
+	const { tournament, players, matches } = data;
 
 	const { errors, enhance, delayed, message, constraints } = superForm(data.form, {
 		invalidateAll: 'force',
@@ -87,48 +82,48 @@
 			<Datatable table={tableHanlder}>
 				<table class="table">
 					<thead>
-						<tr>
-							<th>Data partita</th>
-							<th></th>
-							<th></th>
-							<th></th>
-						</tr>
+					<tr>
+						<th>Data partita</th>
+						<th></th>
+						<th></th>
+						<th></th>
+					</tr>
 					</thead>
 					<tbody>
-						{#each $table as row}
-							<tr>
-								<td>
+					{#each $table as row}
+						<tr>
+							<td>
 									<span>
 										{new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(row.date)}
 									</span>
-								</td>
-								<td>
-									<button type="button" class="table-button" on:click={() => onEditMatch(row)}>
-										<PencilSimple size="20" />
-									</button>
-								</td>
-								<td>
-									<a href={`/admin/tournaments/${tournament.id}/${row.id}`} class="table-button">
-										<DiceThree size="20" />
-									</a>
-								</td>
-								<td>
-									<form
-										action="?/delete"
-										method="POST"
-										on:submit={(e) => onDeleteMatch(e, row)}
-										use:enhance
-									>
-										<input type="hidden" name="matchId" value={row.id} />
-										<input type="hidden" name="tournamentId" value={row.tournamentId} />
+							</td>
+							<td>
+								<button type="button" class="table-button" on:click={() => onEditMatch(row)}>
+									<PencilSimple size="20" />
+								</button>
+							</td>
+							<td>
+								<a href={`/admin/tournaments/${tournament.id}/${row.id}`} class="table-button">
+									<DiceThree size="20" />
+								</a>
+							</td>
+							<td>
+								<form
+									action="?/delete"
+									method="POST"
+									on:submit={(e) => onDeleteMatch(e, row)}
+									use:enhance
+								>
+									<input type="hidden" name="matchId" value={row.id} />
+									<input type="hidden" name="tournamentId" value={row.tournamentId} />
 
-										<button type="submit" class="table-button">
-											<Trash size="20" />
-										</button>
-									</form>
-								</td>
-							</tr>
-						{/each}
+									<button type="submit" class="table-button">
+										<Trash size="20" />
+									</button>
+								</form>
+							</td>
+						</tr>
+					{/each}
 					</tbody>
 				</table>
 			</Datatable>
@@ -164,7 +159,8 @@
 
 				<div class="modal-actions">
 					<button type="button" class="button" on:click={() => (isModalOpen = false)}
-						>Annulla</button
+					>Annulla
+					</button
 					>
 					<button type="submit" class="button primary">Salva</button>
 				</div>
@@ -174,20 +170,20 @@
 </Main>
 
 <style lang="scss">
-	.admin-page-header-form {
-		//div {
-		//  display: flex;
-		//  justify-content: space-between;
-		//  align-items: center;
-		//  gap: .5rem;
-		//}
-		//
-		//select {
-		//  flex: 1 1 auto;
-		//}
-		//
-		//button {
-		//  flex: 0 0 auto;
-		//}
-	}
+  .admin-page-header-form {
+    //div {
+    //  display: flex;
+    //  justify-content: space-between;
+    //  align-items: center;
+    //  gap: .5rem;
+    //}
+    //
+    //select {
+    //  flex: 1 1 auto;
+    //}
+    //
+    //button {
+    //  flex: 0 0 auto;
+    //}
+  }
 </style>

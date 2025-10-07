@@ -14,14 +14,11 @@
 	import { Icons } from '$types';
 	import Loader from '$components/Loader.svelte';
 	import Checkbox from '$components/ui/Form/Checkbox.svelte';
+	import type { PageProps } from './$types';
 
-	type PageProps = {
-		tournaments: Array<Tournament>;
-	};
+	let { data }: PageProps = $props();
 
-	export let data: PageData;
-
-	const { tournaments }: PageProps = data;
+	let { tournaments } = data;
 	const { form, errors, enhance, delayed, message, constraints } = superForm(data.form, {
 		// validationMethod: 'onsubmit', //'auto' | 'oninput' | 'onblur' | 'onsubmit' = 'auto',
 		onUpdated: ({ form }) => {
@@ -74,42 +71,42 @@
 		<Datatable table={tableHanlder}>
 			<table class="table">
 				<thead>
-					<tr>
-						<th>Titolo</th>
-						<th>Matches</th>
-						<th>Attivo</th>
-						<th></th>
-						<th></th>
-					</tr>
+				<tr>
+					<th>Titolo</th>
+					<th>Matches</th>
+					<th>Attivo</th>
+					<th></th>
+					<th></th>
+				</tr>
 				</thead>
 				<tbody>
-					{#each $table as row}
-						<tr>
-							<td>
-								<span>{row.title}</span>
-							</td>
-							<td>
-								<span>{row.matches.length}</span>
-							</td>
-							<td>
-								{#if row.isActive}
-									<CheckCircle size="20" />
-								{:else}
-									<XCircle size="20" />
-								{/if}
-							</td>
-							<td>
-								<button type="button" class="table-button" on:click={() => onEditTournament(row)}>
-									<PencilSimple size="20" />
-								</button>
-							</td>
-							<td>
-								<a href={`/admin/tournaments/${row.id}`} class="table-button">
-									<DiceSix size="20" />
-								</a>
-							</td>
-						</tr>
-					{/each}
+				{#each $table as row}
+					<tr>
+						<td>
+							<span>{row.title}</span>
+						</td>
+						<td>
+							<span>{row.matches.length}</span>
+						</td>
+						<td>
+							{#if row.isActive}
+								<CheckCircle size="20" />
+							{:else}
+								<XCircle size="20" />
+							{/if}
+						</td>
+						<td>
+							<button type="button" class="table-button" on:click={() => onEditTournament(row)}>
+								<PencilSimple size="20" />
+							</button>
+						</td>
+						<td>
+							<a href={`/admin/tournaments/${row.id}`} class="table-button">
+								<DiceSix size="20" />
+							</a>
+						</td>
+					</tr>
+				{/each}
 				</tbody>
 			</table>
 		</Datatable>

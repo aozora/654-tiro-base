@@ -1,11 +1,14 @@
 <script lang="ts">
 	import Main from '$components/Main.svelte';
+	import type { LayoutProps } from './$types';
+
+	let { children }: LayoutProps = $props();
 </script>
 
 <!-- svg-sprite -->
 <div id="svg-defs" style="display: none">
 	<svg width="0" height="0" xmlns="http://www.w3.org/2000/svg">
-		<symbol id="tank-blue" viewBox="0 0 75 32" fill="none">
+		<symbol id="tank-blue" viewBox="0 0 75 32" >
 			<g data-testid="Tank-1">
 				<g class="fills">
 					<rect width="75" height="32" class="frame-background" rx="0" ry="0" transform="matrix(-1 0 0 1 75 0)" />
@@ -190,6 +193,6 @@
 </div>
 
 <Main className="px-0 md:px-0 lg:px-0">
-	<slot></slot>
+	{@render children()}
 </Main>
 

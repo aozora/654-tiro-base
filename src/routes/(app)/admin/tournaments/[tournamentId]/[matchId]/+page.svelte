@@ -1,9 +1,7 @@
 <script lang="ts">
 	import Main from '$components/Main.svelte';
 	import { Datatable, TableHandler } from '@vincjo/datatables';
-	import type { Match, Player, Tournament } from '$lib/server/db';
-	import type { PageData } from './$types';
-	// import { PencilSimple, Ranking, Trash } from 'phosphor-svelte';
+	import type { Player } from '$lib/server/db';
 	import Modal from '$components/ui/Modal/Modal.svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { page } from '$app/stores';
@@ -14,17 +12,11 @@
 	import type { PlayerExtended } from '$lib/server/repository';
 	import Select from '$components/ui/Form/Select.svelte';
 	import NumberInput from '$components/ui/Form/NumberInput.svelte';
+	import type { PageProps } from './$types';
 
-	type PageProps = {
-		match: Match;
-		allPlayers: Array<Player>;
-		players: Array<PlayerExtended>;
-		tournament: Tournament;
-	};
+	let { data }: PageProps = $props();
 
-	export let data: PageData;
-
-	const { match, allPlayers, tournament, players }: PageProps = data;
+	const { match, allPlayers, tournament, players } = data;
 	const { form, errors, enhance, delayed, message, constraints } = superForm(data.form, {
 		onUpdated: ({ form }) => {
 			// When the form is successfully submitted close the modal and reset the item variable
@@ -97,37 +89,37 @@
 		<Datatable table={tableHanlder}>
 			<table class="table">
 				<thead>
-					<tr>
-						<th>Giocatore</th>
-						<th>Punti</th>
-						<th></th>
-						<th></th>
-					</tr>
+				<tr>
+					<th>Giocatore</th>
+					<th>Punti</th>
+					<th></th>
+					<th></th>
+				</tr>
 				</thead>
 				<tbody>
-					{#each $table as row}
-						<tr>
-							<td>
-								<Avatar picture={row.picture} name={row.name} />
-								<span>{row.name}</span>
-							</td>
-							<td>{row.points}</td>
-							<td>
-								<button type="button" class="table-button" on:click={() => onEditPoints(row)}>
-									<PencilSimple size="20" />
+				{#each $table as row}
+					<tr>
+						<td>
+							<Avatar picture={row.picture} name={row.name} />
+							<span>{row.name}</span>
+						</td>
+						<td>{row.points}</td>
+						<td>
+							<button type="button" class="table-button" on:click={() => onEditPoints(row)}>
+								<PencilSimple size="20" />
+							</button>
+						</td>
+						<td>
+							<form action="?/delete" method="POST" on:submit={(e) => onRemovePlayer(e, row)}>
+								<input type="hidden" name="playerId" value={row.id} />
+								<input type="hidden" name="matchId" value={match.id} />
+								<button type="submit" class="table-button">
+									<Trash size="20" />
 								</button>
-							</td>
-							<td>
-								<form action="?/delete" method="POST" on:submit={(e) => onRemovePlayer(e, row)}>
-									<input type="hidden" name="playerId" value={row.id} />
-									<input type="hidden" name="matchId" value={match.id} />
-									<button type="submit" class="table-button">
-										<Trash size="20" />
-									</button>
-								</form>
-							</td>
-						</tr>
-					{/each}
+							</form>
+						</td>
+					</tr>
+				{/each}
 				</tbody>
 			</table>
 		</Datatable>

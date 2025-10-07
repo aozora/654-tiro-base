@@ -11,15 +11,10 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
 	import { ChevronRight } from 'lucide-svelte';
+	import type { PageProps } from './$types';
 
-	type PageProps = {
-		tournament: Tournament;
-		leaderboard: Array<PlayerLeaderboardWithNormalizedRanking>;
-	};
-
-	export let data: PageData;
-
-	const { tournament, leaderboard }: PageProps = data;
+	let { data }: PageProps = $props();
+	let { tournament, leaderboard } = data;
 </script>
 
 <Main className="flex flex-col pb-10">
@@ -32,7 +27,7 @@
 			{#each leaderboard as player}
 				<li class="h-12">
 					<Button
-						href={`/player/${tournament.id}/${player.playerId}`}
+						href={`/player/${tournament.id}_${player.playerId}`}
 						variant="secondary"
 						class="flex items-center justify-between gap-4 h-12 w-full bg-indigo-500 hover:bg-indigo-700"
 					>
@@ -53,7 +48,7 @@
 
 		<div class="mt-6 mb-10 flex w-full items-center justify-center">
 			<Button href={`/matches/${tournament.id}`} class="mx-auto">
-					<span>Visualizza tutte le partite</span>
+				<span>Visualizza tutte le partite</span>
 			</Button>
 		</div>
 	</div>

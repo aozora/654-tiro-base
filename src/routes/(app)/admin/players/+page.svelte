@@ -3,26 +3,20 @@
 	import { Datatable, TableHandler } from '@vincjo/datatables';
 	import type { Player } from '$lib/server/db';
 	import type { PageData } from './$types';
-	// import { CheckCircle, PencilSimple, Trash, UserSquare, XCircle } from 'phosphor-svelte';
 	import Modal from '$components/ui/Modal/Modal.svelte';
 	import TextInput from '$components/ui/Form/TextInput.svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { page } from '$app/stores';
 	import { toast } from '$lib/toast';
-	import Avatar from '$components/ui/Avatar/Avatar.svelte';
 	import AdminPageTitle from '$components/AdminPageTitle.svelte';
 	import Icon from '$components/Icon/Icon.svelte';
 	import { Icons } from '$types';
 	import Loader from '$components/Loader.svelte';
-	import Checkbox from '$components/ui/Form/Checkbox.svelte';
+	import type { PageProps } from './$types';
 
-	type PageProps = {
-		players: Array<Player>;
-	};
+	let { data }: PageProps = $props();
 
-	export let data: PageData;
-
-	const { players }: PageProps = data;
+	const { players } = data;
 	const { form, errors, enhance, delayed, message, constraints } = superForm(data.form, {
 		// validationMethod: 'onsubmit', //'auto' | 'oninput' | 'onblur' | 'onsubmit' = 'auto',
 		onUpdated: ({ form }) => {
@@ -102,43 +96,43 @@
 			<Datatable table={tableHanlder}>
 				<table class="table">
 					<thead>
-						<tr>
-							<th>Nome</th>
-							<th>Attivo</th>
-							<th></th>
-							<th></th>
-						</tr>
+					<tr>
+						<th>Nome</th>
+						<th>Attivo</th>
+						<th></th>
+						<th></th>
+					</tr>
 					</thead>
 					<tbody>
-						{#each $table as row}
-							<tr>
-								<td class="player-info">
-									<Avatar picture={row.picture || ''} name={row.name} />
-									<span>{row.name}</span>
-								</td>
-								<td>
-									{#if row.isActive}
-										<CheckCircle size="20" />
-									{:else}
-										<XCircle size="20" />
-									{/if}
-								</td>
-								<td>
-									<button type="button" class="table-button" on:click={() => onEditPlayer(row)}>
-										<PencilSimple size="20" />
+					{#each $table as row}
+						<tr>
+							<td class="player-info">
+								<Avatar picture={row.picture || ''} name={row.name} />
+								<span>{row.name}</span>
+							</td>
+							<td>
+								{#if row.isActive}
+									<CheckCircle size="20" />
+								{:else}
+									<XCircle size="20" />
+								{/if}
+							</td>
+							<td>
+								<button type="button" class="table-button" on:click={() => onEditPlayer(row)}>
+									<PencilSimple size="20" />
+								</button>
+							</td>
+							<td>
+								<form action="?/delete" method="POST" on:submit={(e) => onRemovePlayer(e, row)}>
+									<input type="hidden" name="id" value={row.id} />
+									<input type="hidden" name="action" value="delete" />
+									<button type="submit" class="table-button">
+										<Trash size="20" />
 									</button>
-								</td>
-								<td>
-									<form action="?/delete" method="POST" on:submit={(e) => onRemovePlayer(e, row)}>
-										<input type="hidden" name="id" value={row.id} />
-										<input type="hidden" name="action" value="delete" />
-										<button type="submit" class="table-button">
-											<Trash size="20" />
-										</button>
-									</form>
-								</td>
-							</tr>
-						{/each}
+								</form>
+							</td>
+						</tr>
+					{/each}
 					</tbody>
 				</table>
 			</Datatable>

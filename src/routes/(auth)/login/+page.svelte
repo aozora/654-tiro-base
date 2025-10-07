@@ -2,15 +2,16 @@
 	import * as Form from '$lib/components/ui/form';
 	import * as Card from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
-	import { formSchema, type FormSchema } from './schema';
+	import { formSchema } from './schema';
 	import { superForm } from 'sveltekit-superforms';
 	import { valibotClient } from 'sveltekit-superforms/adapters';
-	import type { PageData } from './$types';
 	import { Button } from '$lib/components/ui/button';
 	import { Shell } from '@lucide/svelte';
 	import { cn } from '$lib/utils';
+	import type { PageProps } from './$types';
 
-	let { data }: { data: PageData } = $props();
+	let { data }: PageProps = $props();
+
 	let form = $derived(
 		superForm(data.form, {
 			validators: valibotClient(formSchema),

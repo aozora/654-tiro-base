@@ -12,23 +12,24 @@
 	import AxisY from '$components/chart/AxisY.svelte';
 	import Area from '$components/chart/Area.svelte';
 	import Line from '$components/chart/Line.svelte';
-	import type { Player, Tournament } from '$lib/server/database/schema';
 	import { Card, CardContent } from '$lib/components/ui/card';
 	import { Button } from '$lib/components/ui/button';
 	import { ChevronRight } from 'lucide-svelte';
 
-	type PageProps = {
-		tournament: Tournament;
-		stats: PlayerStats;
-		player: Player;
-	};
+	import type { PageProps } from './$types';
+	let { data }: PageProps = $props();
+	let { stats, player, tournament } = data;
 
-	const { stats, player, tournament }: PageProps = $props();
-	const points = stats.matchesDatesAndPoints.map((m) => {
-		return {
-			x: m.date,
-			y: m.points
-		};
+	let points: Array<{ x: Date, y: number }> = $state([]);
+	console.log({ stats, player, tournament });
+
+	$effect(() => {
+		points = stats.matchesDatesAndPoints.map((m) => {
+			return {
+				x: m.date,
+				y: m.points
+			};
+		});
 	});
 </script>
 

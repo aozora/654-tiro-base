@@ -8,7 +8,7 @@ export const formSchema = v.object({
 	),
 	password: v.pipe(
 		v.string(),
-		v.nonEmpty('Inseri la password.'),
+		v.nonEmpty('Inserisci la password.'),
 		v.minLength(6, 'La password deve avere almeno 6 caratteri.')
 	),
 });

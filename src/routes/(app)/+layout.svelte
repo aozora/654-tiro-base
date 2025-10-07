@@ -1,10 +1,10 @@
 <script lang="ts">
 	import Header from '$components/Header.svelte';
-	import type { LayoutData } from './$types';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { cn } from '$lib/utils';
+	import type { LayoutProps } from './$types';
 
-	export let data: LayoutData;
+	let { data, children }: LayoutProps = $props();
 </script>
 
 <!-- svg-sprite -->
@@ -409,5 +409,5 @@
 
 	<SvelteToast />
 
-	<slot></slot>
+	{@render children()}
 </div>
