@@ -2,8 +2,6 @@
 	import Main from '$components/Main.svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import AdminPageTitle from '$components/AdminPageTitle.svelte';
-	import Icon from '$components/Icon/Icon.svelte';
-	import { Icons } from '$types';
 	import Loader from '$components/Loader.svelte';
 	import type { PageProps } from './$types';
 	import { page } from '$app/state';
@@ -15,6 +13,8 @@
 	import { renderComponent } from '$lib/components/ui/data-table/index.js';
 	import DataTableActionButton from '$components/DataTableActionButton.svelte';
 	import DataTable from '$components/DataTable.svelte';
+	import { Button } from '$lib/components/ui/button';
+	import { PackagePlus } from '@lucide/svelte';
 
 	let { data }: PageProps = $props();
 	let { tournaments } = data;
@@ -107,13 +107,13 @@
 
 <AdminPageTitle title="Gestione tornei" showBackButton={true} />
 
-<Main className="admin-page">
-	<div>
-		<header class="page-header">
-			<button type="button" class="button" onclick={() => createTournament()}>
+<Main className="flex flex-col pb-10">
+	<div class="mx-auto w-full max-w-3xl">
+		<header class="mb-8">
+			<Button type="button" class="button" onclick={() => createTournament()}>
 				<span>Nuovo torneo</span>
-				<Icon id={Icons.TankBrand} />
-			</button>
+				<PackagePlus size={24} />
+			</Button>
 		</header>
 
 		<DataTable data={tournaments} {columns} />
