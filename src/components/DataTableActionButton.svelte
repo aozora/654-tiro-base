@@ -4,19 +4,20 @@
 	import type { Tournament } from '$lib/server/database/schema';
 
 	type Props = {
-		onclik?: (tournament: Tournament) => void;
+		onclick?: (tournament: Tournament) => void;
 		variant: 'edit' | 'dice';
 		href?: string;
 	}
 
-	let { onclick, variant, href } = $props();
+	let { onclick, variant, href }:Props = $props();
 </script>
 
 <Button
-	type='button'
 	variant='outline'
 	onclick={ onclick }
-	href={href}>
+	href={href}
+	type='button'
+	class="cursor-pointer">
 	{#if variant === 'edit'}
 		<PencilLine size={ 24 } />
 	{/if}

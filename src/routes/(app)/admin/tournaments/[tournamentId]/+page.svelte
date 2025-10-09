@@ -1,17 +1,20 @@
 <script lang="ts">
 	import Main from '$components/Main.svelte';
-	import type { Match, Player, Tournament } from '$lib/server/db';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { page } from '$app/state';
 	import AdminPageTitle from '$components/AdminPageTitle.svelte';
 	import Loader from '$components/Loader.svelte';
-	import Modal from '$components/ui/Modal/Modal.svelte';
-	import DateInput from '$components/ui/Form/DateInput.svelte';
-	import { Icons } from '$types';
-	import Icon from '$components/Icon/Icon.svelte';
-	import Select from '$components/ui/Form/Select.svelte';
 	import type { PageProps } from './$types';
 	import { toast } from 'svelte-sonner';
+	import type { ColumnDef } from '@tanstack/table-core';
+	import { renderComponent, renderSnippet } from '$lib/components/ui/data-table';
+	import { createRawSnippet } from 'svelte';
+	import DataTableActionButton from '$components/DataTableActionButton.svelte';
+	import type { Match } from '$lib/server/database/schema';
+	import DataTable from '$components/DataTable.svelte';
+	import DataTableButton from '$components/DataTableButton.svelte';
+	import { PackagePlus } from '@lucide/svelte';
+	import { Button } from '$lib/components/ui/button';
 
 	let { data }: PageProps = $props();
 	const { tournament, players, matches } = data;
@@ -38,6 +41,48 @@
 	let isModalOpen = false;
 	let item: Match | undefined = undefined;
 
+	const columns: ColumnDef<Match>[] = [
+		{
+			accessorKey: 'date',
+			header: 'Data partita'
+		},
+		{
+			id: 'editAction',
+			cell: ({ row }) => {
+				const match = row.original;
+				return renderComponent(DataTableButton, {
+					type: 'button',
+					variant: 'outline',
+					icon: "PencilLine",
+					class: 'cursor-pointer',
+					onclick: onEditMatch(match)
+				});
+			}
+		},
+		{
+			id: 'editMatchAction',
+			cell: ({ row }) => {
+				const tournament = row.original;
+				return renderComponent(DataTableButton, {
+					type: 'button',
+					variant: 'outline',
+					icon: "Dices",
+					class: 'cursor-pointer',
+					href: `/admin/tournaments/${tournament.id}/${row.original.id}`,
+				});
+			}
+		},
+		// {
+		// 	id: 'deleteAction',
+		// 	cell: ({ row }) => {
+		// 		const match = row.original;
+		// 		return renderComponent(DataTableActionButton, { variant: 'delete', onclick: onDeleteMatch(match) });
+		// 	}
+		// },
+
+	];
+
+
 	const createMatch = () => {
 		item = undefined;
 		isModalOpen = true;
@@ -48,9 +93,9 @@
 		isModalOpen = true;
 	};
 
-	const onDeleteMatch = (e, row) => {
+	const onDeleteMatch = (match:Match) => {
 		const okDelete = confirm(
-			`Elimino la partita del ${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(row.date)} ?`
+			`Elimino la partita del ${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)} ?`
 		);
 
 		if (!okDelete) {
@@ -62,18 +107,17 @@
 
 <AdminPageTitle title={`${tournament.title}`} subtitle="Gestione partite" showBackButton={true} />
 
-<Main className="admin-page">
-	<div>
-		<header class="page-header">
-			<button type="button" class="button" on:click={() => createMatch()}>
+<Main className="flex flex-col pb-10">
+	<div class="mx-auto w-full max-w-3xl">
+		<header class="mb-8">
+			<Button type="button" class="button" onclick={() => createMatch()}>
 				<span>Nuova partita</span>
-				<Icon id={Icons.TankBrand} />
-			</button>
+				<PackagePlus size={24} />
+			</Button>
 		</header>
 
 		{#if matches.length > 0}
-<!--			<Datatable table={tableHanlder}>-->
-<!--			</Datatable>-->
+			<DataTable data={matches} {columns} />
 		{:else}
 			<p class="empty-text">Non c'è ancora nessuna partita qua...</p>
 		{/if}

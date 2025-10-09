@@ -44,7 +44,7 @@
 			{#each table.getRowModel().rows as row (row.id)}
 				<Table.Row data-state={row.getIsSelected() && "selected"}>
 					{#each row.getVisibleCells() as cell (cell.id)}
-						<Table.Cell>
+						<Table.Cell class="h-12">
 							<FlexRender
 								content={cell.column.columnDef.cell}
 								context={cell.getContext()}

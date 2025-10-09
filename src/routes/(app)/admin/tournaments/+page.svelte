@@ -15,6 +15,7 @@
 	import DataTable from '$components/DataTable.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { PackagePlus } from '@lucide/svelte';
+	import DataTableButton from '$components/DataTableButton.svelte';
 
 	let { data }: PageProps = $props();
 	let { tournaments } = data;
@@ -76,17 +77,25 @@
 			id: 'editAction',
 			cell: ({ row }) => {
 				const tournament = row.original;
-				return renderComponent(DataTableActionButton, { variant: 'edit', onclick: onEditTournament(tournament) });
+				return renderComponent(DataTableButton, {
+					type: 'button',
+					variant: 'outline',
+					icon: "PencilLine",
+					class: 'cursor-pointer',
+					onclick: onEditTournament(tournament)
+				});
 			}
 		},
 		{
 			id: 'matchesAction',
 			cell: ({ row }) => {
 				const tournament = row.original;
-				return renderComponent(DataTableActionButton, {
-					variant: 'dices',
+				return renderComponent(DataTableButton, {
+					type: 'button',
+					variant: 'outline',
+					icon: "Dices",
+					class: 'cursor-pointer',
 					href: `/admin/tournaments/${tournament.id}`,
-					onclick: undefined
 				});
 			}
 		}
