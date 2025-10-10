@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { ArrowLeft } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { cn } from '$lib/utils';
 
 	export let title: string;
 	export let subtitle: string | undefined = undefined;
@@ -11,7 +12,8 @@
 	};
 </script>
 
-<div class="mb-9 flex h-12 w-full cursor-pointer items-center justify-center">
+<div class={cn("mb-9 flex h-12 w-full cursor-pointer items-center justify-center",
+"bg-gradient-to-b from-transparent via-black/40 to-transparent")}>
 	{#if showBackButton}
 		<Button type="button"
 						variant="outline"
