@@ -7,9 +7,7 @@
 	import type { PageProps } from './$types';
 	import { toast } from 'svelte-sonner';
 	import type { ColumnDef } from '@tanstack/table-core';
-	import { renderComponent, renderSnippet } from '$lib/components/ui/data-table';
-	import { createRawSnippet } from 'svelte';
-	import DataTableActionButton from '$components/DataTableActionButton.svelte';
+	import { renderComponent } from '$lib/components/ui/data-table';
 	import type { Match } from '$lib/server/database/schema';
 	import DataTable from '$components/DataTable.svelte';
 	import DataTableButton from '$components/DataTableButton.svelte';
@@ -44,16 +42,21 @@
 	const columns: ColumnDef<Match>[] = [
 		{
 			accessorKey: 'date',
-			header: 'Data partita'
+			header: 'Data partita',
+			cell: ({ row }) => {
+				const match = row.original;
+				return new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date);
+			}
 		},
 		{
 			id: 'editAction',
 			cell: ({ row }) => {
 				const match = row.original;
 				return renderComponent(DataTableButton, {
+					label: 'Modifica',
 					type: 'button',
 					variant: 'outline',
-					icon: "PencilLine",
+					icon: 'PencilLine',
 					class: 'cursor-pointer',
 					onclick: onEditMatch(match)
 				});
@@ -62,16 +65,17 @@
 		{
 			id: 'editMatchAction',
 			cell: ({ row }) => {
-				const tournament = row.original;
+				const match = row.original;
 				return renderComponent(DataTableButton, {
+					label: 'Gestisci',
 					type: 'button',
 					variant: 'outline',
-					icon: "Dices",
+					icon: 'Dices',
 					class: 'cursor-pointer',
-					href: `/admin/tournaments/${tournament.id}/${row.original.id}`,
+					href: `/admin/tournaments/${tournament.id}/${match.id}`
 				});
 			}
-		},
+		}
 		// {
 		// 	id: 'deleteAction',
 		// 	cell: ({ row }) => {
@@ -93,7 +97,7 @@
 		isModalOpen = true;
 	};
 
-	const onDeleteMatch = (match:Match) => {
+	const onDeleteMatch = (match: Match) => {
 		const okDelete = confirm(
 			`Elimino la partita del ${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)} ?`
 		);
@@ -127,30 +131,30 @@
 		<Loader />
 	{/if}
 
-<!--	<Modal-->
-<!--		title={item === undefined ? 'Nuova partita' : 'Modifica partita'}-->
-<!--		bind:isOpen={isModalOpen}-->
-<!--	>-->
-<!--		<svelte:fragment slot="modal-content">-->
-<!--			<form id="form-player" action="?/update" method="POST">-->
-<!--				<input type="hidden" name="matchId" value={item?.id} />-->
-<!--				<input type="hidden" name="tournamentId" value={tournament.id} />-->
-<!--				<DateInput-->
-<!--					label="Data partita"-->
-<!--					name="date"-->
-<!--					errors={$errors.date}-->
-<!--					constraints={$constraints.date}-->
-<!--					value={item?.date}-->
-<!--				/>-->
+	<!--	<Modal-->
+	<!--		title={item === undefined ? 'Nuova partita' : 'Modifica partita'}-->
+	<!--		bind:isOpen={isModalOpen}-->
+	<!--	>-->
+	<!--		<svelte:fragment slot="modal-content">-->
+	<!--			<form id="form-player" action="?/update" method="POST">-->
+	<!--				<input type="hidden" name="matchId" value={item?.id} />-->
+	<!--				<input type="hidden" name="tournamentId" value={tournament.id} />-->
+	<!--				<DateInput-->
+	<!--					label="Data partita"-->
+	<!--					name="date"-->
+	<!--					errors={$errors.date}-->
+	<!--					constraints={$constraints.date}-->
+	<!--					value={item?.date}-->
+	<!--				/>-->
 
-<!--				<div class="modal-actions">-->
-<!--					<button type="button" class="button" on:click={() => (isModalOpen = false)}-->
-<!--					>Annulla-->
-<!--					</button-->
-<!--					>-->
-<!--					<button type="submit" class="button primary">Salva</button>-->
-<!--				</div>-->
-<!--			</form>-->
-<!--		</svelte:fragment>-->
-<!--	</Modal>-->
+	<!--				<div class="modal-actions">-->
+	<!--					<button type="button" class="button" on:click={() => (isModalOpen = false)}-->
+	<!--					>Annulla-->
+	<!--					</button-->
+	<!--					>-->
+	<!--					<button type="submit" class="button primary">Salva</button>-->
+	<!--				</div>-->
+	<!--			</form>-->
+	<!--		</svelte:fragment>-->
+	<!--	</Modal>-->
 </Main>

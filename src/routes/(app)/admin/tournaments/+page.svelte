@@ -11,7 +11,6 @@
 	import { renderSnippet } from '$lib/components/ui/data-table/index.js';
 	import { createRawSnippet } from 'svelte';
 	import { renderComponent } from '$lib/components/ui/data-table/index.js';
-	import DataTableActionButton from '$components/DataTableActionButton.svelte';
 	import DataTable from '$components/DataTable.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { PackagePlus } from '@lucide/svelte';
@@ -78,6 +77,7 @@
 			cell: ({ row }) => {
 				const tournament = row.original;
 				return renderComponent(DataTableButton, {
+					label: 'Rinomina',
 					type: 'button',
 					variant: 'outline',
 					icon: "PencilLine",
@@ -91,6 +91,7 @@
 			cell: ({ row }) => {
 				const tournament = row.original;
 				return renderComponent(DataTableButton, {
+					label: 'Gestisci',
 					type: 'button',
 					variant: 'outline',
 					icon: "Dices",

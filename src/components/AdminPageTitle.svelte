@@ -23,7 +23,7 @@
 		</Button>
 	{/if}
 
-	<h1 class="font-serif text-4xl text-brand">
+	<h1 class="font-serif text-4xl text-primary font-bold">
 		{title}
 		{#if subtitle}
 			<span>{subtitle}</span>

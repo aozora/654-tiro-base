@@ -6,9 +6,10 @@
 
 	type Props = ButtonProps & {
 		icon?: keyof typeof LucideIcons;
+		label?: string;
 	};
 
-	let { icon, children, ...buttonProps }: Props = $props();
+	let { icon, children, label, ...buttonProps }: Props = $props();
 </script>
 
 <Button {...buttonProps}>
@@ -16,4 +17,7 @@
 		<Icon name={icon} size={24} />
 	{/if}
 	{@render children?.()}
+	{#if label}
+		<span class="sr-only sm:not-sr-only">{label}</span>
+	{/if}
 </Button>

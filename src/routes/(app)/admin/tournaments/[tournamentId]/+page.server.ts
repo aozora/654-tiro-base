@@ -26,7 +26,7 @@ const schemaDelete = v.object({
  * Page Load
  */
 export const load: PageServerLoad = async ({ params }) => {
-	const tournamentId: string = params.tournamentId;
+	const { tournamentId } = params;
 
 	const tournament: Tournament = await getTournament(tournamentId);
 	const players: Array<Player> = await getPlayers();

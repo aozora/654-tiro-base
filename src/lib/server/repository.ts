@@ -357,7 +357,8 @@ export async function getMatchPlayers(
 		})
 		.from(playersOnMatches)
 		.innerJoin(players, eq(playersOnMatches.playerId, players.id))
-		.where(eq(playersOnMatches.matchId, matchId));
+		.where(eq(playersOnMatches.matchId, matchId))
+		.orderBy(desc(playersOnMatches.points));
 
 	return result;
 }
