@@ -22,28 +22,28 @@ export const load: PageServerLoad = async () => {
 /**
  * Page Action
  */
-// export const actions: Actions = {
-// 	default: async ({ request }) => {
-// 		const form = await superValidate(request, zod(schemaUpdate));
-//
-// 		if (!form.valid) {
-// 			// Again, always return form and things will just work.
-// 			console.error('Form not valid', form);
-// 			return fail(400, { form });
-// 		}
-//
-// 		try {
-// 			await upsertTournament(
-// 				form.data.id === 'undefined' ? '' : String(form.data.id),
-// 				form.data.title,
-// 				form.data.isActive
-// 			);
-//
-// 			return message(form, 'success');
-// 		} catch (error: unknown) {
-// 			console.error(error);
-//
-// 			return fail(500);
-// 		}
-// 	}
-// };
+export const actions: Actions = {
+	default: async ({ request }) => {
+		const form = await superValidate(request, valibot(schema));
+
+		if (!form.valid) {
+			// Again, always return form and things will just work.
+			console.error('Form not valid', form);
+			return fail(400, { form });
+		}
+
+		try {
+			await upsertTournament(
+				form.data.id === 'undefined' ? undefined : String(form.data.id),
+				form.data.title,
+				form.data.isActive
+			);
+
+			return message(form, 'success');
+		} catch (error: unknown) {
+			console.error(error);
+
+			return fail(500);
+		}
+	}
+};

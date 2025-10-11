@@ -36,12 +36,7 @@
 					isModalOpen = false;
 
 					// show a toast
-					toast.success({
-						// kind: 'success',
-						message: 'Triplooo! Dati salvati!',
-						showTimestamp: true,
-						hideCloseButton: false
-					});
+					toast.success('Triplooo! Dati salvati!');
 				}
 			}
 		})
@@ -115,9 +110,7 @@
 		}
 	];
 
-
 	const onEditTournament = (row: Tournament) => {
-		// console.log({ row });
 		item = row;
 		isModalOpen = true;
 	};
@@ -126,6 +119,17 @@
 		item = undefined;
 		isModalOpen = true;
 	};
+
+	// Populate form data when item changes
+	$effect(() => {
+		if (item) {
+			$formData.title = item.title;
+			$formData.isActive = item.isActive;
+		} else {
+			$formData.title = '';
+			$formData.isActive = false;
+		}
+	});
 </script>
 
 <AdminPageTitle title="Gestione tornei" showBackButton={true} />
@@ -187,6 +191,12 @@
 			<Form.Button disabled={$submitting} class="w-full">
 				{$submitting ? 'Salvataggio...' : 'Conferma'}
 			</Form.Button>
+
+			{#if $errors?._errors}
+				<div class="mt-3 rounded-md text-red-700">
+					{$errors?._errors}
+				</div>
+			{/if}
 		</form>
 
 	</Dialog.Content>

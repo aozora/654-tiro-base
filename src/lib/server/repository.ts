@@ -249,6 +249,8 @@ export async function upsertTournament(
 	title: string,
 	isActive: boolean,
 ): Promise<Tournament> {
+	console.log(`🍉   upsertTournament`, { id, title, isActive });
+
 	if (id) {
 		// Update existing tournament
 		const result = await db

@@ -26,12 +26,7 @@
 				isModalOpen = false;
 
 				// show a toast
-				toast.success({
-					title: 'Triplooo!',
-					subtitle: 'Dati salvati!',
-					showTimestamp: true,
-					hideCloseButton: false
-				});
+				toast.success('Triplooo! Dati salvati!');
 			}
 		}
 	});
