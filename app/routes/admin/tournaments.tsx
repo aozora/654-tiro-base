@@ -1,10 +1,4 @@
-import {
-	type ColumnDef,
-	createColumnHelper,
-	flexRender,
-	getCoreRowModel,
-	useReactTable,
-} from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import { Check, Dices, PackagePlus, PencilLine, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { data, Link } from 'react-router';
@@ -13,6 +7,14 @@ import { DataTable } from '@/components/DataTable';
 import Header from '@/components/Header';
 import Main from '@/components/Main';
 import { Button } from '@/components/ui/button';
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from '@/components/ui/dialog';
 import type { Match, Tournament } from '@/lib/database/schema';
 import { getTournaments } from '@/lib/repository';
 import { cn } from '@/lib/utils';
@@ -92,7 +94,7 @@ export default function AdminTournamentPage({
 				},
 			},
 		],
-		[],
+		[onEditTournament],
 	);
 
 	const onEditTournament = (row: Tournament) => {
@@ -129,6 +131,20 @@ export default function AdminTournamentPage({
 					<DataTable columns={columns} data={tournaments} />
 				</div>
 			</Main>
+
+			<Dialog open={isModalOpen}>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>
+							{item === undefined ? 'Nuovo torneo' : 'Modifica torneo'}
+						</DialogTitle>
+						<DialogDescription>
+							This action cannot be undone. This will permanently delete your
+							account and remove your data from our servers.
+						</DialogDescription>
+					</DialogHeader>
+				</DialogContent>
+			</Dialog>
 		</div>
 	);
 }
