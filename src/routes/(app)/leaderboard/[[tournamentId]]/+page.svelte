@@ -1,13 +1,8 @@
 <script lang="ts">
-	import type { PageData } from './$types';
-	import type { PlayerLeaderboardWithNormalizedRanking } from '$types';
 	import Main from '$components/Main.svelte';
 	import TopThree from '$components/TopThree.svelte';
 	import PageTitle from '$components/PageTitle.svelte';
 	import { pluralizePoints } from '$lib/helpers';
-	import Icon from '$components/Icon/Icon.svelte';
-	import { Icons } from '$types';
-	import type { Tournament } from '$lib/server/database/schema';
 	import { Button } from '$lib/components/ui/button';
 	import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
 	import { ChevronRight } from '@lucide/svelte';
@@ -20,7 +15,9 @@
 <Main className="flex flex-col pb-10">
 	<PageTitle title="Classifica" />
 
-	<TopThree {leaderboard} />
+	{#if leaderboard.length > 0}
+		<TopThree {leaderboard} />
+	{/if}
 
 	<div class="leaderboard-wrapper mx-auto w-full max-w-3xl">
 		<ul class="flex flex-col gap-5">
@@ -46,11 +43,16 @@
 			{/each}
 		</ul>
 
-		<div class="mt-6 mb-10 flex w-full items-center justify-center">
-			<Button href={`/matches/${tournament.id}`} class="mx-auto">
-				<span>Visualizza tutte le partite</span>
-			</Button>
-		</div>
-	</div>
+		{#if leaderboard.length === 0}
+			<p class="text-center text-3xl">Non ci sono ancora partite!</p>
+		{/if}
 
+		{#if leaderboard.length > 0}
+			<div class="mt-6 mb-10 flex w-full items-center justify-center">
+				<Button href={`/matches/${tournament.id}`} class="mx-auto">
+					<span>Visualizza tutte le partite</span>
+				</Button>
+			</div>
+		{/if}
+	</div>
 </Main>

@@ -50,11 +50,6 @@
 	let submitting = $derived(form.submitting);
 	let enhance = $derived(form.enhance);
 
-	// DEBUG
-	$effect(() => {
-		console.log({ $errors });
-	});
-
 	let isModalOpen = $state(false);
 	let item: Tournament | undefined = $state(undefined);
 
