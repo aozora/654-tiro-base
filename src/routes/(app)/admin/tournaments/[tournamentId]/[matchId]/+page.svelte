@@ -58,7 +58,7 @@
 					variant: 'outline',
 					icon: 'PencilLine',
 					class: 'cursor-pointer',
-					onclick: onEditPoints(row.original)
+					onclick: () => onEditPoints(row.original)
 				});
 			}
 		}

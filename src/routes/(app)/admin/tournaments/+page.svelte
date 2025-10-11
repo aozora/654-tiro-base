@@ -15,31 +15,44 @@
 	import { Button } from '$lib/components/ui/button';
 	import { PackagePlus } from '@lucide/svelte';
 	import DataTableButton from '$components/DataTableButton.svelte';
+	import * as Dialog from '$lib/components/ui/dialog';
+	import { Input } from '$lib/components/ui/input';
+	import * as Form from '$lib/components/ui/form';
+	import { valibotClient } from 'sveltekit-superforms/adapters';
+	import { schema } from './schema';
+	import { Checkbox } from '$lib/components/ui/checkbox';
 
 	let { data }: PageProps = $props();
 	let { tournaments } = data;
 
-	const { form, errors, enhance, delayed, message, constraints } = superForm(data.form, {
-		// validationMethod: 'onsubmit', //'auto' | 'oninput' | 'onblur' | 'onsubmit' = 'auto',
-		onUpdated: ({ form }) => {
-			// When the form is successfully submitted close the modal and reset the item variable
-			if (form.valid && message && page.status < 400) {
-				item = undefined;
-				isModalOpen = false;
+	let form = $derived(
+		superForm(data.form, {
+			validators: valibotClient(schema),
+			dataType: 'json',
+			onUpdated: ({ form }) => {
+				// When the form is successfully submitted close the modal and reset the item variable
+				if (form.valid && form.message && page.status < 400) {
+					item = undefined;
+					isModalOpen = false;
 
-				// show a toast
-				toast.success({
-					// kind: 'success',
-					message: 'Triplooo! Dati salvati!',
-					showTimestamp: true,
-					hideCloseButton: false
-				});
+					// show a toast
+					toast.success({
+						// kind: 'success',
+						message: 'Triplooo! Dati salvati!',
+						showTimestamp: true,
+						hideCloseButton: false
+					});
+				}
 			}
-		}
-	});
+		})
+	);
+	let formData = $derived(form.form);
+	let errors = $derived(form.errors);
+	let submitting = $derived(form.submitting);
+	let enhance = $derived(form.enhance);
 
-	let isModalOpen = false;
-	let item: Tournament | undefined = undefined;
+	let isModalOpen = $state(false);
+	let item: Tournament | undefined = $state(undefined);
 
 	const columns: ColumnDef<Tournament>[] = [
 		{
@@ -80,9 +93,9 @@
 					label: 'Rinomina',
 					type: 'button',
 					variant: 'outline',
-					icon: "PencilLine",
+					icon: 'PencilLine',
 					class: 'cursor-pointer',
-					onclick: onEditTournament(tournament)
+					onclick: () => onEditTournament(tournament)
 				});
 			}
 		},
@@ -94,9 +107,9 @@
 					label: 'Gestisci',
 					type: 'button',
 					variant: 'outline',
-					icon: "Dices",
+					icon: 'Dices',
 					class: 'cursor-pointer',
-					href: `/admin/tournaments/${tournament.id}`,
+					href: `/admin/tournaments/${tournament.id}`
 				});
 			}
 		}
@@ -129,10 +142,55 @@
 		<DataTable data={tournaments} {columns} />
 	</div>
 
-	{#if $delayed}
-		<Loader />
-	{/if}
+	<!--{#if $delayed}-->
+	<!--	<Loader />-->
+	<!--{/if}-->
 </Main>
+
+<Dialog.Root bind:open={isModalOpen}>
+	<Dialog.Content>
+		<Dialog.Header>
+			<Dialog.Title>{item === undefined ? 'Nuovo torneo' : 'Modifica torneo'}</Dialog.Title>
+		</Dialog.Header>
+
+		<form method="POST" use:enhance>
+			<input type="hidden" name="id" value={item?.id} />
+
+			<Form.Field {form} name="title">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Titolo</Form.Label>
+						<Input
+							{...props}
+							bind:value={$formData.title}
+							type="text"
+							placeholder="Inserisci il titolo del torneo..."
+						/>
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors class="mb-4 *:mb-2" />
+			</Form.Field>
+
+			<Form.Field {form} name="isActive">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Attivo</Form.Label>
+						<Checkbox
+							{...props}
+							bind:checked={$formData.isActive}
+						/>
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors class="mb-4 *:mb-2" />
+			</Form.Field>
+
+			<Form.Button disabled={$submitting} class="w-full">
+				{$submitting ? 'Salvataggio...' : 'Conferma'}
+			</Form.Button>
+		</form>
+
+	</Dialog.Content>
+</Dialog.Root>
 
 <!--<Modal title={item === undefined ? 'Nuovo torneo' : 'Modifica torneo'} bind:isOpen={isModalOpen}>-->
 <!--	<svelte:fragment slot="modal-content">-->

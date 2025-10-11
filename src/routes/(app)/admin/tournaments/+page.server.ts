@@ -4,13 +4,7 @@ import { message, superValidate, fail } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { invalidate } from '$app/navigation';
 import type { Tournament } from '$lib/server/database/schema';
-import * as v from 'valibot';
-
-const schema = v.object({
-	id: v.optional(v.string()),
-	title: v.pipe(v.string(),v.minLength(2)),
-	isActive: v.boolean()
-});
+import { schema } from './schema';
 
 /**
  * Page Load

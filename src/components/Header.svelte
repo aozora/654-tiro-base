@@ -17,8 +17,10 @@
 	};
 </script>
 
-<header class={cn("header sticky top-0 z-10 flex h-16 items-center justify-between p-4 px-4",
-"bg-gradient-to-b from-black/80 via-black/40 to-transparent")}>
+<header class={cn(
+	"header sticky top-0 z-10 flex h-16 items-center justify-between p-4 px-4",
+	"bg-gradient-to-b from-black via-black/80 to-black/40"
+)}>
 	<a href="/" class="logo">
 		{#if page.data.tournament}
 			<span>{page.data.tournament.title}</span>

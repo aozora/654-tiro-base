@@ -12,8 +12,10 @@
 	};
 </script>
 
-<div class={cn("mb-9 flex h-12 w-full cursor-pointer items-center justify-center",
-"bg-gradient-to-b from-transparent via-black/40 to-transparent")}>
+<div class={cn(
+	"mb-9 flex h-12 w-full cursor-pointer items-center justify-center",
+	"bg-gradient-to-b from-black/40 to-transparent"
+)}>
 	{#if showBackButton}
 		<Button type="button"
 						variant="outline"

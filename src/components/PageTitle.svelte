@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import { ArrowLeft } from '@lucide/svelte';
+	import { cn } from '$lib/utils';
 
 	type Props = {
 		title: string;
@@ -14,7 +15,10 @@
 	};
 </script>
 
-<div class="mb-9 flex w-full items-center justify-center">
+<div class={cn(
+	"mb-9 flex w-full items-center justify-center",
+	"bg-gradient-to-b from-black/40 to-transparent"
+	)}>
 	{#if showBackButton}
 		<Button type="button" variant="outline"
 						class="mr-8 flex-0 cursor-pointer" onclick={goBack}>

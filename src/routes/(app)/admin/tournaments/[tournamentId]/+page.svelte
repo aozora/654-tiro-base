@@ -58,7 +58,7 @@
 					variant: 'outline',
 					icon: 'PencilLine',
 					class: 'cursor-pointer',
-					onclick: onEditMatch(match)
+					onclick: () => onEditMatch(match)
 				});
 			}
 		},
