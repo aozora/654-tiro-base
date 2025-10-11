@@ -80,10 +80,8 @@
 					</Form.Field>
 
 					<Form.Button disabled={$submitting} class="w-full">
-						{$submitting ? 'Submitting...' : 'Submit'}
+						{$submitting ? 'Caricamento...' : 'Entra'}
 					</Form.Button>
-
-					{JSON.stringify(errors, null, 2)}
 
 					{#if $errors?._errors}
 						<div class="mt-3 rounded-md text-red-700">

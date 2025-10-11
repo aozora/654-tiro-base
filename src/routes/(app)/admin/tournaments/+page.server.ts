@@ -1,10 +1,9 @@
 import type { Actions, PageServerLoad } from './$types';
-import { getTournaments, upsertTournament } from '$lib/server/repository';
+import { deleteTournament, getTournaments, upsertTournament } from '$lib/server/repository';
 import { message, superValidate, fail } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
-import { invalidate } from '$app/navigation';
 import type { Tournament } from '$lib/server/database/schema';
-import { schema } from './schema';
+import { deleteSchema, schema } from './schema';
 
 /**
  * Page Load
@@ -23,18 +22,17 @@ export const load: PageServerLoad = async () => {
  * Page Action
  */
 export const actions: Actions = {
-	default: async ({ request }) => {
+	edit: async ({ request }) => {
 		const form = await superValidate(request, valibot(schema));
 
 		if (!form.valid) {
-			// Again, always return form and things will just work.
 			console.error('Form not valid', form);
-			return fail(400, { form });
+			return fail(400, { form, message: 'Form not valid' });
 		}
 
 		try {
 			await upsertTournament(
-				form.data.id === 'undefined' ? undefined : String(form.data.id),
+				form.data.id,
 				form.data.title,
 				form.data.isActive
 			);
@@ -43,7 +41,30 @@ export const actions: Actions = {
 		} catch (error: unknown) {
 			console.error(error);
 
-			return fail(500);
+			return fail(500, { form, message: 'Something went wrong' });
+		}
+	},
+
+	delete: async ({ request }) => {
+		const form = await superValidate(request, valibot(deleteSchema));
+
+		if (!form.valid) {
+			console.error('Form not valid', form);
+			return fail(400, { form, message: 'Form not valid' });
+		}
+
+		try {
+			const deleted = await deleteTournament(
+				form.data.id
+			);
+
+			console.log(`🍉   Deleted tournament ${deleted.id}`);
+
+			return message(form, 'Torneo eliminato!');
+		} catch (error: unknown) {
+			console.error(error);
+
+			return fail(500, { form, message: 'Something went wrong' });
 		}
 	}
 };

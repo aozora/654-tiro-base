@@ -7,7 +7,7 @@ import {
 	players,
 	playersOnMatches,
 	type Tournament,
-	tournaments,
+	tournaments
 } from './database/schema';
 import db from './db';
 
@@ -49,7 +49,7 @@ export type PlayerStats = {
 
 export async function getPlayerStats(
 	tournamentId: string,
-	playerId: string,
+	playerId: string
 ): Promise<PlayerStats> {
 	// Get tournament matches for the player
 	const tournamentMatches = await db
@@ -57,30 +57,30 @@ export async function getPlayerStats(
 			playerId: playersOnMatches.playerId,
 			matchId: playersOnMatches.matchId,
 			points: playersOnMatches.points,
-			date: matches.date,
+			date: matches.date
 		})
 		.from(playersOnMatches)
 		.innerJoin(matches, eq(playersOnMatches.matchId, matches.id))
 		.where(
 			and(
 				eq(matches.tournamentId, tournamentId),
-				eq(playersOnMatches.playerId, playerId),
-			),
+				eq(playersOnMatches.playerId, playerId)
+			)
 		)
 		.orderBy(asc(matches.date));
 
 	// Get distinct match IDs where player participated
 	const distinctMatchIds = await db
 		.selectDistinct({
-			matchId: playersOnMatches.matchId,
+			matchId: playersOnMatches.matchId
 		})
 		.from(playersOnMatches)
 		.innerJoin(matches, eq(playersOnMatches.matchId, matches.id))
 		.where(
 			and(
 				eq(playersOnMatches.playerId, playerId),
-				eq(matches.tournamentId, tournamentId),
-			),
+				eq(matches.tournamentId, tournamentId)
+			)
 		);
 
 	const matchesPlayedCount = distinctMatchIds.length;
@@ -96,22 +96,22 @@ export async function getPlayerStats(
 				and(
 					inArray(
 						playersOnMatches.matchId,
-						distinctMatchIds.map((m) => m.matchId),
+						distinctMatchIds.map((m) => m.matchId)
 					),
-					eq(matches.tournamentId, tournamentId),
-				),
+					eq(matches.tournamentId, tournamentId)
+				)
 			);
 
 		// Calculate wins
 		for (const distinctMatch of distinctMatchIds) {
 			const matchResults = allMatchResults.filter(
-				(x) => x.PlayersOnMatches.matchId === distinctMatch.matchId,
+				(x) => x.PlayersOnMatches.matchId === distinctMatch.matchId
 			);
 			const maxPoints = Math.max(
-				...matchResults.map((x) => x.PlayersOnMatches.points),
+				...matchResults.map((x) => x.PlayersOnMatches.points)
 			);
 			const winner = matchResults.find(
-				(x) => x.PlayersOnMatches.points === maxPoints,
+				(x) => x.PlayersOnMatches.points === maxPoints
 			);
 
 			if (winner && winner.PlayersOnMatches.playerId === playerId) {
@@ -125,50 +125,50 @@ export async function getPlayerStats(
 			playerId: m.playerId,
 			matchId: m.matchId,
 			date: m.date,
-			points: m.points,
-		}),
+			points: m.points
+		})
 	);
 
 	return {
 		matchesDatesAndPoints,
 		matchesPlayedCount,
-		matchesWonCount,
+		matchesWonCount
 	};
 }
 
-export async function upsertPlayer(
-	id: undefined | string,
-	name: string,
-	picture: string,
-	isActive: boolean,
-): Promise<Player> {
-	if (id) {
-		// Update existing player
-		const result = await db
-			.update(players)
-			.set({ name, isActive, picture })
-			.where(eq(players.id, id))
-			.returning();
-
-		if (result.length === 0) {
-			throw new Error(`Player with id ${id} not found`);
-		}
-
-		return result[0];
-	} else {
-		// Create new player
-		const result = await db
-			.insert(players)
-			.values({ name, isActive, picture })
-			.returning();
-
-		return result[0];
-	}
-}
+// export async function upsertPlayer(
+// 	id: undefined | string,
+// 	name: string,
+// 	picture: string,
+// 	isActive: boolean,
+// ): Promise<Player> {
+// 	if (id) {
+// 		// Update existing player
+// 		const result = await db
+// 			.update(players)
+// 			.set({ name, isActive, picture })
+// 			.where(eq(players.id, id))
+// 			.returning();
+//
+// 		if (result.length === 0) {
+// 			throw new Error(`Player with id ${id} not found`);
+// 		}
+//
+// 		return result[0];
+// 	} else {
+// 		// Create new player
+// 		const result = await db
+// 			.insert(players)
+// 			.values({ name, isActive, picture })
+// 			.returning();
+//
+// 		return result[0];
+// 	}
+// }
 
 export async function updatePlayerPicture(
 	id: string,
-	picture: string,
+	picture: string
 ): Promise<Player> {
 	const result = await db
 		.update(players)
@@ -209,7 +209,7 @@ export async function getTournaments(): Promise<
 
 		result.push({
 			...tournament,
-			matches: tournamentMatches,
+			matches: tournamentMatches
 		});
 	}
 
@@ -247,9 +247,9 @@ export async function getActiveTournament(): Promise<Tournament> {
 export async function upsertTournament(
 	id: undefined | string,
 	title: string,
-	isActive: boolean,
+	isActive: boolean
 ): Promise<Tournament> {
-	console.log(`🍉   upsertTournament`, { id, title, isActive });
+	// console.log(`🍉   upsertTournament`, { id, title, isActive });
 
 	if (id) {
 		// Update existing tournament
@@ -273,6 +273,11 @@ export async function upsertTournament(
 
 		return result[0];
 	}
+}
+
+export async function deleteTournament(id: string): Promise<Tournament> {
+	const result = await db.delete(tournaments).where(eq(tournaments.id, id)).returning();
+	return result[0];
 }
 
 // Matches
@@ -301,7 +306,7 @@ export async function getMatch(id: string): Promise<Match> {
 export async function upsertMatch(
 	id: undefined | string,
 	tournamentId: string,
-	date: Date,
+	date: Date
 ): Promise<Match> {
 	console.log({ id, tournamentId, date });
 
@@ -346,7 +351,7 @@ export async function deleteMatchDeep(id: string): Promise<Match> {
 export type PlayerExtended = Player & { points: number };
 
 export async function getMatchPlayers(
-	matchId: string,
+	matchId: string
 ): Promise<Array<PlayerExtended>> {
 	const result = await db
 		.select({
@@ -355,7 +360,7 @@ export async function getMatchPlayers(
 			picture: players.picture,
 			isActive: players.isActive,
 			isDeleted: players.isDeleted,
-			points: playersOnMatches.points,
+			points: playersOnMatches.points
 		})
 		.from(playersOnMatches)
 		.innerJoin(players, eq(playersOnMatches.playerId, players.id))
@@ -368,7 +373,7 @@ export async function getMatchPlayers(
 export async function upsertMatchPlayer(
 	matchId: string,
 	playerId: string,
-	points: number,
+	points: number
 ): Promise<PlayerOnMatch> {
 	// Try to update first
 	const updateResult = await db
@@ -377,8 +382,8 @@ export async function upsertMatchPlayer(
 		.where(
 			and(
 				eq(playersOnMatches.playerId, playerId),
-				eq(playersOnMatches.matchId, matchId),
-			),
+				eq(playersOnMatches.matchId, matchId)
+			)
 		)
 		.returning();
 
@@ -397,15 +402,15 @@ export async function upsertMatchPlayer(
 
 export async function removePlayerFromMatch(
 	matchId: string,
-	playerId: string,
+	playerId: string
 ): Promise<PlayerOnMatch> {
 	const result = await db
 		.delete(playersOnMatches)
 		.where(
 			and(
 				eq(playersOnMatches.playerId, playerId),
-				eq(playersOnMatches.matchId, matchId),
-			),
+				eq(playersOnMatches.matchId, matchId)
+			)
 		)
 		.returning();
 
@@ -424,7 +429,7 @@ export async function getLeaderboard(tournamentId: string) {
 		.where(eq(matches.tournamentId, tournamentId));
 
 	const matchesIds = tournamentMatches.map(
-		(tournamentMatche) => tournamentMatche.id,
+		(tournamentMatche) => tournamentMatche.id
 	);
 
 	if (tournamentMatches.length === 0) {
@@ -436,7 +441,9 @@ export async function getLeaderboard(tournamentId: string) {
 		.select({
 			playerId: playersOnMatches.playerId,
 			// totalPoints: sum(playersOnMatches.points),
-			totalPoints: sql<number>`sum(${playersOnMatches.points})`,
+			totalPoints: sql<number>`sum(
+      ${playersOnMatches.points}
+      )`
 		})
 		.from(playersOnMatches)
 		.where(inArray(playersOnMatches.matchId, matchesIds))

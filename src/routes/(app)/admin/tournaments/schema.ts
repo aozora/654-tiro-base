@@ -5,3 +5,7 @@ export const schema = v.object({
 	title: v.pipe(v.string(),v.minLength(2)),
 	isActive: v.boolean()
 });
+
+export const deleteSchema = v.object({
+	id: v.string()
+});

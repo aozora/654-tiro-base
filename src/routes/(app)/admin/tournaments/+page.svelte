@@ -2,7 +2,6 @@
 	import Main from '$components/Main.svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import AdminPageTitle from '$components/AdminPageTitle.svelte';
-	import Loader from '$components/Loader.svelte';
 	import type { PageProps } from './$types';
 	import { page } from '$app/state';
 	import type { Match, Tournament } from '$lib/server/database/schema';
@@ -21,15 +20,18 @@
 	import { valibotClient } from 'sveltekit-superforms/adapters';
 	import { schema } from './schema';
 	import { Checkbox } from '$lib/components/ui/checkbox';
+	import DataTableFormButton from '$components/DataTableFormButton.svelte';
 
 	let { data }: PageProps = $props();
-	let { tournaments } = data;
+	let { tournaments } = $derived(data);
 
 	let form = $derived(
 		superForm(data.form, {
 			validators: valibotClient(schema),
 			dataType: 'json',
 			onUpdated: ({ form }) => {
+				console.log(`🍉   form updated: ${form.valid} ${form.message} ${form.errors?._errors} ${page.status}`);
+
 				// When the form is successfully submitted close the modal and reset the item variable
 				if (form.valid && form.message && page.status < 400) {
 					item = undefined;
@@ -37,6 +39,8 @@
 
 					// show a toast
 					toast.success('Triplooo! Dati salvati!');
+				} else {
+					toast.error('Cita murta! c\'è un errore....');
 				}
 			}
 		})
@@ -45,6 +49,11 @@
 	let errors = $derived(form.errors);
 	let submitting = $derived(form.submitting);
 	let enhance = $derived(form.enhance);
+
+	// DEBUG
+	$effect(() => {
+		console.log({ $errors });
+	});
 
 	let isModalOpen = $state(false);
 	let item: Tournament | undefined = $state(undefined);
@@ -107,6 +116,27 @@
 					href: `/admin/tournaments/${tournament.id}`
 				});
 			}
+		},
+		{
+			id: 'deleteAction',
+			cell: ({ row }) => {
+				const tournament = row.original;
+				const matches = row.getValue('matches') as Match[];
+				if (matches.length === 0) {
+					return renderComponent(DataTableFormButton, {
+						ids: [{ name: 'id', value: tournament.id }],
+						enhance: enhance,
+						action: '?/delete',
+						label: 'Elimina',
+						type: 'submit',
+						variant: 'destructive',
+						icon: 'Trash2',
+						class: 'cursor-pointer'
+					});
+				}
+
+				return null;
+			}
 		}
 	];
 
@@ -120,12 +150,17 @@
 		isModalOpen = true;
 	};
 
+	const deleteTournament = (tournamentId: string) => {
+	};
+
 	// Populate form data when item changes
 	$effect(() => {
 		if (item) {
+			$formData.id = item.id;
 			$formData.title = item.title;
 			$formData.isActive = item.isActive;
 		} else {
+			$formData.id = undefined;
 			$formData.title = '';
 			$formData.isActive = false;
 		}
@@ -145,10 +180,6 @@
 
 		<DataTable data={tournaments} {columns} />
 	</div>
-
-	<!--{#if $delayed}-->
-	<!--	<Loader />-->
-	<!--{/if}-->
 </Main>
 
 <Dialog.Root bind:open={isModalOpen}>
@@ -157,7 +188,7 @@
 			<Dialog.Title>{item === undefined ? 'Nuovo torneo' : 'Modifica torneo'}</Dialog.Title>
 		</Dialog.Header>
 
-		<form method="POST" use:enhance>
+		<form method="POST" action="?/edit" use:enhance>
 			<input type="hidden" name="id" value={item?.id} />
 
 			<Form.Field {form} name="title">
@@ -201,33 +232,3 @@
 
 	</Dialog.Content>
 </Dialog.Root>
-
-<!--<Modal title={item === undefined ? 'Nuovo torneo' : 'Modifica torneo'} bind:isOpen={isModalOpen}>-->
-<!--	<svelte:fragment slot="modal-content">-->
-<!--		<form id="form-player" method="POST">-->
-<!--			<input type="hidden" name="id" value={item?.id} />-->
-
-<!--			<TextInput-->
-<!--				label="Titolo"-->
-<!--				name="title"-->
-<!--				errors={$errors.title}-->
-<!--				constraints={$constraints.title}-->
-<!--				value={item?.title}-->
-<!--			/>-->
-<!--			&lt;!&ndash;			<Toggle label='Is active' name='isActive' required={true} value={item?.isActive ?? false} />&ndash;&gt;-->
-<!--			<Checkbox-->
-<!--				label="Attivo"-->
-<!--				required={false}-->
-<!--				name="isActive"-->
-<!--				errors={$errors.isActive}-->
-<!--				constraints={$constraints.isActive}-->
-<!--				checked={item?.isActive}-->
-<!--			/>-->
-
-<!--			<div class="modal-actions">-->
-<!--				<button type="button" class="button" on:click={() => (isModalOpen = false)}>Annulla</button>-->
-<!--				<button type="submit" class="button primary">Salva</button>-->
-<!--			</div>-->
-<!--		</form>-->
-<!--	</svelte:fragment>-->
-<!--</Modal>-->
