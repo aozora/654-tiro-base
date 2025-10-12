@@ -9,18 +9,10 @@ import {
 import { message, superValidate, fail } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { error } from '@sveltejs/kit';
-import * as v from 'valibot';
 import type { Match, Player, Tournament } from '$lib/server/database/schema';
+import { schema } from './schema';
+import { deleteSchema } from '../schema';
 
-const schema = v.object({
-	matchId: v.string(),
-	tournamentId: v.string(),
-	date: v.date()
-});
-
-const schemaDelete = v.object({
-	matchId: v.string()
-});
 
 /**
  * Page Load
@@ -49,47 +41,47 @@ export const load: PageServerLoad = async ({ params }) => {
 /**
  * Page Action
  */
-// export const actions: Actions = {
-// 	update: async ({ request }) => {
-// 		const form = await superValidate(request, zod(schema));
-//
-// 		if (!form.valid) {
-// 			// Again, always return form and things will just work.
-// 			console.error('Form not valid', form);
-// 			return fail(400, { form });
-// 		}
-//
-// 		try {
-// 			await upsertMatch(
-// 				String(form.data.matchId),
-// 				String(form.data.tournamentId),
-// 				new Date(form.data.date)
-// 			);
-//
-// 			return message(form, 'success');
-// 		} catch (error: unknown) {
-// 			console.error(error);
-//
-// 			return fail(500);
-// 		}
-// 	},
-//
-// 	delete: async ({ request }) => {
-// 		const form = await superValidate(request, zod(schemaDelete));
-//
-// 		if (!form.valid) {
-// 			// Again, always return form and things will just work.
-// 			console.error('Delete Form not valid', form);
-// 			return fail(400, { form });
-// 		}
-//
-// 		try {
-// 			await deleteMatchDeep(form.data.matchId);
-// 			return message(form, 'success');
-// 		} catch (error: unknown) {
-// 			console.error(error);
-//
-// 			return fail(500);
-// 		}
-// 	}
-// };
+export const actions: Actions = {
+	update: async ({ request }) => {
+		const form = await superValidate(request, valibot(schema));
+
+		if (!form.valid) {
+			// Again, always return form and things will just work.
+			console.error('Form not valid', form);
+			return fail(400, { form });
+		}
+
+		try {
+			await upsertMatch(
+				String(form.data.matchId),
+				String(form.data.tournamentId),
+				new Date(form.data.date)
+			);
+
+			return message(form, 'success');
+		} catch (error: unknown) {
+			console.error(error);
+
+			return fail(500, { form, message: 'Something went wrong' });
+		}
+	},
+
+	delete: async ({ request }) => {
+		const form = await superValidate(request, valibot(deleteSchema));
+
+		if (!form.valid) {
+			// Again, always return form and things will just work.
+			console.error('Delete Form not valid', form);
+			return fail(400, { form });
+		}
+
+		try {
+			await deleteMatchDeep(form.data.id);
+			return message(form, 'success');
+		} catch (error: unknown) {
+			console.error(error);
+
+			return fail(500, { form, message: 'Something went wrong' });
+		}
+	}
+};

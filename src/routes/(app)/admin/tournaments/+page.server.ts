@@ -22,7 +22,7 @@ export const load: PageServerLoad = async () => {
  * Page Action
  */
 export const actions: Actions = {
-	edit: async ({ request }) => {
+	update: async ({ request }) => {
 		const form = await superValidate(request, valibot(schema));
 
 		if (!form.valid) {
@@ -57,8 +57,6 @@ export const actions: Actions = {
 			const deleted = await deleteTournament(
 				form.data.id
 			);
-
-			console.log(`🍉   Deleted tournament ${deleted.id}`);
 
 			return message(form, 'Torneo eliminato!');
 		} catch (error: unknown) {

@@ -23,7 +23,7 @@
 	import DataTableFormButton from '$components/DataTableFormButton.svelte';
 
 	let { data }: PageProps = $props();
-	let { tournaments } = $derived(data);
+	let { tournaments,  } = $derived(data);
 
 	let form = $derived(
 		superForm(data.form, {
@@ -145,9 +145,6 @@
 		isModalOpen = true;
 	};
 
-	const deleteTournament = (tournamentId: string) => {
-	};
-
 	// Populate form data when item changes
 	$effect(() => {
 		if (item) {
@@ -183,7 +180,7 @@
 			<Dialog.Title>{item === undefined ? 'Nuovo torneo' : 'Modifica torneo'}</Dialog.Title>
 		</Dialog.Header>
 
-		<form method="POST" action="?/edit" use:enhance>
+		<form method="POST" action="?/update" use:enhance>
 			<input type="hidden" name="id" value={item?.id} />
 
 			<Form.Field {form} name="title">

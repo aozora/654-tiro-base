@@ -10,14 +10,16 @@
 		action: string;
 		enhance: any
 		ids: Array<{ name: string, value: string }>
+		onSubmit?: (e: SubmitEvent) => void;
 	};
 
-	let { icon, children, label, enhance,action, ids, ...buttonProps }: Props = $props();
+	let { icon, children, label, onSubmit, enhance, action, ids, ...buttonProps }: Props = $props();
 </script>
 
 <form
 	action={action}
 	method="POST"
+	onsubmit={e => onSubmit?.(e)}
 >
 	{#each ids as id}
 		<input type="hidden" name={id.name} value={id.value} />
