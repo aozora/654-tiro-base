@@ -3,7 +3,8 @@ node_modules
 
 # Output
 .output
-.netlify
+.deno
+.deno-deploy
 /.svelte-kit
 /build
 
