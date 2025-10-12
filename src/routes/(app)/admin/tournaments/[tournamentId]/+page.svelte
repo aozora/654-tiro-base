@@ -32,15 +32,13 @@
 	} from '@internationalized/date';
 
 	let { data }: PageProps = $props();
-	const { tournament, players, matches } = data;
+	const { tournament, players, matches } = $derived(data);
 
 	let form = $derived(
 		superForm(data.form, {
 			validators: valibotClient(schema),
 			dataType: 'json',
 			onUpdated: ({ form }) => {
-				console.log(`🍉   form updated: ${form.valid} ${form.message} ${form.errors?._errors} ${page.status}`);
-
 				// When the form is successfully submitted close the modal and reset the item variable
 				if (form.valid && form.message && page.status < 400) {
 					item = undefined;
@@ -61,7 +59,13 @@
 
 	let isModalOpen = $state(false);
 	let item: Match | undefined = $state(undefined);
-	let value = $derived($formData.date ?? undefined);
+
+	// Convert JavaScript Date to CalendarDate for the calendar component
+	let value = $derived.by(() => {
+		if (!$formData.date) return undefined;
+		const date = $formData.date instanceof Date ? $formData.date : new Date($formData.date);
+		return new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
+	});
 
 	const columns: ColumnDef<Match>[] = [
 		{
@@ -179,7 +183,7 @@
 <Dialog.Root bind:open={isModalOpen}>
 	<Dialog.Content>
 		<Dialog.Header>
-			<Dialog.Title>{item === undefined ? 'Nuovo torneo' : 'Modifica torneo'}</Dialog.Title>
+			<Dialog.Title>{item === undefined ? 'Nuova partita' : 'Modifica partita'}</Dialog.Title>
 		</Dialog.Header>
 
 		<form method="POST" action="?/update" use:enhance>
@@ -200,33 +204,28 @@
             )}
 							>
 								{value
-									? df.format(value)
+									? df.format(value.toDate(getLocalTimeZone()))
 									: "Pick a date"}
 								<Calendar1 class="ml-auto size-4 opacity-50" />
 							</Popover.Trigger>
 							<Popover.Content class="w-auto p-0" side="top">
 								<Calendar
 									type="single"
-									value={value as DateValue}
+									value={value}
 									minValue={new CalendarDate(1900, 1, 1)}
-									maxValue={today(getLocalTimeZone())}
-									calendarLabel="Date of birth"
+									calendarLabel="Data partita"
 									onValueChange={(v) => {
 										if (v) {
 											$formData.date = v.toDate(getLocalTimeZone());
 										} else {
-											$formData.date = "";
+											$formData.date = new Date();
 										}
 									}}
 								/>
 							</Popover.Content>
 						</Popover.Root>
-						<Form.Description
-						>Your date of birth is used to calculate your age
-						</Form.Description
-						>
 						<Form.FieldErrors />
-						<input hidden value={$formData.date} name={props.name} />
+						<input hidden bind:value={$formData.date} name={props.name} />
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors class="mb-4 *:mb-2" />
@@ -245,30 +244,3 @@
 
 	</Dialog.Content>
 </Dialog.Root>
-
-<!--	<Modal-->
-<!--		title={item === undefined ? 'Nuova partita' : 'Modifica partita'}-->
-<!--		bind:isOpen={isModalOpen}-->
-<!--	>-->
-<!--		<svelte:fragment slot="modal-content">-->
-<!--			<form id="form-player" action="?/update" method="POST">-->
-<!--				<input type="hidden" name="matchId" value={item?.id} />-->
-<!--				<input type="hidden" name="tournamentId" value={tournament.id} />-->
-<!--				<DateInput-->
-<!--					label="Data partita"-->
-<!--					name="date"-->
-<!--					errors={$errors.date}-->
-<!--					constraints={$constraints.date}-->
-<!--					value={item?.date}-->
-<!--				/>-->
-
-<!--				<div class="modal-actions">-->
-<!--					<button type="button" class="button" on:click={() => (isModalOpen = false)}-->
-<!--					>Annulla-->
-<!--					</button-->
-<!--					>-->
-<!--					<button type="submit" class="button primary">Salva</button>-->
-<!--				</div>-->
-<!--			</form>-->
-<!--		</svelte:fragment>-->
-<!--	</Modal>-->

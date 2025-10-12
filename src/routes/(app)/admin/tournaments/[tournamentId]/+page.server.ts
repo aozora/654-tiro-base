@@ -48,14 +48,14 @@ export const actions: Actions = {
 		if (!form.valid) {
 			// Again, always return form and things will just work.
 			console.error('Form not valid', form);
-			return fail(400, { form });
+			return fail(400, { form, message: 'Form not valid' });
 		}
 
 		try {
 			await upsertMatch(
-				String(form.data.matchId),
-				String(form.data.tournamentId),
-				new Date(form.data.date)
+				form.data.matchId,
+				form.data.tournamentId,
+				form.data.date
 			);
 
 			return message(form, 'success');
@@ -72,7 +72,7 @@ export const actions: Actions = {
 		if (!form.valid) {
 			// Again, always return form and things will just work.
 			console.error('Delete Form not valid', form);
-			return fail(400, { form });
+			return fail(400, { form, message: 'Form not valid' });
 		}
 
 		try {

@@ -136,35 +136,35 @@ export async function getPlayerStats(
 	};
 }
 
-// export async function upsertPlayer(
-// 	id: undefined | string,
-// 	name: string,
-// 	picture: string,
-// 	isActive: boolean,
-// ): Promise<Player> {
-// 	if (id) {
-// 		// Update existing player
-// 		const result = await db
-// 			.update(players)
-// 			.set({ name, isActive, picture })
-// 			.where(eq(players.id, id))
-// 			.returning();
-//
-// 		if (result.length === 0) {
-// 			throw new Error(`Player with id ${id} not found`);
-// 		}
-//
-// 		return result[0];
-// 	} else {
-// 		// Create new player
-// 		const result = await db
-// 			.insert(players)
-// 			.values({ name, isActive, picture })
-// 			.returning();
-//
-// 		return result[0];
-// 	}
-// }
+export async function upsertPlayer(
+	id: undefined | string,
+	name: string,
+	picture: string,
+	isActive: boolean,
+): Promise<Player> {
+	if (id) {
+		// Update existing player
+		const result = await db
+			.update(players)
+			.set({ name, isActive, picture })
+			.where(eq(players.id, id))
+			.returning();
+
+		if (result.length === 0) {
+			throw new Error(`Player with id ${id} not found`);
+		}
+
+		return result[0];
+	} else {
+		// Create new player
+		const result = await db
+			.insert(players)
+			.values({ name, isActive, picture })
+			.returning();
+
+		return result[0];
+	}
+}
 
 export async function updatePlayerPicture(
 	id: string,

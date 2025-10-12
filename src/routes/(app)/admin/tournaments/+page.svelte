@@ -30,8 +30,6 @@
 			validators: valibotClient(schema),
 			dataType: 'json',
 			onUpdated: ({ form }) => {
-				console.log(`🍉   form updated: ${form.valid} ${form.message} ${form.errors?._errors} ${page.status}`);
-
 				// When the form is successfully submitted close the modal and reset the item variable
 				if (form.valid && form.message && page.status < 400) {
 					item = undefined;
