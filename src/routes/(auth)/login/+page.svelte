@@ -1,63 +1,95 @@
 <script lang="ts">
+	import * as Form from '$lib/components/ui/form';
+	import * as Card from '$lib/components/ui/card';
+	import { Input } from '$lib/components/ui/input';
+	import { formSchema } from './schema';
 	import { superForm } from 'sveltekit-superforms';
-	import { authSchema } from '$lib/schemas/auth-schema';
-	import { zod } from 'sveltekit-superforms/adapters';
-	import type { ActionData } from '../../../../.svelte-kit/types/src/routes/(auth)/login/$types';
-	import Icon from '$components/Icon/Icon.svelte';
-	import { Icons } from '$types';
-	import Loader from '$components/Loader.svelte';
+	import { valibotClient } from 'sveltekit-superforms/adapters';
+	import { Button } from '$lib/components/ui/button';
+	import { Shell } from '@lucide/svelte';
+	import { cn } from '$lib/utils';
+	import type { PageProps } from './$types';
 
-	export let data: ActionData;
+	let { data }: PageProps = $props();
 
-	const { delayed, form, errors, enhance, constraints, message } = superForm(data.form, {
-		validators: zod(authSchema),
-		//   field: (value) => string | string[] | null | undefined;
-		// },
-		validationMethod: 'submit-only' //  | 'oninput' | 'onblur' | 'submit-only' = 'auto',
+	let form = $derived(
+		superForm(data.form, {
+			validators: valibotClient(formSchema),
+			dataType: 'json'
+		})
+	);
+	let formData = $derived(form.form);
+	let errors = $derived(form.errors);
+	let submitting = $derived(form.submitting);
+	let enhance = $derived(form.enhance);
+
+	$effect(() => {
+		console.log({$formData});
 	});
-	// console.log({$form}, {$message})
 </script>
 
+<div
+	class={cn(
+				'flex h-full min-h-screen w-full items-center justify-center',
+				'bg-[url("/img/frame6.webp")] bg-cover bg-position-[60%_100%] bg-no-repeat',
+			)}
+>
+	<div
+		class={cn(
+					'flex min-w-80 flex-col gap-6 lg:min-w-100',
+					'mx-auto max-w-7xl',
+				)}
+	>
+		<Card.Root>
+			<Card.Header class="text-center">
+				<Card.Title>
+					<h1 class="font-brutal text-5xl text-brand">Risiko!</h1>
+				</Card.Title>
+				<Card.Description>
+					<h2 class="font-brutal text-5xl text-brand">
+						654 tiro base!
+					</h2>
+				</Card.Description>
+			</Card.Header>
+			<Card.Content>
+				<form method="POST" use:enhance>
 
-<div class="auth-frame">
-	<h1>Risiko!</h1>
-	<h2>654 tiro base!</h2>
+					<Form.Field {form} name="email">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>Email</Form.Label>
+								<Input
+									{...props}
+									bind:value={$formData.email}
+									type="email"
+									placeholder="Inserisci l'email..."
+								/>
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors class="mb-4 *:mb-2" />
+					</Form.Field>
 
-	<form method="POST" use:enhance>
-		<label for="email">Email</label>
-		<div class="form-field-wrapper">
-			<input id="email"
-						 name="email"
-						 aria-invalid={$errors.email ? 'true' : undefined}
-						 bind:value={$form.email}
-						 {...$constraints.email} />
-			{#if $errors.email}<p class="invalid">{$errors.email}</p>{/if}
-		</div>
+					<Form.Field {form} name="password">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>Password</Form.Label>
+								<Input type="password" bind:value={$formData.password} {props} />
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors class="mb-4 *:mb-2" />
+					</Form.Field>
 
-		<label for="password">Password</label>
-		<div class="form-field-wrapper">
-			<input type="password"
-						 id="password"
-						 name="password"
-						 aria-invalid={$errors.password ? 'true' : undefined}
-						 bind:value={$form.password}
-						 {...$constraints.password} />
-			{#if $errors.password}<p class="invalid">{$errors.password}</p>{/if}
-		</div>
+					<Form.Button disabled={$submitting} class="w-full">
+						{$submitting ? 'Caricamento...' : 'Entra'}
+					</Form.Button>
 
-		<button type="submit" class="button">
-			<span>Entra</span>
-			<Icon id={Icons.TankBrand} />
-		</button>
-
-		{#if $message}<p>{$message}</p>{/if}
-		{#if data.message}<p>{data.message}</p>{/if}
-	</form>
-
-	<!--	<a href="/signup">Create an account</a>-->
+					{#if $errors?._errors}
+						<div class="mt-3 rounded-md text-red-700">
+							{$errors?._errors}
+						</div>
+					{/if}
+				</form>
+			</Card.Content>
+		</Card.Root>
+	</div>
 </div>
-
-
-{#if $delayed}
-	<Loader />
-{/if}

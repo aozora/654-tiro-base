@@ -1,36 +1,16 @@
 import { deletePlayer, getPlayers, upsertPlayer } from '$lib/server/repository';
-import type { Player } from '@prisma/client';
 import { fail, message, superValidate } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
-import { z } from 'zod';
+import { valibot } from 'sveltekit-superforms/adapters';
 import type { Actions, PageServerLoad } from './$types';
-
-const schemaUpdateTemp = z.object({
-	id: z.string().nullable().optional(),
-	name: z.string().min(2),
-	picture: z.string().nullable().optional(),
-	action: z.string().nullable().optional(),
-	isActive: z.boolean()
-});
-const schemaUpdate = schemaUpdateTemp.required({
-	// id is false to allow new items
-	name: true,
-	// picture: true,
-	isActive: true
-});
-
-const schemaDelete = z
-	.object({
-		id: z.string()
-	})
-	.required();
+import { deleteSchema, schema } from './schema';
+import type { Player } from '$lib/server/database/schema';
 
 /**
  * Page Load
  */
 export const load: PageServerLoad = async () => {
 	const players: Array<Player> = await getPlayers();
-	const form = await superValidate(zod(schemaUpdate));
+	const form = await superValidate(valibot(schema));
 
 	return {
 		players,
@@ -43,7 +23,7 @@ export const load: PageServerLoad = async () => {
  */
 export const actions: Actions = {
 	update: async ({ request }) => {
-		const form = await superValidate(request, zod(schemaUpdate));
+		const form = await superValidate(request, valibot(schema));
 
 		if (!form.valid) {
 			// Again, always return form and things will just work.
@@ -53,7 +33,7 @@ export const actions: Actions = {
 
 		try {
 			await upsertPlayer(
-				form.data.id === 'undefined' ? '' : String(form.data.id),
+				form.data.id,
 				form.data.name,
 				form.data.picture || '',
 				form.data.isActive
@@ -72,7 +52,7 @@ export const actions: Actions = {
 	 * @param request
 	 */
 	delete: async ({ request }) => {
-		const form = await superValidate(request, zod(schemaDelete));
+		const form = await superValidate(request, valibot(deleteSchema));
 
 		if (!form.valid || !form.data.id) {
 			// Again, always return form and things will just work.

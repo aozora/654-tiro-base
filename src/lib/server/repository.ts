@@ -1,25 +1,37 @@
-import prisma from '$lib/server/prisma';
-import type { Match, Player, Tournament } from '@prisma/client';
+import { and, asc, desc, eq, inArray, sql, sum } from 'drizzle-orm';
+import {
+	type Match,
+	matches,
+	type Player,
+	type PlayerOnMatch,
+	players,
+	playersOnMatches,
+	type Tournament,
+	tournaments
+} from './database/schema';
+import db from './db';
 
+// Players
 export async function getPlayers(): Promise<Array<Player>> {
-	return prisma.player.findMany({
-		where: {
-			isDeleted: false
-		},
-		orderBy: [
-			{
-				name: 'asc'
-			}
-		]
-	});
+	return db
+		.select()
+		.from(players)
+		.where(eq(players.isDeleted, false))
+		.orderBy(asc(players.name));
 }
 
 export async function getPlayerById(id: string): Promise<Player> {
-	return prisma.player.findUniqueOrThrow({
-		where: {
-			id
-		}
-	});
+	const result = await db
+		.select()
+		.from(players)
+		.where(eq(players.id, id))
+		.limit(1);
+
+	if (result.length === 0) {
+		throw new Error(`Player with id ${id} not found`);
+	}
+
+	return result[0];
 }
 
 export type PlayerMatches = {
@@ -29,130 +41,93 @@ export type PlayerMatches = {
 	date: Date;
 };
 
-// export async function getPlayerWithMatchesById(
-// 	tournamentId: string,
-// 	playerId: string
-// ): Promise<Array<PlayerMatches>> {
-// 	const tournamentMatches = await prisma.playersOnMatches.findMany({
-// 		where: {
-// 			match: {
-// 				tournamentId
-// 			},
-// 			player: {
-// 				id: playerId
-// 			}
-// 		},
-// 		select: {
-// 			match: {
-// 				select: {
-// 					date: true
-// 				}
-// 			},
-// 			points: true
-// 		},
-// 		orderBy: {
-// 			match: {
-// 				date: 'asc'
-// 			}
-// 		}
-// 	});
-//
-// 	return tournamentMatches.map((m) => {
-// 		return {
-// 			date: m.match.date,
-// 			points: m.points
-// 		};
-// 	});
-// }
-
 export type PlayerStats = {
 	matchesDatesAndPoints: Array<PlayerMatches>;
 	matchesPlayedCount: number;
 	matchesWonCount: number;
 };
 
-export async function getPlayerStats(tournamentId: string, playerId: string): Promise<PlayerStats> {
-	const tournamentMatches = await prisma.playersOnMatches.findMany({
-		where: {
-			match: {
-				tournamentId
-			},
-			player: {
-				id: playerId
-			}
-		},
-		select: {
-			match: {
-				select: {
-					date: true,
-					id: true
-				}
-			},
-			playerId: true,
-			points: true
-		},
-		orderBy: {
-			match: {
-				date: 'asc'
-			}
-		}
-	});
+export async function getPlayerStats(
+	tournamentId: string,
+	playerId: string
+): Promise<PlayerStats> {
+	// Get tournament matches for the player
+	const tournamentMatches = await db
+		.select({
+			playerId: playersOnMatches.playerId,
+			matchId: playersOnMatches.matchId,
+			points: playersOnMatches.points,
+			date: matches.date
+		})
+		.from(playersOnMatches)
+		.innerJoin(matches, eq(playersOnMatches.matchId, matches.id))
+		.where(
+			and(
+				eq(matches.tournamentId, tournamentId),
+				eq(playersOnMatches.playerId, playerId)
+			)
+		)
+		.orderBy(asc(matches.date));
 
-	// get the distinct list of all matches where player played
-	const distinctMatchesIds = await prisma.playersOnMatches.findMany({
-		where: {
-			playerId: playerId,
-			match: {
-				tournamentId
-			}
-		},
-		select: {
-			matchId: true
-		},
-		distinct: ['matchId']
-	});
+	// Get distinct match IDs where player participated
+	const distinctMatchIds = await db
+		.selectDistinct({
+			matchId: playersOnMatches.matchId
+		})
+		.from(playersOnMatches)
+		.innerJoin(matches, eq(playersOnMatches.matchId, matches.id))
+		.where(
+			and(
+				eq(playersOnMatches.playerId, playerId),
+				eq(matches.tournamentId, tournamentId)
+			)
+		);
 
-	const matchesPlayedCount = distinctMatchesIds.length;
+	const matchesPlayedCount = distinctMatchIds.length;
 	let matchesWonCount = 0;
 
-	// get the match details for all players in the given list of matches
-	const distinctMatches = await prisma.playersOnMatches.findMany({
-		where: {
-			matchId: {
-				in: distinctMatchesIds.map((m) => m.matchId)
-			},
-			match: {
-				tournamentId
+	if (distinctMatchIds.length > 0) {
+		// Get all players' results for these matches
+		const allMatchResults = await db
+			.select()
+			.from(playersOnMatches)
+			.innerJoin(matches, eq(playersOnMatches.matchId, matches.id))
+			.where(
+				and(
+					inArray(
+						playersOnMatches.matchId,
+						distinctMatchIds.map((m) => m.matchId)
+					),
+					eq(matches.tournamentId, tournamentId)
+				)
+			);
+
+		// Calculate wins
+		for (const distinctMatch of distinctMatchIds) {
+			const matchResults = allMatchResults.filter(
+				(x) => x.PlayersOnMatches.matchId === distinctMatch.matchId
+			);
+			const maxPoints = Math.max(
+				...matchResults.map((x) => x.PlayersOnMatches.points)
+			);
+			const winner = matchResults.find(
+				(x) => x.PlayersOnMatches.points === maxPoints
+			);
+
+			if (winner && winner.PlayersOnMatches.playerId === playerId) {
+				matchesWonCount += 1;
 			}
 		}
-	});
+	}
 
-	// console.log({ distinctMatchesIds });
-	// console.log({ distinctMatches });
-
-	distinctMatchesIds.forEach((distinctMatch) => {
-		const max = Math.max(
-			...distinctMatches.filter((x) => x.matchId === distinctMatch.matchId).map((x) => x.points)
-		);
-		const winner = distinctMatches
-			.filter((x) => x.matchId === distinctMatch.matchId)
-			.find((x) => x.points === max);
-
-		// console.log({max, winner, playerId});
-
-		if (winner && winner.playerId === playerId) {
-			matchesWonCount += 1;
-		}
-	});
-
-	const matchesDatesAndPoints: Array<PlayerMatches> = tournamentMatches.map((m) => {
-		return {
+	const matchesDatesAndPoints: Array<PlayerMatches> = tournamentMatches.map(
+		(m) => ({
 			playerId: m.playerId,
-			matchId: m.match.id,
-			date: m.match.date,
+			matchId: m.matchId,
+			date: m.date,
 			points: m.points
-		};
-	});
+		})
+	);
 
 	return {
 		matchesDatesAndPoints,
@@ -165,83 +140,108 @@ export async function upsertPlayer(
 	id: undefined | string,
 	name: string,
 	picture: string,
-	isActive: boolean
+	isActive: boolean,
 ): Promise<Player> {
-	// console.log({ id, name, isActive });
+	if (id) {
+		// Update existing player
+		const result = await db
+			.update(players)
+			.set({ name, isActive, picture })
+			.where(eq(players.id, id))
+			.returning();
 
-	return prisma.player.upsert({
-		where: {
-			id: id
-		},
-		update: {
-			name,
-			isActive,
-			picture
-		},
-		create: {
-			name,
-			isActive,
-			picture
+		if (result.length === 0) {
+			throw new Error(`Player with id ${id} not found`);
 		}
-	});
+
+		return result[0];
+	} else {
+		// Create new player
+		const result = await db
+			.insert(players)
+			.values({ name, isActive, picture })
+			.returning();
+
+		return result[0];
+	}
 }
 
 export async function updatePlayerPicture(
-	id: undefined | string,
+	id: string,
 	picture: string
 ): Promise<Player> {
-	return prisma.player.update({
-		where: {
-			id: id
-		},
-		data: {
-			picture
-		}
-	});
+	const result = await db
+		.update(players)
+		.set({ picture })
+		.where(eq(players.id, id))
+		.returning();
+
+	if (result.length === 0) {
+		throw new Error(`Player with id ${id} not found`);
+	}
+
+	return result[0];
 }
 
-/**
- * Delete a player and all its matches
- * @param id
- */
-export async function deletePlayer(id: string) {
-	await prisma.player.update({
-		where: {
-			id: id
-		},
-		data: {
-			isDeleted: true,
-			isActive: false
-		}
-	});
+export async function deletePlayer(id: string): Promise<void> {
+	await db
+		.update(players)
+		.set({ isDeleted: true, isActive: false })
+		.where(eq(players.id, id));
 }
 
-// export type
-export async function getTournaments(): Promise<Array<Tournament>> {
-	return prisma.tournament.findMany({
-		include: {
-			matches: true
-		},
-		orderBy: [
-			{
-				title: 'desc'
-			}
-		]
-	});
+// Tournaments
+export async function getTournaments(): Promise<
+	Array<Tournament & { matches: Match[] }>
+> {
+	const tournamentsData = await db
+		.select()
+		.from(tournaments)
+		.orderBy(desc(tournaments.title));
+
+	// Get matches for each tournament
+	const result = [];
+	for (const tournament of tournamentsData) {
+		const tournamentMatches = await db
+			.select()
+			.from(matches)
+			.where(eq(matches.tournamentId, tournament.id));
+
+		result.push({
+			...tournament,
+			matches: tournamentMatches
+		});
+	}
+
+	return result;
 }
 
 export async function getTournament(id: string): Promise<Tournament> {
-	return prisma.tournament.findUniqueOrThrow({
-		where: { id }
-	});
+	const result = await db
+		.select()
+		.from(tournaments)
+		.where(eq(tournaments.id, id))
+		.limit(1);
+
+	if (result.length === 0) {
+		throw new Error(`Tournament with id ${id} not found`);
+	}
+
+	return result[0];
 }
 
 export async function getActiveTournament(): Promise<Tournament> {
-	return prisma.tournament.findFirstOrThrow({
-		where: {
-			isActive: true
-		}
-	});
+	const result = await db
+		.select()
+		.from(tournaments)
+		.where(eq(tournaments.isActive, true))
+		.limit(1);
+
+	if (result.length === 0) {
+		throw new Error('No active tournament found');
+	}
+
+	return result[0];
 }
 
 export async function upsertTournament(
@@ -249,41 +249,58 @@ export async function upsertTournament(
 	title: string,
 	isActive: boolean
 ): Promise<Tournament> {
-	return prisma.tournament.upsert({
-		where: {
-			id: id
-		},
-		update: {
-			title,
-			isActive
-		},
-		create: {
-			title,
-			isActive
+	// console.log(`🍉   upsertTournament`, { id, title, isActive });
+
+	if (id) {
+		// Update existing tournament
+		const result = await db
+			.update(tournaments)
+			.set({ title, isActive })
+			.where(eq(tournaments.id, id))
+			.returning();
+
+		if (result.length === 0) {
+			throw new Error(`Tournament with id ${id} not found`);
 		}
-	});
+
+		return result[0];
+	} else {
+		// Create new tournament
+		const result = await db
+			.insert(tournaments)
+			.values({ title, isActive })
+			.returning();
+
+		return result[0];
+	}
 }
 
+export async function deleteTournament(id: string): Promise<Tournament> {
+	const result = await db.delete(tournaments).where(eq(tournaments.id, id)).returning();
+	return result[0];
+}
+
+// Matches
 export async function getMatches(tournamentId: string): Promise<Array<Match>> {
-	return prisma.match.findMany({
-		// include: {
-		// 	players: {
-		// 		select: {
-		// 			player: true
-		// 		}
-		// 	}
-		// },
-		where: { tournamentId },
-		orderBy: {
-			date: 'desc'
-		}
-	});
+	return db
+		.select()
+		.from(matches)
+		.where(eq(matches.tournamentId, tournamentId))
+		.orderBy(desc(matches.date));
 }
 
 export async function getMatch(id: string): Promise<Match> {
-	return prisma.match.findUniqueOrThrow({
-		where: { id }
-	});
+	const result = await db
+		.select()
+		.from(matches)
+		.where(eq(matches.id, id))
+		.limit(1);
+
+	if (result.length === 0) {
+		throw new Error(`Match with id ${id} not found`);
+	}
+
+	return result[0];
 }
 
 export async function upsertMatch(
@@ -293,100 +310,142 @@ export async function upsertMatch(
 ): Promise<Match> {
 	console.log({ id, tournamentId, date });
 
-	return prisma.match.upsert({
-		where: {
-			id: id
-		},
-		update: {
-			date
-		},
-		create: {
-			date,
-			tournamentId
+	if (id) {
+		// Update existing match
+		const result = await db
+			.update(matches)
+			.set({ date })
+			.where(eq(matches.id, id))
+			.returning();
+
+		if (result.length === 0) {
+			throw new Error(`Match with id ${id} not found`);
 		}
-	});
+
+		return result[0];
+	} else {
+		// Create new match
+		const result = await db
+			.insert(matches)
+			.values({ date, tournamentId })
+			.returning();
+
+		return result[0];
+	}
 }
 
 export async function deleteMatchDeep(id: string): Promise<Match> {
-	await prisma.playersOnMatches.deleteMany({
-		where: {
-			matchId: id
-		}
-	});
+	// Delete all player-match relationships first
+	await db.delete(playersOnMatches).where(eq(playersOnMatches.matchId, id));
 
-	return prisma.match.delete({
-		where: {
-			id: id
-		}
-	});
+	// Delete the match
+	const result = await db.delete(matches).where(eq(matches.id, id)).returning();
+
+	if (result.length === 0) {
+		throw new Error(`Match with id ${id} not found`);
+	}
+
+	return result[0];
 }
 
 export type PlayerExtended = Player & { points: number };
 
-export async function getMatchPlayers(matchId: string): Promise<Array<PlayerExtended>> {
-	const data = await prisma.playersOnMatches.findMany({
-		include: {
-			player: true
-		},
-		where: {
-			matchId
-		}
-		// orderBy: {
-		// 	player: {
-		// 		name: true
-		// 	}
-		// }
-	});
+export async function getMatchPlayers(
+	matchId: string
+): Promise<Array<PlayerExtended>> {
+	const result = await db
+		.select({
+			id: players.id,
+			name: players.name,
+			picture: players.picture,
+			isActive: players.isActive,
+			isDeleted: players.isDeleted,
+			points: playersOnMatches.points
+		})
+		.from(playersOnMatches)
+		.innerJoin(players, eq(playersOnMatches.playerId, players.id))
+		.where(eq(playersOnMatches.matchId, matchId))
+		.orderBy(desc(playersOnMatches.points));
 
-	return data.map((x) => {
-		return {
-			...x.player,
-			points: x.points
-		} satisfies PlayerExtended;
-	});
+	return result;
 }
 
-export async function upsertMatchPlayer(matchId: string, playerId: string, points: number) {
-	return prisma.playersOnMatches.upsert({
-		where: {
-			playerId_matchId: { playerId, matchId }
-		},
-		update: {
-			points
-		},
-		create: {
-			matchId,
-			playerId,
-			points
-		}
-	});
+export async function upsertMatchPlayer(
+	matchId: string,
+	playerId: string,
+	points: number
+): Promise<PlayerOnMatch> {
+	// Try to update first
+	const updateResult = await db
+		.update(playersOnMatches)
+		.set({ points })
+		.where(
+			and(
+				eq(playersOnMatches.playerId, playerId),
+				eq(playersOnMatches.matchId, matchId)
+			)
+		)
+		.returning();
+
+	if (updateResult.length > 0) {
+		return updateResult[0];
+	}
+
+	// If no update occurred, insert new record
+	const insertResult = await db
+		.insert(playersOnMatches)
+		.values({ matchId, playerId, points })
+		.returning();
+
+	return insertResult[0];
 }
 
-export async function removePlayerFromMatch(matchId: string, playerId: string) {
-	return prisma.playersOnMatches.delete({
-		where: {
-			playerId_matchId: { playerId, matchId }
-		}
-	});
+export async function removePlayerFromMatch(
+	matchId: string,
+	playerId: string
+): Promise<PlayerOnMatch> {
+	const result = await db
+		.delete(playersOnMatches)
+		.where(
+			and(
+				eq(playersOnMatches.playerId, playerId),
+				eq(playersOnMatches.matchId, matchId)
+			)
+		)
+		.returning();
+
+	if (result.length === 0) {
+		throw new Error(`Player-match relationship not found`);
+	}
+
+	return result[0];
 }
 
 export async function getLeaderboard(tournamentId: string) {
-	// get all the matches of the given tournament
-	const matches = await prisma.match.findMany({
-		where: {
-			tournamentId
-		}
-	});
+	// Get all match IDs for the tournament
+	const tournamentMatches = await db
+		.select() // { id: matches.id }
+		.from(matches)
+		.where(eq(matches.tournamentId, tournamentId));
 
-	return prisma.playersOnMatches.groupBy({
-		by: ['playerId'],
-		where: {
-			matchId: {
-				in: matches.map((m) => m.id)
-			}
-		},
-		_sum: {
-			points: true
-		}
-	});
+	const matchesIds = tournamentMatches.map(
+		(tournamentMatche) => tournamentMatche.id
+	);
+
+	if (tournamentMatches.length === 0) {
+		return [];
+	}
+
+	// Group by playerId and sum points
+	return db
+		.select({
+			playerId: playersOnMatches.playerId,
+			// totalPoints: sum(playersOnMatches.points),
+			totalPoints: sql<number>`sum(
+      ${playersOnMatches.points}
+      )`
+		})
+		.from(playersOnMatches)
+		.where(inArray(playersOnMatches.matchId, matchesIds))
+		.groupBy(playersOnMatches.playerId);
 }

@@ -5,8 +5,8 @@ import {
 	getTournament,
 	type PlayerExtended
 } from '$lib/server/repository';
-import type { Match, Tournament } from '@prisma/client';
 import type { PlayerLeaderboardWithNormalizedRanking } from '$types';
+import type { Match, Tournament } from '$lib/server/database/schema';
 
 function sortPointsDesc(a: PlayerExtended, b: PlayerExtended) {
 	if (a.points > b.points) {
@@ -38,7 +38,7 @@ function normalizeLeaderboardRanking(
 
 		// console.log(current.sumPoints, previousPoints, previousRank, currentRank);
 		list.push({
-			playerId:current.id,
+			playerId: current.id,
 			name: current.name,
 			picture: current.picture,
 			sumPoints: current.points,

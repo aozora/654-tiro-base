@@ -1,62 +1,139 @@
 <script lang="ts">
 	import Main from '$components/Main.svelte';
-	import { Datatable, DataHandler } from '@vincjo/datatables';
-	import type { Tournament } from '@prisma/client';
-	import type { PageData } from './$types';
-	import { CheckCircle, DiceSix, PencilSimple, XCircle } from 'phosphor-svelte';
-	import Modal from '$components/ui/Modal/Modal.svelte';
-	import TextInput from '$components/ui/Form/TextInput.svelte';
 	import { superForm } from 'sveltekit-superforms/client';
-	import { page } from '$app/stores';
-	import { toast } from '$lib/toast';
 	import AdminPageTitle from '$components/AdminPageTitle.svelte';
-	import Icon from '$components/Icon/Icon.svelte';
-	import { Icons } from '$types';
-	import Loader from '$components/Loader.svelte';
-	import Checkbox from '$components/ui/Form/Checkbox.svelte';
+	import type { PageProps } from './$types';
+	import { page } from '$app/state';
+	import type { Match, Tournament } from '$lib/server/database/schema';
+	import { toast } from 'svelte-sonner';
+	import type { ColumnDef } from '@tanstack/table-core';
+	import { renderSnippet } from '$lib/components/ui/data-table/index.js';
+	import { createRawSnippet } from 'svelte';
+	import { renderComponent } from '$lib/components/ui/data-table/index.js';
+	import DataTable from '$components/DataTable.svelte';
+	import { Button } from '$lib/components/ui/button';
+	import { PackagePlus } from '@lucide/svelte';
+	import DataTableButton from '$components/DataTableButton.svelte';
+	import * as Dialog from '$lib/components/ui/dialog';
+	import { Input } from '$lib/components/ui/input';
+	import * as Form from '$lib/components/ui/form';
+	import { valibotClient } from 'sveltekit-superforms/adapters';
+	import { schema } from './schema';
+	import { Checkbox } from '$lib/components/ui/checkbox';
+	import DataTableFormButton from '$components/DataTableFormButton.svelte';
 
-	type PageProps = {
-		tournaments: Array<Tournament>
-	}
+	let { data }: PageProps = $props();
+	let { tournaments,  } = $derived(data);
 
-	export let data: PageData;
+	let form = $derived(
+		superForm(data.form, {
+			validators: valibotClient(schema),
+			dataType: 'json',
+			onUpdated: ({ form }) => {
+				// When the form is successfully submitted close the modal and reset the item variable
+				if (form.valid && form.message && page.status < 400) {
+					item = undefined;
+					isModalOpen = false;
 
-	const { tournaments }: PageProps = data;
-	const {
-		form,
-		errors,
-		enhance,
-		delayed,
-		message,
-		constraints
-	} = superForm(data.form, {
-		// validationMethod: 'onsubmit', //'auto' | 'oninput' | 'onblur' | 'onsubmit' = 'auto',
-		onUpdated: ({ form }) => {
-			// When the form is successfully submitted close the modal and reset the item variable
-			if (form.valid && message && $page.status < 400) {
-				item = undefined;
-				isModalOpen = false;
+					// show a toast
+					toast.success('Triplooo! Dati salvati!');
+				} else {
+					toast.error('Cita murta! c\'è un errore....');
+				}
+			}
+		})
+	);
+	let formData = $derived(form.form);
+	let errors = $derived(form.errors);
+	let submitting = $derived(form.submitting);
+	let enhance = $derived(form.enhance);
 
-				// show a toast
-				toast({
-					kind: 'success',
-					title: 'Triplooo!',
-					subtitle: 'Dati salvati!',
-					showTimestamp: true,
-					hideCloseButton: false
+	let isModalOpen = $state(false);
+	let item: Tournament | undefined = $state(undefined);
+
+	const columns: ColumnDef<Tournament>[] = [
+		{
+			accessorKey: 'title',
+			header: 'Titolo torneo'
+		},
+		{
+			accessorKey: 'isActive',
+			header: 'Attivo',
+			cell: ({ row }) => {
+				const isActive = Boolean(row.getValue('isActive'));
+
+				return renderSnippet(
+					createRawSnippet(() => ({
+						render: () => isActive ? `<span>Yes</span>` : `<span>No</span>`
+					}))
+				);
+			}
+		},
+		{
+			accessorKey: 'matches',
+			header: 'Num. partite giocate',
+			cell: ({ row }) => {
+				const matches = row.getValue('matches') as Match[];
+
+				return renderSnippet(
+					createRawSnippet(() => ({
+						render: () => `<span class='text-right font-medium'>${matches.length}</span>`
+					}))
+				);
+			}
+		},
+		{
+			id: 'editAction',
+			cell: ({ row }) => {
+				const tournament = row.original;
+				return renderComponent(DataTableButton, {
+					label: 'Rinomina',
+					type: 'button',
+					variant: 'outline',
+					icon: 'PencilLine',
+					class: 'cursor-pointer',
+					onclick: () => onEditTournament(tournament)
 				});
 			}
+		},
+		{
+			id: 'matchesAction',
+			cell: ({ row }) => {
+				const tournament = row.original;
+				return renderComponent(DataTableButton, {
+					label: 'Gestisci',
+					type: 'button',
+					variant: 'outline',
+					icon: 'Dices',
+					class: 'cursor-pointer',
+					href: `/admin/tournaments/${tournament.id}`
+				});
+			}
+		},
+		{
+			id: 'deleteAction',
+			cell: ({ row }) => {
+				const tournament = row.original;
+				const matches = row.getValue('matches') as Match[];
+				if (matches.length === 0) {
+					return renderComponent(DataTableFormButton, {
+						ids: [{ name: 'id', value: tournament.id }],
+						enhance: enhance,
+						action: '?/delete',
+						label: 'Elimina',
+						type: 'submit',
+						variant: 'destructive',
+						icon: 'Trash2',
+						class: 'cursor-pointer'
+					});
+				}
+
+				return null;
+			}
 		}
-	});
-
-	let isModalOpen = false;
-	let item: Tournament | undefined = undefined;
-
-	const tableHanlder = new DataHandler(tournaments, { rowsPerPage: 10 });
-	const table = tableHanlder.getRows();
+	];
 
 	const onEditTournament = (row: Tournament) => {
-		// console.log({ row });
 		item = row;
 		isModalOpen = true;
 	};
@@ -65,91 +142,83 @@
 		item = undefined;
 		isModalOpen = true;
 	};
+
+	// Populate form data when item changes
+	$effect(() => {
+		if (item) {
+			$formData.id = item.id;
+			$formData.title = item.title;
+			$formData.isActive = item.isActive;
+		} else {
+			$formData.id = undefined;
+			$formData.title = '';
+			$formData.isActive = false;
+		}
+	});
 </script>
 
 <AdminPageTitle title="Gestione tornei" showBackButton={true} />
 
-<Main className="admin-page">
-	<div>
-		<header class="page-header">
-			<button type="button" class="button" on:click={() => createTournament()}>
+<Main className="flex flex-col pb-10">
+	<div class="mx-auto w-full max-w-3xl">
+		<header class="mb-8">
+			<Button type="button" class="cursor-pointer" onclick={() => createTournament()}>
 				<span>Nuovo torneo</span>
-				<Icon id={Icons.TankBrand} />
-			</button>
+				<PackagePlus size={24} />
+			</Button>
 		</header>
 
-		<Datatable handler={tableHanlder}>
-			<table class="table">
-				<thead>
-				<tr>
-					<th>Titolo</th>
-					<th>Matches</th>
-					<th>Attivo</th>
-					<th></th>
-					<th></th>
-				</tr>
-				</thead>
-				<tbody>
-				{#each $table as row}
-					<tr>
-						<td>
-							<span>{row.title}</span>
-						</td>
-						<td>
-							<span>{row.matches.length}</span>
-						</td>
-						<td>
-							{#if row.isActive}
-								<CheckCircle size="20" />
-							{:else}
-								<XCircle size="20" />
-							{/if}
-						</td>
-						<td>
-							<button type="button" class="table-button" on:click={() => onEditTournament(row)}>
-								<PencilSimple size="20" />
-							</button>
-						</td>
-						<td>
-							<a href={`/admin/tournaments/${row.id}`} class="table-button">
-								<DiceSix size="20" />
-							</a>
-						</td>
-					</tr>
-				{/each}
-				</tbody>
-			</table>
-		</Datatable>
+		<DataTable data={tournaments} {columns} />
 	</div>
-
-	{#if $delayed}
-		<Loader />
-	{/if}
 </Main>
 
-<Modal title={item === undefined ? 'Nuovo torneo':'Modifica torneo'}
-			 bind:isOpen={isModalOpen}>
-	<svelte:fragment slot='modal-content'>
-		<form id="form-player" method="POST">
-			<input type='hidden' name='id' value={item?.id} />
+<Dialog.Root bind:open={isModalOpen}>
+	<Dialog.Content>
+		<Dialog.Header>
+			<Dialog.Title>{item === undefined ? 'Nuovo torneo' : 'Modifica torneo'}</Dialog.Title>
+		</Dialog.Header>
 
-			<TextInput label='Titolo' name='title'
-								 errors={$errors.title}
-								 constraints={$constraints.title}
-								 value={item?.title}
-			/>
-			<!--			<Toggle label='Is active' name='isActive' required={true} value={item?.isActive ?? false} />-->
-			<Checkbox label='Attivo' required={false} name='isActive'
-								errors={$errors.isActive}
-								constraints={$constraints.isActive}
-								checked={item?.isActive}
-			/>
+		<form method="POST" action="?/update" use:enhance>
+			<input type="hidden" name="id" value={item?.id} />
 
-			<div class="modal-actions">
-				<button type="button" class="button" on:click={()=>isModalOpen = false}>Annulla</button>
-				<button type="submit" class="button primary">Salva</button>
-			</div>
+			<Form.Field {form} name="title">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Titolo</Form.Label>
+						<Input
+							{...props}
+							bind:value={$formData.title}
+							type="text"
+							placeholder="Inserisci il titolo del torneo..."
+						/>
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors class="mb-4 *:mb-2" />
+			</Form.Field>
+
+			<Form.Field {form} name="isActive">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Attivo</Form.Label>
+						<Checkbox
+							{...props}
+							bind:checked={$formData.isActive}
+						/>
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors class="mb-4 *:mb-2" />
+			</Form.Field>
+
+			<Form.Button disabled={$submitting} class="w-full">
+				{$submitting ? 'Salvataggio...' : 'Conferma'}
+			</Form.Button>
+
+			{#if $errors?._errors}
+				<div class="mt-3 rounded-md text-red-700">
+					{$errors?._errors}
+				</div>
+			{/if}
 		</form>
-	</svelte:fragment>
-</Modal>
 
+	</Dialog.Content>
+</Dialog.Root>

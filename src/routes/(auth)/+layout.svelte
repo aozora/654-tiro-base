@@ -1,20 +1,14 @@
 <script lang="ts">
-	import SkipLink from '$components/SkipLink.svelte';
-	import type { LayoutData } from '../$types';
-	import { page } from '$app/stores';
 	import Main from '$components/Main.svelte';
-	import '$styles/app.scss';
+	import type { LayoutProps } from './$types';
 
-	export let data: LayoutData;
-
-	// console.log($page.data.user);
-	// console.log($data.user.email)
+	let { children }: LayoutProps = $props();
 </script>
 
 <!-- svg-sprite -->
 <div id="svg-defs" style="display: none">
 	<svg width="0" height="0" xmlns="http://www.w3.org/2000/svg">
-		<symbol id="tank-blue" viewBox="0 0 75 32" fill="none">
+		<symbol id="tank-blue" viewBox="0 0 75 32" >
 			<g data-testid="Tank-1">
 				<g class="fills">
 					<rect width="75" height="32" class="frame-background" rx="0" ry="0" transform="matrix(-1 0 0 1 75 0)" />
@@ -198,11 +192,7 @@
 	</svg>
 </div>
 
-<SkipLink />
-
-<Main className="auth-page">
-	<slot></slot>
+<Main className="px-0 md:px-0 lg:px-0">
+	{@render children()}
 </Main>
 
-<!--<img src="/img/risiko-challenge-tabellone.webp" alt="" />-->
-<!--<Footer />-->

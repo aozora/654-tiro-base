@@ -1,11 +1,10 @@
 <script lang="ts">
-	import SkipLink from '$components/SkipLink.svelte';
 	import Header from '$components/Header.svelte';
-	import type { LayoutData } from './$types';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
-	import '$styles/app.scss';
+	import { cn } from '$lib/utils';
+	import type { LayoutProps } from './$types';
 
-	export let data: LayoutData;
+	let { data, children }: LayoutProps = $props();
 </script>
 
 <!-- svg-sprite -->
@@ -400,11 +399,15 @@
 	</svg>
 </div>
 
-<SkipLink />
-<Header {data} />
+<div class={cn('relative min-h-screen')}>
+	<img
+		src="/img/risiko-challenge-tabellone.webp"
+		class="-z-1 absolute top-0 left-0 h-full w-full object-cover blur-xs"
+		alt=""
+	/>
+	<Header {data} />
 
-<SvelteToast />
+	<SvelteToast />
 
-<slot></slot>
-
-<!--<Footer />-->
+	{@render children()}
+</div>

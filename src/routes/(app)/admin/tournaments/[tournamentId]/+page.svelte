@@ -1,194 +1,242 @@
 <script lang="ts">
 	import Main from '$components/Main.svelte';
-	import { Datatable, DataHandler } from '@vincjo/datatables';
-	import type { Match, Player, Tournament } from '@prisma/client';
-	import type { PageData } from './$types';
-	import { DiceThree, PencilSimple, Trash } from 'phosphor-svelte';
 	import { superForm } from 'sveltekit-superforms/client';
-	import { page } from '$app/stores';
-	import { toast } from '$lib/toast';
+	import { page } from '$app/state';
 	import AdminPageTitle from '$components/AdminPageTitle.svelte';
-	import Loader from '$components/Loader.svelte';
-	import Modal from '$components/ui/Modal/Modal.svelte';
-	import DateInput from '$components/ui/Form/DateInput.svelte';
-	import { Icons } from '$types';
-	import Icon from '$components/Icon/Icon.svelte';
-	import Select from '$components/ui/Form/Select.svelte';
+	import type { PageProps } from './$types';
+	import { toast } from 'svelte-sonner';
+	import type { ColumnDef } from '@tanstack/table-core';
+	import { renderComponent } from '$lib/components/ui/data-table';
+	import type { Match } from '$lib/server/database/schema';
+	import DataTable from '$components/DataTable.svelte';
+	import DataTableButton from '$components/DataTableButton.svelte';
+	import { PackagePlus } from '@lucide/svelte';
+	import { Button, buttonVariants } from '$lib/components/ui/button';
+	import { valibotClient } from 'sveltekit-superforms/adapters';
+	import { schema } from './schema';
+	import DataTableFormButton from '$components/DataTableFormButton.svelte';
+	import * as Dialog from '$lib/components/ui/dialog';
+	import * as Form from '$lib/components/ui/form';
+	import { Calendar } from '$lib/components/ui/calendar/index.js';
+	import * as Popover from '$lib/components/ui/popover/index.js';
+	import { cn } from '$lib/utils';
+	import { Calendar1 } from '@lucide/svelte';
+	import {
+		CalendarDate,
+		DateFormatter,
+		getLocalTimeZone,
+	} from '@internationalized/date';
 
-	type PageProps = {
-		tournament: Tournament,
-		players: Array<Player>,
-		matches: Array<Match>
-	}
+	let { data }: PageProps = $props();
+	const { tournament, players, matches } = $derived(data);
 
-	export let data: PageData;
-	const {
-		tournament,
-		players,
-		matches
-	}: PageProps = data;
+	let form = $derived(
+		superForm(data.form, {
+			validators: valibotClient(schema),
+			dataType: 'json',
+			onUpdated: ({ form }) => {
+				// When the form is successfully submitted close the modal and reset the item variable
+				if (form.valid && form.message && page.status < 400) {
+					item = undefined;
+					isModalOpen = false;
 
-	const {
-		errors,
-		enhance,
-		delayed,
-		message,
-		constraints
-	} = superForm(data.form, {
-		invalidateAll: 'force',
-		onUpdated: ({ form }) => {
-			// When the form is successfully submitted close the modal and reset the item variable
-			if (form.valid && message && $page.status < 400) {
-				item = undefined;
-				isModalOpen = false;
+					// show a toast
+					toast.success('Triplooo! Dati salvati!');
+				} else {
+					toast.error('Cita murta! c\'è un errore....');
+				}
+			}
+		})
+	);
+	let formData = $derived(form.form);
+	let errors = $derived(form.errors);
+	let submitting = $derived(form.submitting);
+	let enhance = $derived(form.enhance);
 
-				// show a toast
-				toast({
-					kind: 'success',
-					title: 'Triplooo!',
-					subtitle: 'Dati salvati!',
-					showTimestamp: true,
-					hideCloseButton: false
+	let isModalOpen = $state(false);
+	let item: Match | undefined = $state(undefined);
+
+	// Convert JavaScript Date to CalendarDate for the calendar component
+	let value = $derived.by(() => {
+		if (!$formData.date) return undefined;
+		const date = $formData.date instanceof Date ? $formData.date : new Date($formData.date);
+		return new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
+	});
+
+	const columns: ColumnDef<Match>[] = [
+		{
+			accessorKey: 'date',
+			header: 'Data partita',
+			cell: ({ row }) => {
+				const match = row.original;
+				return new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date);
+			}
+		},
+		{
+			id: 'editAction',
+			cell: ({ row }) => {
+				const match = row.original;
+				return renderComponent(DataTableButton, {
+					label: 'Modifica',
+					type: 'button',
+					variant: 'outline',
+					icon: 'PencilLine',
+					class: 'cursor-pointer',
+					onclick: () => onEditMatch(match)
+				});
+			}
+		},
+		{
+			id: 'editMatchAction',
+			cell: ({ row }) => {
+				const match = row.original;
+				return renderComponent(DataTableButton, {
+					label: 'Gestisci',
+					type: 'button',
+					variant: 'outline',
+					icon: 'Dices',
+					class: 'cursor-pointer',
+					href: `/admin/tournaments/${tournament.id}/${match.id}`
+				});
+			}
+		},
+		{
+			id: 'deleteAction',
+			cell: ({ row }) => {
+				const match = row.original;
+
+				return renderComponent(DataTableFormButton, {
+					ids: [{ name: 'id', value: match.id }],
+					enhance: enhance,
+					action: '?/delete',
+					label: 'Elimina',
+					type: 'submit',
+					variant: 'destructive',
+					icon: 'Trash2',
+					class: 'cursor-pointer',
+					onSubmit: (e) => {
+						const okDelete = confirm(
+							`Elimino la partita del ${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)} ?`
+						);
+
+						if (!okDelete) {
+							e.preventDefault();
+							return;
+						}
+					}
 				});
 			}
 		}
+	];
+
+	const df = new DateFormatter('it-IT', {
+		dateStyle: 'long'
 	});
-
-	let isModalOpen = false;
-	let item: Match | undefined = undefined;
-
-	const tableHanlder = new DataHandler(matches, { rowsPerPage: 10 });
-	const table = tableHanlder.getRows();
 
 	const createMatch = () => {
 		item = undefined;
 		isModalOpen = true;
 	};
 
-
-	const onEditMatch = (row: Player) => {
+	const onEditMatch = (row: Match) => {
 		item = row;
 		isModalOpen = true;
 	};
 
-	const onDeleteMatch = (e, row) => {
-		const okDelete = confirm(`Elimino la partita del ${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(row.date)} ?`);
-
-		if (!okDelete) {
-			e.preventDefault();
-			return;
+	// Populate form data when item changes
+	$effect(() => {
+		if (item) {
+			$formData.matchId = item.id;
+			$formData.tournamentId = item.tournamentId;
+			$formData.date = item.date;
+		} else {
+			$formData.matchId = undefined;
+			$formData.tournamentId = tournament.id;
+			$formData.date = new Date();
 		}
-	};
+	});
 </script>
 
 <AdminPageTitle title={`${tournament.title}`} subtitle="Gestione partite" showBackButton={true} />
 
-<Main className="admin-page">
-	<div>
-		<header class="page-header">
-			<button type="button" class="button" on:click={() => createMatch()}>
+<Main className="flex flex-col pb-10">
+	<div class="mx-auto w-full max-w-3xl">
+		<header class="mb-8">
+			<Button type="button" class="cursor-pointer" onclick={() => createMatch()}>
 				<span>Nuova partita</span>
-				<Icon id={Icons.TankBrand} />
-			</button>
+				<PackagePlus size={24} />
+			</Button>
 		</header>
 
 		{#if matches.length > 0}
-			<Datatable handler={tableHanlder}>
-				<table class="table">
-					<thead>
-					<tr>
-						<th>Data partita</th>
-						<th></th>
-						<th></th>
-						<th></th>
-					</tr>
-					</thead>
-					<tbody>
-					{#each $table as row}
-						<tr>
-							<td>
-							<span>
-								{new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(row.date)}
-							</span>
-							</td>
-							<td>
-								<button type="button" class="table-button" on:click={() => onEditMatch(row)}>
-									<PencilSimple size="20" />
-								</button>
-							</td>
-							<td>
-								<a href={`/admin/tournaments/${tournament.id}/${row.id}`} class="table-button">
-									<DiceThree size="20" />
-								</a>
-							</td>
-							<td>
-								<form action="?/delete" method="POST" on:submit={(e) => onDeleteMatch(e, row)} use:enhance>
-									<input type='hidden' name='matchId' value={row.id} />
-									<input type='hidden' name='tournamentId' value={row.tournamentId} />
-
-									<button type="submit" class="table-button">
-										<Trash size="20" />
-									</button>
-								</form>
-							</td>
-						</tr>
-					{/each}
-					</tbody>
-				</table>
-			</Datatable>
+			<DataTable data={matches} {columns} />
 		{:else}
-			<p class="empty-text">Non c'è ancora nessuna partita qua...</p>
+			<p class="">Non c'è ancora nessuna partita qua...</p>
 		{/if}
 	</div>
-
-	{#if $delayed}
-		<Loader />
-	{/if}
-
-	<Modal title={item === undefined ? 'Nuova partita':'Modifica partita'}
-				 bind:isOpen={isModalOpen}>
-		<svelte:fragment slot='modal-content'>
-			<form id="form-player" action="?/update" method="POST">
-				<input type='hidden' name='matchId' value={item?.id} />
-				<input type='hidden' name='tournamentId' value={tournament.id} />
-
-<!--				<Select label='Data partita' name='date'errors={$errors.date}-->
-<!--								constraints={$constraints.date}-->
-<!--								value={item?.date}-->
-<!--				/>-->
-				<DateInput label='Data partita' name='date'
-									 errors={$errors.date}
-									 constraints={$constraints.date}
-									 value={item?.date}
-				/>
-
-				<div class="modal-actions">
-					<button type="button" class="button" on:click={()=>isModalOpen = false}>Annulla</button>
-					<button type="submit" class="button primary">Salva</button>
-				</div>
-			</form>
-		</svelte:fragment>
-	</Modal>
-
 </Main>
 
-<style lang="scss">
-  .admin-page-header-form {
+<Dialog.Root bind:open={isModalOpen}>
+	<Dialog.Content>
+		<Dialog.Header>
+			<Dialog.Title>{item === undefined ? 'Nuova partita' : 'Modifica partita'}</Dialog.Title>
+		</Dialog.Header>
 
-    //div {
-    //  display: flex;
-    //  justify-content: space-between;
-    //  align-items: center;
-    //  gap: .5rem;
-    //}
-    //
-    //select {
-    //  flex: 1 1 auto;
-    //}
-    //
-    //button {
-    //  flex: 0 0 auto;
-    //}
-  }
-</style>
+		<form method="POST" action="?/update" use:enhance>
+			<input type="hidden" name="matchId" bind:value={$formData.matchId} />
+			<input type="hidden" name="tournamentId" bind:value={$formData.tournamentId} />
 
+			<Form.Field {form} name="date">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Data partita</Form.Label>
+						<Popover.Root>
+							<Popover.Trigger
+								{...props}
+								class={cn(
+              buttonVariants({ variant: "outline" }),
+              "w-[280px] justify-start pl-4 text-left font-normal",
+              !value && "text-muted-foreground"
+            )}
+							>
+								{value
+									? df.format(value.toDate(getLocalTimeZone()))
+									: "Pick a date"}
+								<Calendar1 class="ml-auto size-4 opacity-50" />
+							</Popover.Trigger>
+							<Popover.Content class="w-auto p-0" side="top">
+								<Calendar
+									type="single"
+									value={value}
+									minValue={new CalendarDate(1900, 1, 1)}
+									calendarLabel="Data partita"
+									onValueChange={(v) => {
+										if (v) {
+											$formData.date = v.toDate(getLocalTimeZone());
+										} else {
+											$formData.date = new Date();
+										}
+									}}
+								/>
+							</Popover.Content>
+						</Popover.Root>
+						<Form.FieldErrors />
+						<input hidden bind:value={$formData.date} name={props.name} />
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors class="mb-4 *:mb-2" />
+			</Form.Field>
+
+			<Form.Button disabled={$submitting} class="w-full">
+				{$submitting ? 'Salvataggio...' : 'Conferma'}
+			</Form.Button>
+
+			{#if $errors?._errors}
+				<div class="mt-3 rounded-md text-red-700">
+					{$errors?._errors}
+				</div>
+			{/if}
+		</form>
+
+	</Dialog.Content>
+</Dialog.Root>

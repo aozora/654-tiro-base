@@ -1,191 +1,231 @@
 <script lang="ts">
 	import Main from '$components/Main.svelte';
-	import { Datatable, DataHandler } from '@vincjo/datatables';
-	import type { Player } from '@prisma/client';
-	import type { PageData } from './$types';
-	import { CheckCircle, PencilSimple, Trash, UserSquare, XCircle } from 'phosphor-svelte';
-	import Modal from '$components/ui/Modal/Modal.svelte';
-	import TextInput from '$components/ui/Form/TextInput.svelte';
 	import { superForm } from 'sveltekit-superforms/client';
-	import { page } from '$app/stores';
-	import { toast } from '$lib/toast';
-	import Avatar from '$components/ui/Avatar/Avatar.svelte';
+	import { page } from '$app/state';
 	import AdminPageTitle from '$components/AdminPageTitle.svelte';
-	import Icon from '$components/Icon/Icon.svelte';
-	import { Icons } from '$types';
-	import Loader from '$components/Loader.svelte';
-	import Checkbox from '$components/ui/Form/Checkbox.svelte';
+	import { UserRound } from '@lucide/svelte';
+	import type { PageProps } from './$types';
+	import { valibotClient } from 'sveltekit-superforms/adapters';
+	import { toast } from 'svelte-sonner';
+	import type { Player } from '$lib/server/database/schema';
+	import { Button } from '$lib/components/ui/button';
+	import DataTable from '$components/DataTable.svelte';
+	import type { ColumnDef } from '@tanstack/table-core';
+	import { renderComponent, renderSnippet } from '$lib/components/ui/data-table';
+	import DataTableButton from '$components/DataTableButton.svelte';
+	import DataTableFormButton from '$components/DataTableFormButton.svelte';
+	import { createRawSnippet } from 'svelte';
+	import DataTablePlayer from '$components/DataTablePlayer.svelte';
+	import * as Dialog from '$lib/components/ui/dialog';
+	import { Input } from '$lib/components/ui/input';
+	import * as Form from '$lib/components/ui/form';
+	import { Checkbox } from '$lib/components/ui/checkbox';
+	import { schema } from './schema';
 
-	type PageProps = {
-		players: Array<Player>;
-	};
+	let { data }: PageProps = $props();
+	const { players } = $derived(data);
 
-	export let data: PageData;
+	let form = $derived(
+		superForm(data.form, {
+			validators: valibotClient(schema),
+			dataType: 'json',
+			onUpdated: ({ form }) => {
+				// When the form is successfully submitted close the modal and reset the item variable
+				if (form.valid && form.message && page.status < 400) {
+					item = undefined;
+					isModalOpen = false;
 
-	const { players }: PageProps = data;
-	const { form, errors, enhance, delayed, message, constraints } = superForm(data.form, {
-		// validationMethod: 'onsubmit', //'auto' | 'oninput' | 'onblur' | 'onsubmit' = 'auto',
-		onUpdated: ({ form }) => {
-			// When the form is successfully submitted close the modal and reset the item variable
-			if (form.valid && message && $page.status < 400) {
-				item = undefined;
-				isModalOpen = false;
+					// show a toast
+					toast.success('Triplooo! Dati salvati!');
+				} else {
+					toast.error('Cita murta! c\'è un errore....');
+				}
+			}
+		})
+	);
+	let formData = $derived(form.form);
+	let errors = $derived(form.errors);
+	let submitting = $derived(form.submitting);
+	let enhance = $derived(form.enhance);
 
-				// show a toast
-				toast({
-					kind: 'success',
-					title: 'Triplooo!',
-					subtitle: 'Dati salvati!',
-					showTimestamp: true,
-					hideCloseButton: false
+	let isModalOpen = $state(false);
+	let item: Player | undefined = $state(undefined);
+
+	const columns: ColumnDef<Player>[] = [
+		{
+			accessorKey: 'name',
+			header: 'Nome',
+			cell: ({ row }) => {
+				return renderComponent(DataTablePlayer, {
+					player: row.original
+				});
+			}
+		},
+		{
+			accessorKey: 'isActive',
+			header: 'Attivo',
+			cell: ({ row }) => {
+				const isActive = Boolean(row.getValue('isActive'));
+
+				return renderSnippet(
+					createRawSnippet(() => ({
+						render: () => isActive ? `<span>Yes</span>` : `<span>No</span>`
+					}))
+				);
+			}
+		},
+		{
+			id: 'editAction',
+			cell: ({ row }) => {
+				return renderComponent(DataTableButton, {
+					label: 'Modifica',
+					type: 'button',
+					variant: 'outline',
+					icon: 'PencilLine',
+					class: 'cursor-pointer',
+					onclick: () => onEditPlayer(row.original)
+				});
+			}
+		},
+		{
+			id: 'deleteAction',
+			cell: ({ row }) => {
+				const player = row.original;
+
+				return renderComponent(DataTableFormButton, {
+					ids: [
+						{ name: 'id', value: player.id }
+					],
+					enhance: enhance,
+					action: '?/delete',
+					label: 'Elimina',
+					type: 'submit',
+					variant: 'destructive',
+					icon: 'Trash2',
+					class: 'cursor-pointer',
+					onSubmit: (e) => {
+						const okDelete = confirm(
+							`Elimino il giocatore ${player.name}?`
+						);
+
+						if (!okDelete) {
+							e.preventDefault();
+							return;
+						}
+					}
 				});
 			}
 		}
-	});
-
-	let isModalOpen = false;
-	let isUploadWidgetOpen = false;
-	let item: Player | undefined = undefined;
-
-	const tableHanlder = new DataHandler(players, { rowsPerPage: 10 });
-	const table = tableHanlder.getRows();
+	];
 
 	const onEditPlayer = (row: Player) => {
-		// console.log({ row });
 		item = row;
 		isModalOpen = true;
-	};
-
-	const onRemovePlayer = (e, row: Player) => {
-		const okDelete = confirm(`Elimino l'utente ${row.name} ?`);
-
-		if (!okDelete) {
-			e.preventDefault();
-			return;
-		}
-	};
-
-	const onEditPlayerPicture = async (results, row: Player) => {
-		console.log({ row });
-		// console.log('Public ID', results.info.public_id);
-
-		const response = await fetch('/api/player', {
-			method: 'POST',
-			body: JSON.stringify({ id: row.id, picture: results.info.public_id }),
-			headers: {
-				'content-type': 'application/json'
-			}
-		});
-
-		const success: boolean = await response.json();
-		return success;
 	};
 
 	const createPlayer = () => {
 		item = undefined;
 		isModalOpen = true;
 	};
+
+	// Populate form data when item changes
+	$effect(() => {
+		if (item) {
+			$formData.id = item.id;
+			$formData.name = item.name;
+			$formData.picture = item.picture ?? undefined;
+			$formData.isActive = item.isActive;
+		} else {
+			$formData.id = undefined;
+			$formData.name = '';
+			$formData.picture = undefined;
+			$formData.isActive = false;
+		}
+	});
 </script>
 
 <AdminPageTitle title="Gestione giocatori" showBackButton={true} />
 
-<Main className="admin-page">
-	<div>
-		<header class="page-header">
-			<button type="button" class="button" on:click={() => createPlayer()}>
+<Main className="flex flex-col pb-10">
+	<div class="mx-auto w-full max-w-3xl">
+		<header class="mb-8">
+			<Button type="button" class="cursor-pointer" onclick={() => createPlayer()}>
 				<span>Aggiungi giocatore</span>
-				<Icon id={Icons.TankBrand} />
-			</button>
+				<UserRound size="24" />
+			</Button>
 		</header>
 
-		{#if table}
-			<Datatable handler={tableHanlder}>
-				<table class="table">
-					<thead>
-					<tr>
-						<th>Nome</th>
-						<th>Attivo</th>
-						<th></th>
-						<th></th>
-					</tr>
-					</thead>
-					<tbody>
-					{#each $table as row}
-						<tr>
-							<td class="player-info">
-								<Avatar picture={row.picture || ''} name={row.name} />
-								<span>{row.name}</span>
-							</td>
-							<td>
-								{#if row.isActive}
-									<CheckCircle size="20" />
-								{:else}
-									<XCircle size="20" />
-								{/if}
-							</td>
-							<td>
-								<button type="button" class="table-button" on:click={() => onEditPlayer(row)}>
-									<PencilSimple size="20" />
-								</button>
-							</td>
-							<td>
-								<form action="?/delete" method="POST" on:submit={(e) => onRemovePlayer(e, row)}>
-									<input type="hidden" name="id" value={row.id} />
-									<input type="hidden" name="action" value="delete" />
-									<button type="submit" class="table-button">
-										<Trash size="20" />
-									</button>
-								</form>
-							</td>
-						</tr>
-					{/each}
-					</tbody>
-				</table>
-			</Datatable>
+		{#if players.length > 0}
+			<DataTable data={players} {columns} />
+		{:else}
+			<p class="">Non ci sono ancora giocatori qua...</p>
 		{/if}
 	</div>
-
-	{#if $delayed}
-		<Loader />
-	{/if}
 </Main>
 
-<Modal
-	title={item === undefined ? 'Nuovo giocatore' : 'Modifica giocatore'}
-	bind:isOpen={isModalOpen}
->
-	<svelte:fragment slot="modal-content">
-		<form id="form-player" action="?/update" method="POST" use:enhance>
-			<input type="hidden" name="id" value={item?.id} />
 
-			<TextInput
-				label="Nome"
-				name="name"
-				errors={$errors.name}
-				constraints={$constraints.name}
-				value={item?.name}
-			/>
-			<TextInput
-				label="Foto (path)"
-				name="picture"
-				errors={$errors.name}
-				constraints={$constraints.name}
-				value={item?.picture}
-			/>
-			<!--			<Toggle label='Is active' name='isActive' required={true} value={item?.isActive ?? false} />-->
-			<Checkbox
-				label="Attivo"
-				required={true}
-				name="isActive"
-				errors={$errors.isActive}
-				constraints={$constraints.isActive}
-				checked={item?.isActive}
-			/>
+<Dialog.Root bind:open={isModalOpen}>
+	<Dialog.Content>
+		<Dialog.Header>
+			<Dialog.Title>{item === undefined ? 'Nuovo giocatore' : 'Modifica giocatore'}</Dialog.Title>
+		</Dialog.Header>
 
-			<div class="modal-actions">
-				<button type="button" class="button" on:click={() => (isModalOpen = false)}>Annulla</button>
-				<button type="submit" class="button primary">Salva</button>
-			</div>
+		<form method="POST" action="?/update" use:enhance>
+			<input type="hidden" name="id" value={$formData.id} />
+
+			<Form.Field {form} name="name">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Nome</Form.Label>
+						<Input
+							{...props}
+							bind:value={$formData.name}
+							type="text"
+							placeholder="Inserisci il nome del giocatore"
+						/>
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors class="mb-4 *:mb-2" />
+			</Form.Field>
+
+			<Form.Field {form} name="picture">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Foto (path)</Form.Label>
+						<Input
+							{...props}
+							bind:value={$formData.picture}
+							type="text"
+							placeholder=""
+						/>
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors class="mb-4 *:mb-2" />
+			</Form.Field>
+
+			<Form.Field {form} name="isActive">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Attivo</Form.Label>
+						<Checkbox
+							{...props}
+							bind:checked={$formData.isActive}
+						/>
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors class="mb-4 *:mb-2" />
+			</Form.Field>
+
+			<Form.Button disabled={$submitting} class="w-full">
+				{$submitting ? 'Salvataggio...' : 'Conferma'}
+			</Form.Button>
+
+			{#if $errors?._errors}
+				<div class="mt-3 rounded-md text-red-700">
+					{$errors?._errors}
+				</div>
+			{/if}
 		</form>
-	</svelte:fragment>
-</Modal>
+
+	</Dialog.Content>
+</Dialog.Root>

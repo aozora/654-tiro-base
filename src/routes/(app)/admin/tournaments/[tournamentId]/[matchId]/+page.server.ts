@@ -1,6 +1,5 @@
 import type { Actions, PageServerLoad } from './$types';
 import {
-	deletePlayer,
 	getMatch,
 	getMatchPlayers,
 	getPlayers,
@@ -9,38 +8,23 @@ import {
 	removePlayerFromMatch,
 	upsertMatchPlayer
 } from '$lib/server/repository';
-import type { Player, Tournament } from '@prisma/client';
 import { message, superValidate, fail } from 'sveltekit-superforms';
-import { z } from 'zod';
-import { zod } from 'sveltekit-superforms/adapters';
-import { invalidate } from '$app/navigation';
+import { valibot } from 'sveltekit-superforms/adapters';
+import type { Player, Tournament } from '$lib/server/database/schema';
+import { schema } from './schema';
+import { deleteSchema } from './schema';
 
-const schemaUpdate = z
-	.object({
-		matchId: z.string(),
-		playerId: z.string(),
-		points: z.number()
-	})
-	.required();
-
-const schemaDelete = z
-	.object({
-		matchId: z.string(),
-		playerId: z.string()
-	})
-	.required();
 
 /**
  * Page Load
  */
 export const load: PageServerLoad = async ({ params }) => {
-	const tournamentId: string = params.tournamentId;
-	const matchId: string = params.matchId;
+	const { matchId, tournamentId } = params;
 	const match = await getMatch(matchId);
 	const tournament: Tournament = await getTournament(tournamentId);
 	const allPlayers: Array<Player> = await getPlayers();
 	const players: Array<PlayerExtended> = await getMatchPlayers(matchId);
-	const form = await superValidate(zod(schemaUpdate));
+	const form = await superValidate(valibot(schema));
 
 	return {
 		match,
@@ -56,12 +40,12 @@ export const load: PageServerLoad = async ({ params }) => {
  */
 export const actions: Actions = {
 	update: async ({ request }) => {
-		const form = await superValidate(request, zod(schemaUpdate));
+		const form = await superValidate(request, valibot(schema));
 
 		if (!form.valid) {
 			// Again, always return form and things will just work.
 			console.error('Form not valid', form);
-			return fail(400, { form });
+			return fail(400, { form, message: 'Form not valid' });
 		}
 
 		try {
@@ -80,12 +64,12 @@ export const actions: Actions = {
 	 * @param request
 	 */
 	delete: async ({ request }) => {
-		const form = await superValidate(request, zod(schemaDelete));
+		const form = await superValidate(request, valibot(deleteSchema));
 
 		if (!form.valid) {
 			// Again, always return form and things will just work.
 			console.error('Delete Form not valid', form);
-			return fail(400, { form });
+			return fail(400, { form, message: 'Form not valid' });
 		}
 
 		try {

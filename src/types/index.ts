@@ -3,10 +3,6 @@ export enum Icons {
 	TankBrand = 'tank-brand'
 }
 
-export type DatatableColumn = {
-	key: string;
-	label: string;
-};
 
 export type PlayerLeaderboard = {
 	playerId: string;

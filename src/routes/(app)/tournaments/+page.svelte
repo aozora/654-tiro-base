@@ -1,109 +1,59 @@
 <script lang="ts">
-	import type { Tournament } from '@prisma/client';
-	import type { PageData } from './$types';
 	import Main from '$components/Main.svelte';
 	import PageTitle from '$components/PageTitle.svelte';
-	import { ArrowCircleRight } from 'phosphor-svelte';
+	import type { PageProps } from './$types';
+	import { ChevronRight } from '@lucide/svelte';
+	import { buttonVariants } from '$lib/components/ui/button';
+	import { cn } from '$lib/utils';
 
-	type PageProps = {
-		tournaments: Array<Tournament>;
-	};
+	let { data }: PageProps = $props();
+	const { tournaments } = data;
 
-	export let data: PageData;
-
-	const { tournaments }: PageProps = data;
-
-	const activeTournament = tournaments.find(t => t.isActive);
-	const otherTournaments = tournaments.filter(t => t.id !== activeTournament?.id);
+	const activeTournament = tournaments.find((t) => t.isActive);
+	const otherTournaments = tournaments.filter((t) => t.id !== activeTournament?.id);
 </script>
 
 <Main className="user-page">
-	<div class="tournaments">
+	<div class="flex flex-col gap-4 justify-center items-center">
 		<PageTitle title="Tornei" />
 
-		<h2>Torneo attuale:</h2>
+		<h2 class="mb-4">Torneo attuale:</h2>
 
 		{#if activeTournament}
-			<ul>
-				<li>
-					<a href={`/leaderboard/${activeTournament.id}`}>
+			<ul class="flex w-full flex-col items-center gap-4">
+				<li class="h-12">
+					<a href={`/leaderboard/${activeTournament.id}`}
+						 class={cn(
+							 buttonVariants({variant: "secondary"}),
+							 "h-12 w-full bg-indigo-500 hover:bg-indigo-700"
+							 )}>
 						<strong>{activeTournament.title}</strong>
-						<ArrowCircleRight size="20" class="arrow" />
+						<ChevronRight size="24" />
 					</a>
 				</li>
 			</ul>
-		{:else }
-			<p>Non c'è un torneo attivo</p>
+		{:else}
+			<p class="mb-4">Non c'è un torneo attivo</p>
 		{/if}
 
-
-		<h2>Tornei precedenti:</h2>
+		<h2 class="mb-4">Tornei precedenti:</h2>
 		{#if otherTournaments && otherTournaments.length > 0}
-			<ul>
+			<ul class="flex w-full flex-col items-center gap-4">
 				{#each otherTournaments as t}
-					<li>
-						<a href={`/leaderboard/${t.id}`}>
+					<li class="h-12">
+						<a href={`/leaderboard/${t.id}`}
+							 class={cn(
+							 buttonVariants({variant: "secondary"}),
+							 "h-12 w-full bg-indigo-500 hover:bg-indigo-700"
+							 )}>
 							<strong>{t.title}</strong>
-							<ArrowCircleRight size="20" class="arrow" />
+							<ChevronRight size="24" />
 						</a>
 					</li>
 				{/each}
 			</ul>
 		{:else}
-			<p>Non ci sono altri tornei.</p>
+			<p class="mb-4">Non ci sono altri tornei.</p>
 		{/if}
 	</div>
 </Main>
-
-<style lang="scss">
-  .tournaments {
-    display: flex;
-    flex-direction: column;
-
-    ul,
-    li {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    ul {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      width: 100%;
-    }
-
-    li {
-      width: 100%;
-    }
-
-    a {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      width: 100%;
-      padding: 0.5rem;
-      border: 0;
-      border-radius: var(--global-radius);
-      background-color: var(--color-white);
-      text-decoration: none;
-      color: var(--color-dark);
-
-      span {
-        flex: 0;
-        margin-right: 1rem;
-      }
-
-      strong {
-        flex: 1 1 auto;
-        text-align: left;
-      }
-
-      :global(.arrow) {
-        margin-left: 0.5rem;
-      }
-    }
-  }
-</style>
