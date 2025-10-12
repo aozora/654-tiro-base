@@ -54,7 +54,7 @@ export const actions: Actions = {
 		}
 
 		try {
-			const deleted = await deleteTournament(
+			await deleteTournament(
 				form.data.id
 			);
 
