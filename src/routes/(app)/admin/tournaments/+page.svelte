@@ -162,7 +162,7 @@
 <Main className="flex flex-col pb-10">
 	<div class="mx-auto w-full max-w-3xl">
 		<header class="mb-8">
-			<Button type="button" class="button" onclick={() => createTournament()}>
+			<Button type="button" class="cursor-pointer" onclick={() => createTournament()}>
 				<span>Nuovo torneo</span>
 				<PackagePlus size={24} />
 			</Button>

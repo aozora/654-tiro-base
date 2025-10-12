@@ -16,7 +16,6 @@
 	import { schema } from './schema';
 	import DataTableFormButton from '$components/DataTableFormButton.svelte';
 	import * as Dialog from '$lib/components/ui/dialog';
-	import { Input } from '$lib/components/ui/input';
 	import * as Form from '$lib/components/ui/form';
 	import { Calendar } from '$lib/components/ui/calendar/index.js';
 	import * as Popover from '$lib/components/ui/popover/index.js';
@@ -24,11 +23,8 @@
 	import { Calendar1 } from '@lucide/svelte';
 	import {
 		CalendarDate,
-		type DateValue,
 		DateFormatter,
 		getLocalTimeZone,
-		parseDate,
-		today
 	} from '@internationalized/date';
 
 	let { data }: PageProps = $props();
@@ -166,7 +162,7 @@
 <Main className="flex flex-col pb-10">
 	<div class="mx-auto w-full max-w-3xl">
 		<header class="mb-8">
-			<Button type="button" class="button" onclick={() => createMatch()}>
+			<Button type="button" class="cursor-pointer" onclick={() => createMatch()}>
 				<span>Nuova partita</span>
 				<PackagePlus size={24} />
 			</Button>
@@ -175,7 +171,7 @@
 		{#if matches.length > 0}
 			<DataTable data={matches} {columns} />
 		{:else}
-			<p class="empty-text">Non c'è ancora nessuna partita qua...</p>
+			<p class="">Non c'è ancora nessuna partita qua...</p>
 		{/if}
 	</div>
 </Main>
