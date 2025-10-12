@@ -5,22 +5,20 @@
 	import AdminPageTitle from '$components/AdminPageTitle.svelte';
 	import type { PageProps } from './$types';
 	import { toast } from 'svelte-sonner';
-	import type { Match, Player, Tournament } from '$lib/server/database/schema';
 	import DataTable from '$components/DataTable.svelte';
 	import type { ColumnDef } from '@tanstack/table-core';
 	import { renderComponent } from '$lib/components/ui/data-table';
 	import DataTableButton from '$components/DataTableButton.svelte';
 	import type { PlayerExtended } from '$lib/server/repository';
 	import { Button } from '$lib/components/ui/button';
-	import { PackagePlus } from '@lucide/svelte';
 	import { valibotClient } from 'sveltekit-superforms/adapters';
 	import { Dice6 } from '@lucide/svelte';
-	import { Checkbox } from '$lib/components/ui/checkbox';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Input } from '$lib/components/ui/input';
 	import * as Form from '$lib/components/ui/form';
 	import * as Select from "$lib/components/ui/select";
 	import { schema } from './schema';
+	import DataTableFormButton from '$components/DataTableFormButton.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -73,28 +71,37 @@
 					onclick: () => onEditPoints(row.original)
 				});
 			}
-		}
-		// {
-		// 	id: 'editMatchAction',
-		// 	cell: ({ row }) => {
-		// 		const tournament = row.original;
-		// 		return renderComponent(DataTableButton, {
-		// 			type: 'button',
-		// 			variant: 'outline',
-		// 			icon: "Dices",
-		// 			class: 'cursor-pointer',
-		// 			href: `/admin/tournaments/${tournament.id}/${row.original.id}`,
-		// 		});
-		// 	}
-		// },
-		// {
-		// 	id: 'deleteAction',
-		// 	cell: ({ row }) => {
-		// 		const match = row.original;
-		// 		return renderComponent(DataTableActionButton, { variant: 'delete', onclick: onDeleteMatch(match) });
-		// 	}
-		// },
+		},
+		{
+			id: 'deleteAction',
+			cell: ({ row }) => {
+				const player = row.original;
 
+				return renderComponent(DataTableFormButton, {
+					ids: [
+						{ name: 'matchId', value: match.id },
+						{ name: 'playerId', value: player.id }
+					],
+					enhance: enhance,
+					action: '?/delete',
+					label: 'Elimina',
+					type: 'submit',
+					variant: 'destructive',
+					icon: 'Trash2',
+					class: 'cursor-pointer',
+					onSubmit: (e) => {
+						const okDelete = confirm(
+							`Elimino il punteggio di ${player.name}?`
+						);
+
+						if (!okDelete) {
+							e.preventDefault();
+							return;
+						}
+					}
+				});
+			}
+		}
 	];
 
 	const onEditPoints = (row: PlayerExtended) => {
@@ -222,48 +229,3 @@
 
 	</Dialog.Content>
 </Dialog.Root>
-
-<!--<Modal-->
-<!--	title={item === undefined ? 'Nuovo giocatore' : 'Modifica giocatore'}-->
-<!--	bind:isOpen={isModalOpen}-->
-<!--&gt;-->
-<!--	<svelte:fragment slot="modal-content">-->
-<!--		<form id="form-player" action="?/update" method="POST">-->
-<!--			<input type="hidden" name="matchId" value={match.id} />-->
-
-<!--			<Select-->
-<!--				label="Giocatore"-->
-<!--				name="playerId"-->
-<!--				errors={$errors.id}-->
-<!--				constraints={$constraints.id}-->
-<!--				value={item?.id}-->
-<!--			>-->
-<!--				<option></option>-->
-<!--				{#if item}-->
-<!--					{#each allPlayers as player}-->
-<!--						<option value={player.id}>{player.name}</option>-->
-<!--					{/each}-->
-<!--				{:else}-->
-<!--					{#each allPlayers.filter((p) => players.find((x) => x.id === p.id) === undefined) as player}-->
-<!--						<option value={player.id}>{player.name}</option>-->
-<!--					{/each}-->
-<!--				{/if}-->
-<!--			</Select>-->
-
-<!--			<NumberInput-->
-<!--				label="Punti"-->
-<!--				name="points"-->
-<!--				min={0}-->
-<!--				max={100}-->
-<!--				errors={$errors.points}-->
-<!--				constraints={$constraints.points}-->
-<!--				value={item?.points}-->
-<!--			/>-->
-
-<!--			<div class="modal-actions">-->
-<!--				<button type="button" class="button" on:click={() => (isModalOpen = false)}>Annulla</button>-->
-<!--				<button type="submit" class="button primary">Salva</button>-->
-<!--			</div>-->
-<!--		</form>-->
-<!--	</svelte:fragment>-->
-<!--</Modal>-->

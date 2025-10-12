@@ -8,7 +8,7 @@
 <AdminPageTitle title="Gestione 654" />
 
 <Main className="flex flex-col pb-10">
-	<div class="mx-auto w-full max-w-3xl">
+	<div class="mx-auto w-full max-w-xl">
 		<ul class="flex flex-col gap-4">
 			<li class="h-12">
 				<a href="/admin/players"
