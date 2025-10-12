@@ -182,7 +182,7 @@
 						>
 							<Select.Trigger {...props}>
 								{$formData.playerId
-									? $formData.playerId
+									? allPlayers.find(p => p.id === $formData.playerId).name
 									: "Seleziona un giocatore..."}
 							</Select.Trigger>
 							<Select.Content>
