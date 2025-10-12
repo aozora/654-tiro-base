@@ -2,7 +2,7 @@
 	import Main from '$components/Main.svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { page } from '$app/state';
-	import AdminPageTitle from '$components/AdminPageTitle.svelte';
+	import PageTitle from '$components/PageTitle.svelte';
 	import type { PageProps } from './$types';
 	import { toast } from 'svelte-sonner';
 	import type { ColumnDef } from '@tanstack/table-core';
@@ -157,7 +157,7 @@
 	});
 </script>
 
-<AdminPageTitle title={`${tournament.title}`} subtitle="Gestione partite" showBackButton={true} />
+<PageTitle title={`${tournament.title}`} subtitle="Gestione partite" showBackButton={true} variant="admin" />
 
 <Main className="flex flex-col pb-10">
 	<div class="mx-auto w-full max-w-3xl">

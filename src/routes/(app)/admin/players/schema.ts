@@ -1,4 +1,5 @@
 import * as v from 'valibot';
+import { deleteSchema as commonDeleteSchema } from '$lib/validation/common-schemas';
 
 export const schema = v.object({
 	id: v.optional(v.string()),
@@ -7,6 +8,4 @@ export const schema = v.object({
 	isActive: v.boolean()
 });
 
-export const deleteSchema = v.object({
-	id: v.string()
-})
+export const deleteSchema = commonDeleteSchema;

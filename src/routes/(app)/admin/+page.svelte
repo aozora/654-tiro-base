@@ -1,11 +1,11 @@
 <script lang="ts">
 	import Main from '$components/Main.svelte';
-	import AdminPageTitle from '$components/AdminPageTitle.svelte';
+	import PageTitle from '$components/PageTitle.svelte';
 	import { buttonVariants } from '$lib/components/ui/button';
 	import { cn } from '$lib/utils';
 </script>
 
-<AdminPageTitle title="Gestione 654" />
+<PageTitle title="Gestione 654" variant="admin" />
 
 <Main className="flex flex-col pb-10">
 	<div class="mx-auto w-full max-w-xl">

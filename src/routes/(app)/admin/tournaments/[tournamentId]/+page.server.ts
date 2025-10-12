@@ -6,12 +6,13 @@ import {
 	getTournament,
 	upsertMatch
 } from '$lib/server/repository';
-import { message, superValidate, fail } from 'sveltekit-superforms';
+import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { error } from '@sveltejs/kit';
 import type { Match, Player, Tournament } from '$lib/server/database/schema';
 import { schema } from './schema';
 import { deleteSchema } from '../schema';
+import { handleDelete, handleUpdate } from '$lib/server/action-helpers';
 
 
 /**
@@ -43,45 +44,18 @@ export const load: PageServerLoad = async ({ params }) => {
  */
 export const actions: Actions = {
 	update: async ({ request }) => {
-		const form = await superValidate(request, valibot(schema));
-
-		if (!form.valid) {
-			// Again, always return form and things will just work.
-			console.error('Form not valid', form);
-			return fail(400, { form, message: 'Form not valid' });
-		}
-
-		try {
+		return handleUpdate(request, schema, async (data: any) => {
 			await upsertMatch(
-				form.data.matchId,
-				form.data.tournamentId,
-				form.data.date
+				data.matchId,
+				data.tournamentId,
+				data.date
 			);
-
-			return message(form, 'success');
-		} catch (error: unknown) {
-			console.error(error);
-
-			return fail(500, { form, message: 'Something went wrong' });
-		}
+		});
 	},
 
 	delete: async ({ request }) => {
-		const form = await superValidate(request, valibot(deleteSchema));
-
-		if (!form.valid) {
-			// Again, always return form and things will just work.
-			console.error('Delete Form not valid', form);
-			return fail(400, { form, message: 'Form not valid' });
-		}
-
-		try {
-			await deleteMatchDeep(form.data.id);
-			return message(form, 'success');
-		} catch (error: unknown) {
-			console.error(error);
-
-			return fail(500, { form, message: 'Something went wrong' });
-		}
+		return handleDelete(request, deleteSchema, async (data: any) => {
+			await deleteMatchDeep(data.id);
+		});
 	}
 };

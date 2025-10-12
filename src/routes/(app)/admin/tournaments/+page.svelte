@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Main from '$components/Main.svelte';
 	import { superForm } from 'sveltekit-superforms/client';
-	import AdminPageTitle from '$components/AdminPageTitle.svelte';
+	import PageTitle from '$components/PageTitle.svelte';
 	import type { PageProps } from './$types';
 	import { page } from '$app/state';
 	import type { Match, Tournament } from '$lib/server/database/schema';
@@ -157,7 +157,7 @@
 	});
 </script>
 
-<AdminPageTitle title="Gestione tornei" showBackButton={true} />
+<PageTitle title="Gestione tornei" showBackButton={true} variant="admin" />
 
 <Main className="flex flex-col pb-10">
 	<div class="mx-auto w-full max-w-3xl">
