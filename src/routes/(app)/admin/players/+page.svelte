@@ -2,7 +2,7 @@
 	import Main from '$components/Main.svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { page } from '$app/state';
-	import AdminPageTitle from '$components/AdminPageTitle.svelte';
+	import PageTitle from '$components/PageTitle.svelte';
 	import { UserRound } from '@lucide/svelte';
 	import type { PageProps } from './$types';
 	import { valibotClient } from 'sveltekit-superforms/adapters';
@@ -144,7 +144,7 @@
 	});
 </script>
 
-<AdminPageTitle title="Gestione giocatori" showBackButton={true} />
+<PageTitle title="Gestione giocatori" showBackButton={true} variant="admin" />
 
 <Main className="flex flex-col pb-10">
 	<div class="mx-auto w-full max-w-3xl">

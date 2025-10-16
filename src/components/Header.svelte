@@ -1,16 +1,14 @@
 <script lang="ts">
-	// import { DiceSix } from 'phosphor-svelte';
 	import MobileMenu from '$components/MobileMenu.svelte';
 	import { page } from '$app/state';
 	import { MediaQuery } from 'svelte/reactivity';
 	import { Dices } from '@lucide/svelte';
 	import { cn } from '$lib/utils';
 
-	export let data;
-
-	const { user } = data;
-	const isDesktop = new MediaQuery('min-width: 64em');
-	let isOpen = false;
+	const { user } = $props();
+	const isDesktop = new MediaQuery('min-width: 40em');
+	const isMobile = $derived(!isDesktop.current);
+	let isOpen = $state(false);
 
 	const onClose = () => {
 		isOpen = false;
@@ -29,7 +27,7 @@
 		{/if}
 	</a>
 
-	{#if isDesktop.current}
+	{#if !isMobile}
 		<nav class="menu flex-1">
 			<ul class="flex items-center justify-end gap-4">
 				<li>
@@ -60,9 +58,9 @@
 	{:else}
 		<button
 			type="button"
-			class="toggle-menu"
+			class="toggle-menu z-101"
 			aria-expanded={isOpen}
-			on:click={() => (isOpen = !isOpen)}
+			onclick={() => (isOpen = !isOpen)}
 		>
 			<Dices size="36" />
 		</button>

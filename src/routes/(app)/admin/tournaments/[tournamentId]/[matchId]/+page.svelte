@@ -2,7 +2,7 @@
 	import Main from '$components/Main.svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { page } from '$app/state';
-	import AdminPageTitle from '$components/AdminPageTitle.svelte';
+	import PageTitle from '$components/PageTitle.svelte';
 	import type { PageProps } from './$types';
 	import { toast } from 'svelte-sonner';
 	import DataTable from '$components/DataTable.svelte';
@@ -137,10 +137,11 @@
 	});
 </script>
 
-<AdminPageTitle
+<PageTitle
 	title={`${tournament.title}`}
 	subtitle={`Gestione punteggi per la partita del ${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)}`}
 	showBackButton={true}
+	variant="admin"
 />
 
 <Main className="flex flex-col pb-10">
@@ -181,7 +182,7 @@
 						>
 							<Select.Trigger {...props}>
 								{$formData.playerId
-									? $formData.playerId
+									? allPlayers.find(p => p.id === $formData.playerId).name
 									: "Seleziona un giocatore..."}
 							</Select.Trigger>
 							<Select.Content>

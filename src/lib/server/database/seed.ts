@@ -11,27 +11,27 @@ const authClient = createAuthClient({
 async function seed() {
 	console.log(`Starting seeding database... 🌱`);
 
-	// create admin user
-	const email = 'marcello.kot@yandex.com';
-	const password = 'T@t0Ts@r!';
-
-	const { data, error } = await authClient.signUp.email({
-		email,
-		password,
-		name: 'Marcello',
-		// @ts-expect-error
-		role: 'admin',
-	});
-
-	if (error) {
-		console.error({ error });
-	}
-
-	console.log({ data });
+	// // create admin user
+	// const email = 'marcello.kot@yandex.com';
+	// const password = 'T@t0Ts@r!';
+	//
+	// const { data, error } = await authClient.signUp.email({
+	// 	email,
+	// 	password,
+	// 	name: 'Marcello',
+	// 	// @ts-expect-error
+	// 	role: 'admin',
+	// });
+	//
+	// if (error) {
+	// 	console.error({ error });
+	// }
+	//
+	// console.log({ data });
 
 	await authClient.signUp.email({
-		email: 'porco@dio.com',
-		password: '654tirobase',
+		email: '654@tiro.base',
+		password: '654tirobase!',
 		name: 'Marcello',
 		// @ts-expect-error
 		role: 'user',

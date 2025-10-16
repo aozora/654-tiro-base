@@ -1,9 +1,10 @@
 import { deletePlayer, getPlayers, upsertPlayer } from '$lib/server/repository';
-import { fail, message, superValidate } from 'sveltekit-superforms';
+import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import type { Actions, PageServerLoad } from './$types';
 import { deleteSchema, schema } from './schema';
 import type { Player } from '$lib/server/database/schema';
+import { handleDelete, handleUpdate } from '$lib/server/action-helpers';
 
 /**
  * Page Load
@@ -23,50 +24,22 @@ export const load: PageServerLoad = async () => {
  */
 export const actions: Actions = {
 	update: async ({ request }) => {
-		const form = await superValidate(request, valibot(schema));
-
-		if (!form.valid) {
-			// Again, always return form and things will just work.
-			console.error('Form not valid', form);
-			return fail(400, { form });
-		}
-
-		try {
+		return handleUpdate(request, schema, async (data: any) => {
 			await upsertPlayer(
-				form.data.id,
-				form.data.name,
-				form.data.picture || '',
-				form.data.isActive
+				data.id,
+				data.name,
+				data.picture || '',
+				data.isActive
 			);
-
-			return message(form, 'success');
-		} catch (error: unknown) {
-			console.error(error);
-
-			return fail(500);
-		}
+		});
 	},
 
 	/**
 	 * NOTE: delete don't work cause of FK relations in table Player
-	 * @param request
 	 */
 	delete: async ({ request }) => {
-		const form = await superValidate(request, valibot(deleteSchema));
-
-		if (!form.valid || !form.data.id) {
-			// Again, always return form and things will just work.
-			console.error('Delete Form not valid', form);
-			return fail(400, { form });
-		}
-
-		try {
-			await deletePlayer(form.data.id);
-			return message(form, 'success');
-		} catch (error: unknown) {
-			console.error(error);
-
-			return fail(500);
-		}
+		return handleDelete(request, deleteSchema, async (data: any) => {
+			await deletePlayer(data.id);
+		});
 	}
 };

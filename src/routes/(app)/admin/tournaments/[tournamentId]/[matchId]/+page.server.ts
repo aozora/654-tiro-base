@@ -8,11 +8,12 @@ import {
 	removePlayerFromMatch,
 	upsertMatchPlayer
 } from '$lib/server/repository';
-import { message, superValidate, fail } from 'sveltekit-superforms';
+import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import type { Player, Tournament } from '$lib/server/database/schema';
 import { schema } from './schema';
 import { deleteSchema } from './schema';
+import { handleDelete, handleUpdate } from '$lib/server/action-helpers';
 
 
 /**
@@ -40,45 +41,14 @@ export const load: PageServerLoad = async ({ params }) => {
  */
 export const actions: Actions = {
 	update: async ({ request }) => {
-		const form = await superValidate(request, valibot(schema));
-
-		if (!form.valid) {
-			// Again, always return form and things will just work.
-			console.error('Form not valid', form);
-			return fail(400, { form, message: 'Form not valid' });
-		}
-
-		try {
-			await upsertMatchPlayer(form.data.matchId, form.data.playerId, form.data.points);
-
-			return message(form, 'success');
-		} catch (error: unknown) {
-			console.error(error);
-
-			return fail(500);
-		}
+		return handleUpdate(request, schema, async (data: any) => {
+			await upsertMatchPlayer(data.matchId, data.playerId, data.points);
+		});
 	},
 
-	/**
-	 * NOTE: delete don't work cause of FK relations in table Player
-	 * @param request
-	 */
 	delete: async ({ request }) => {
-		const form = await superValidate(request, valibot(deleteSchema));
-
-		if (!form.valid) {
-			// Again, always return form and things will just work.
-			console.error('Delete Form not valid', form);
-			return fail(400, { form, message: 'Form not valid' });
-		}
-
-		try {
-			await removePlayerFromMatch(form.data.matchId, form.data.playerId);
-			return message(form, 'success');
-		} catch (error: unknown) {
-			console.error(error);
-
-			return fail(500);
-		}
+		return handleDelete(request, deleteSchema, async (data: any) => {
+			await removePlayerFromMatch(data.matchId, data.playerId);
+		});
 	}
 };

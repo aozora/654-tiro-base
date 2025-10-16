@@ -1,4 +1,5 @@
 import * as v from 'valibot';
+import { deleteMultiKeySchema } from '$lib/validation/common-schemas';
 
 export const schema = v
 	.object({
@@ -7,8 +8,4 @@ export const schema = v
 		points: v.number()
 	});
 
-export const deleteSchema = v
-	.object({
-		matchId: v.string(),
-		playerId: v.string()
-	});
+export const deleteSchema = deleteMultiKeySchema;
