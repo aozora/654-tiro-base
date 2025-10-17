@@ -405,7 +405,7 @@
 		class="-z-1 absolute top-0 left-0 h-full w-full object-cover blur-xs"
 		alt=""
 	/>
-	<Header {data} />
+	<Header user={data.user} />
 
 	<SvelteToast />
 

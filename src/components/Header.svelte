@@ -6,6 +6,7 @@
 	import { cn } from '$lib/utils';
 
 	const { user } = $props();
+	console.log({user});
 	const isDesktop = new MediaQuery('min-width: 40em');
 	const isMobile = $derived(!isDesktop.current);
 	let isOpen = $state(false);
