@@ -9,6 +9,7 @@ const client = createClient({
 });
 
 const db = drizzle({
+	logger: true,
 	client,
 	schema: {
 		...schemaApp,

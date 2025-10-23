@@ -26,7 +26,6 @@ export const load: PageServerLoad = async ({ params }) => {
 	const allPlayers: Array<Player> = await getPlayers();
 	const players: Array<PlayerExtended> = await getMatchPlayers(matchId);
 	const form = await superValidate(valibot(schema));
-
 	return {
 		match,
 		tournament,
@@ -42,7 +41,7 @@ export const load: PageServerLoad = async ({ params }) => {
 export const actions: Actions = {
 	update: async ({ request }) => {
 		return handleUpdate(request, schema, async (data: any) => {
-			await upsertMatchPlayer(data.matchId, data.playerId, data.points);
+			await upsertMatchPlayer(data.matchId, data.playerId, data.points, data.territoriesPoints);
 		});
 	},
 

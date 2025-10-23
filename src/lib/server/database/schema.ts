@@ -48,6 +48,7 @@ export const playersOnMatches = sqliteTable(
 			.notNull()
 			.references(() => matches.id, { onUpdate: 'cascade' }),
 		points: integer('points').notNull(),
+		territoriesPoints: integer('territoriesPoints').default(0).notNull(),
 	},
 	(table) => ({
 		pk: primaryKey({ columns: [table.playerId, table.matchId] }),

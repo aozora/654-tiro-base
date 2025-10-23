@@ -5,7 +5,8 @@ export const schema = v
 	.object({
 		matchId: v.string(),
 		playerId: v.string(),
-		points: v.number()
+		points: v.number(),
+		territoriesPoints: v.number()
 	});
 
 export const deleteSchema = deleteMultiKeySchema;

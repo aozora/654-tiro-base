@@ -19,7 +19,7 @@
 		<TopThree {leaderboard} />
 	{/if}
 
-	<div class="leaderboard-wrapper mx-auto w-full max-w-3xl">
+	<div class="leaderboard-wrapper mx-auto w-full max-w-xl">
 		<ul class="flex flex-col gap-5">
 			{#each leaderboard as player}
 				<li class="h-12">
@@ -28,15 +28,17 @@
 						variant="secondary"
 						class="flex items-center justify-between gap-4 h-12 w-full bg-indigo-500 hover:bg-indigo-700"
 					>
-						<span>{player.rank}</span>
-						<Avatar class="h-6 w-6">
-							<AvatarImage src={player.picture} />
-							<AvatarFallback>
-								{player.name[0] + player.name[1]}
-							</AvatarFallback>
-						</Avatar>
-						<strong>{player.name}</strong>
-						<span class="points">{pluralizePoints(player.sumPoints)}</span>
+						<div class="flex-1 flex items-center gap-2">
+							<span>{player.rank}</span>
+							<Avatar class="h-6 w-6">
+								<AvatarImage src={player.picture} />
+								<AvatarFallback>
+									{player.name[0] + player.name[1]}
+								</AvatarFallback>
+							</Avatar>
+							<strong>{player.name}</strong>
+						</div>
+						<span>{pluralizePoints(player.sumPoints)}</span>
 						<ChevronRight size={24} />
 					</Button>
 				</li>

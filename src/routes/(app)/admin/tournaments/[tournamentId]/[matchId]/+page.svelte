@@ -60,6 +60,10 @@
 			header: 'Punti'
 		},
 		{
+			accessorKey: 'territoriesPoints',
+			header: 'Punti territori'
+		},
+		{
 			id: 'editAction',
 			cell: ({ row }) => {
 				return renderComponent(DataTableButton, {
@@ -129,10 +133,12 @@
 			$formData.matchId = match.id;
 			$formData.playerId = item.id;
 			$formData.points = item.points;
+			$formData.territoriesPoints = item.territoriesPoints;
 		} else {
 			$formData.matchId = match.id;
 			$formData.playerId = "";
 			$formData.points = 0;
+			$formData.territoriesPoints = 0;
 		}
 	});
 </script>
@@ -211,6 +217,21 @@
 						bind:value={$formData.points}
 						type="number"
 						placeholder="punti"
+					/>
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors class="mb-4 *:mb-2" />
+			</Form.Field>
+
+			<Form.Field {form} name="territoriesPoints">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Punti territori</Form.Label>
+						<Input
+						{...props}
+						bind:value={$formData.territoriesPoints}
+						type="number"
+						placeholder="punti territori"
 					/>
 					{/snippet}
 				</Form.Control>

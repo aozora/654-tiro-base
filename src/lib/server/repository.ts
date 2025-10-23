@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, inArray, sql, sum } from 'drizzle-orm';
+import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm';
 import {
 	type Match,
 	matches,
@@ -38,6 +38,7 @@ export type PlayerMatches = {
 	playerId: string;
 	matchId: string;
 	points: number;
+	territoriesPoints: number;
 	date: Date;
 };
 
@@ -57,6 +58,7 @@ export async function getPlayerStats(
 			playerId: playersOnMatches.playerId,
 			matchId: playersOnMatches.matchId,
 			points: playersOnMatches.points,
+			territoriesPoints: playersOnMatches.territoriesPoints,
 			date: matches.date
 		})
 		.from(playersOnMatches)
@@ -120,12 +122,14 @@ export async function getPlayerStats(
 		}
 	}
 
+	console.log({tournamentMatches});
 	const matchesDatesAndPoints: Array<PlayerMatches> = tournamentMatches.map(
 		(m) => ({
 			playerId: m.playerId,
 			matchId: m.matchId,
 			date: m.date,
-			points: m.points
+			points: m.points,
+			territoriesPoints: m.territoriesPoints
 		})
 	);
 
@@ -140,7 +144,7 @@ export async function upsertPlayer(
 	id: undefined | string,
 	name: string,
 	picture: string,
-	isActive: boolean,
+	isActive: boolean
 ): Promise<Player> {
 	if (id) {
 		// Update existing player
@@ -348,7 +352,10 @@ export async function deleteMatchDeep(id: string): Promise<Match> {
 	return result[0];
 }
 
-export type PlayerExtended = Player & { points: number };
+export type PlayerExtended = Player & {
+	points: number;
+	territoriesPoints: number;
+};
 
 export async function getMatchPlayers(
 	matchId: string
@@ -360,25 +367,28 @@ export async function getMatchPlayers(
 			picture: players.picture,
 			isActive: players.isActive,
 			isDeleted: players.isDeleted,
-			points: playersOnMatches.points
+			points: playersOnMatches.points,
+			territoriesPoints: playersOnMatches.territoriesPoints
 		})
 		.from(playersOnMatches)
 		.innerJoin(players, eq(playersOnMatches.playerId, players.id))
 		.where(eq(playersOnMatches.matchId, matchId))
 		.orderBy(desc(playersOnMatches.points));
 
+	// console.log({result});
 	return result;
 }
 
 export async function upsertMatchPlayer(
 	matchId: string,
 	playerId: string,
-	points: number
+	points: number,
+	territoriesPoints: number
 ): Promise<PlayerOnMatch> {
 	// Try to update first
 	const updateResult = await db
 		.update(playersOnMatches)
-		.set({ points })
+		.set({ points, territoriesPoints })
 		.where(
 			and(
 				eq(playersOnMatches.playerId, playerId),
@@ -394,7 +404,7 @@ export async function upsertMatchPlayer(
 	// If no update occurred, insert new record
 	const insertResult = await db
 		.insert(playersOnMatches)
-		.values({ matchId, playerId, points })
+		.values({ matchId, playerId, points, territoriesPoints })
 		.returning();
 
 	return insertResult[0];
@@ -429,7 +439,7 @@ export async function getLeaderboard(tournamentId: string) {
 		.where(eq(matches.tournamentId, tournamentId));
 
 	const matchesIds = tournamentMatches.map(
-		(tournamentMatche) => tournamentMatche.id
+		(tournamentMatch) => tournamentMatch.id
 	);
 
 	if (tournamentMatches.length === 0) {
@@ -440,10 +450,12 @@ export async function getLeaderboard(tournamentId: string) {
 	return db
 		.select({
 			playerId: playersOnMatches.playerId,
-			// totalPoints: sum(playersOnMatches.points),
 			totalPoints: sql<number>`sum(
       ${playersOnMatches.points}
-      )`
+      )`,
+			totalTerritoriesPoints: sql<number>`sum(
+      ${playersOnMatches.territoriesPoints}
+      )`,
 		})
 		.from(playersOnMatches)
 		.where(inArray(playersOnMatches.matchId, matchesIds))
