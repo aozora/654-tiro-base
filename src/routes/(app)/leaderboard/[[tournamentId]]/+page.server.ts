@@ -68,7 +68,7 @@ export const load: PageServerLoad = async ({ params }) => {
 				name: player.name,
 				// @ts-ignore
 				picture: player.picture || '',
-				sumPoints: x.totalPoints || 0
+				sumPoints: x.totalPoints || 0,
 			} satisfies PlayerLeaderboard;
 		})
 		.sort(sortPointsDesc);

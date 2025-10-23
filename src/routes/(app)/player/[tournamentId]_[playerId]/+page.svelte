@@ -67,9 +67,9 @@
 			</CardContent>
 		</Card>
 
-		<div class="matches-wrapper mx-auto w-full max-w-3xl">
+		<div class="matches-wrapper mx-auto w-full max-w-xl mb-10">
 			<h2 class="h-20 w-full text-center text-2xl">
-				Partite giocate: {stats.matchesDatesAndPoints.length}
+				Partite giocate: {stats?.matchesDatesAndPoints.length}
 			</h2>
 
 			<ul class="flex flex-col gap-5">
@@ -79,10 +79,11 @@
 							<Button
 								href={`/matches/${tournament.id}/${match.matchId}`}
 								variant="secondary"
-								class="h-12 w-full bg-indigo-500 hover:bg-indigo-700"
+								class="h-12 w-full flex items-center justify-between bg-indigo-500 hover:bg-indigo-700"
 							>
 								<span>{new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)}</span>
-								<span class="points">{pluralizePoints(match.points)}</span>
+								<span class="">{pluralizePoints(match.points)}</span>
+								<span class="">({pluralizePoints(match.territoriesPoints)} territori)</span>
 								<ChevronRight size="24" />
 							</Button>
 						</li>

@@ -22,10 +22,6 @@
 	let errors = $derived(form.errors);
 	let submitting = $derived(form.submitting);
 	let enhance = $derived(form.enhance);
-
-	$effect(() => {
-		console.log({$formData});
-	});
 </script>
 
 <div

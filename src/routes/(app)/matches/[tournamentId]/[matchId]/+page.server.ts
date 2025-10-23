@@ -42,6 +42,7 @@ function normalizeLeaderboardRanking(
 			name: current.name,
 			picture: current.picture,
 			sumPoints: current.points,
+			sumTerritoriesPoints: current.territoriesPoints,
 			rank: currentRank
 		} as PlayerLeaderboardWithNormalizedRanking);
 

@@ -25,14 +25,17 @@
 			<ul class="flex flex-col gap-5">
 				{#each matchPlayers as player}
 					<li class="h-12">
-							<div class={cn(
+						<div class={cn(
 								buttonVariants({ variant: "default" }),
 								"h-12 w-full flex items-center justify-between"
 								)}>
-								<span>{player.rank}</span>
-								<span>{player.name}</span>
+							<span>{player.rank}</span>
+							<span>{player.name}</span>
+							<div class="flex gap-2">
 								<span class="points">{pluralizePoints(player.sumPoints)}</span>
+								<span class="points">({pluralizePoints(player.sumTerritoriesPoints)} territori)</span>
 							</div>
+						</div>
 					</li>
 				{/each}
 			</ul>

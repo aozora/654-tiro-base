@@ -16,4 +16,5 @@ export type PlayerLeaderboardWithNormalizedRanking = {
 	name: string;
 	picture: string;
 	sumPoints: number;
+	sumTerritoriesPoints: number;
 };

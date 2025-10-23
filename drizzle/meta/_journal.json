@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1761204113273,
+      "tag": "0000_petite_vulcan",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1761204138934,
+      "tag": "0001_steady_power_pack",
+      "breakpoints": true
+    }
+  ]
+}
