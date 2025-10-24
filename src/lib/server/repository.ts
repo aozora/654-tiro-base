@@ -122,7 +122,7 @@ export async function getPlayerStats(
 		}
 	}
 
-	console.log({tournamentMatches});
+	console.log({ tournamentMatches });
 	const matchesDatesAndPoints: Array<PlayerMatches> = tournamentMatches.map(
 		(m) => ({
 			playerId: m.playerId,
@@ -455,7 +455,7 @@ export async function getLeaderboard(tournamentId: string) {
       )`,
 			totalTerritoriesPoints: sql<number>`sum(
       ${playersOnMatches.territoriesPoints}
-      )`,
+      )`
 		})
 		.from(playersOnMatches)
 		.where(inArray(playersOnMatches.matchId, matchesIds))

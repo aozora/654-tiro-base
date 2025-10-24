@@ -21,29 +21,32 @@
 				index === 2 && 'col-3 row-1 mt-10 md:mt-20',
 			)}
 >
-	<Avatar
-		class={cn(
+	{#if player}
+		<Avatar
+			class={cn(
 					'border-4 border-foreground',
-					!isDesktop ? 'h-20 w-20' : 'h-37 w-37',
+					!isDesktop.current ? 'h-20 w-20' : 'h-37 w-37',
 				)}
-	>
-		<AvatarImage src={player.picture} />
-		<AvatarFallback>{player.name[0] + player.name[1]}</AvatarFallback>
-	</Avatar>
+		>
+			<AvatarImage src={player.picture} />
+			<AvatarFallback>{player.name[0] + player.name[1]}</AvatarFallback>
+		</Avatar>
 
-	<div
-		class={cn(
+		<div
+			class={cn(
 					'-translate-1/2 absolute left-[50%] flex flex-col items-center justify-center gap-4',
 					index === 0 ? 'top-[74%]' : 'top-[115%]',
 				)}
-	>
-		<div
-			class={cn(
+		>
+			<div
+				class={cn(
 						'flex h-5 w-5 items-center justify-center rounded-full bg-[#c7f064] text-center font-bold text-black text-md md:h-10 md:w-10 md:text-2xl',
 					)}
-		>
-			{index + 1}
+			>
+				{index + 1}
+			</div>
+			<strong class="text-2xl">{player.name}</strong>
 		</div>
-		<strong class="text-2xl">{player.name}</strong>
-	</div>
+
+	{/if}
 </div>
