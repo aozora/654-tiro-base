@@ -16,10 +16,10 @@
 	const isAdmin = variant === 'admin';
 	const iconSize = isAdmin ? 20 : 24;
 	const titleClasses = isAdmin
-		? "font-serif text-4xl text-primary font-bold"
-		: "font-serif text-4xl text-foreground";
+		? "font-serif text-2xl md:text-4xl text-primary font-bold"
+		: "font-serif text-2xl md:text-4xl text-foreground";
 	const containerClasses = isAdmin
-		? "mb-9 flex h-12 w-full cursor-pointer items-center justify-center bg-gradient-to-b from-black/40 to-transparent"
+		? "px-4 mb-9 flex h-12 w-full cursor-pointer items-center justify-center bg-gradient-to-b from-black/40 to-transparent"
 		: "mb-9 flex w-full items-center justify-center bg-gradient-to-b from-black/40 to-transparent";
 </script>
 

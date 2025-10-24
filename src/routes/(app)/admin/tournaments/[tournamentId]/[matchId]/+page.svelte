@@ -109,6 +109,7 @@
 	];
 
 	const onEditPoints = (row: PlayerExtended) => {
+		$formData.matchId = match.id;
 		item = row;
 		isModalOpen = true;
 	};
@@ -123,6 +124,7 @@
 	};
 
 	const addPlayer = () => {
+		$formData.matchId = match.id;
 		item = undefined;
 		isModalOpen = true;
 	};
@@ -140,12 +142,13 @@
 			$formData.points = 0;
 			$formData.territoriesPoints = 0;
 		}
+		console.log(`effect!`);
 	});
 </script>
 
 <PageTitle
-	title={`${tournament.title}`}
-	subtitle={`Gestione punteggi per la partita del ${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)}`}
+	title={`Partita del ${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)}`}
+	subtitle={`Gestione punteggi`}
 	showBackButton={true}
 	variant="admin"
 />

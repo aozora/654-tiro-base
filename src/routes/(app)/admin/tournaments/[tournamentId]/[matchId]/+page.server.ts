@@ -26,10 +26,11 @@ export const load: PageServerLoad = async ({ params }) => {
 	const allPlayers: Array<Player> = await getPlayers();
 	const players: Array<PlayerExtended> = await getMatchPlayers(matchId);
 	const form = await superValidate(valibot(schema));
+
 	return {
 		match,
 		tournament,
-		allPlayers,
+		allPlayers: allPlayers.filter((x) => x.isActive),
 		players,
 		form
 	};
