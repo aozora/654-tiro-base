@@ -9,9 +9,9 @@
 	const { matches, tournament } = data;
 </script>
 
+<PageTitle title={`Cronologia partite`} showBackButton={true} />
 <Main className="matches-page">
 	<div class="matches">
-		<PageTitle title={`Cronologia partite`} showBackButton={true} />
 
 		<div class="matches-wrapper mx-auto w-full max-w-3xl">
 			<h2 class="h-12 w-full text-center">
@@ -26,7 +26,7 @@
 						<Button
 							href={`/matches/${tournament.id}/${match.id}`}
 							variant="secondary"
-							class="flex items-center justify-between gap-4 h-12 w-full bg-indigo-500 hover:bg-indigo-700"
+							class="flex items-center justify-between gap-4 h-12 w-full bg-card hover:bg-indigo-700"
 						>
 							<strong>{new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)}</strong>
 							<ChevronRight size={24} />

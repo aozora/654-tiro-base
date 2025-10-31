@@ -8,10 +8,19 @@ import {
 } from '$lib/server/repository';
 import { error } from '@sveltejs/kit';
 import type { PlayerLeaderboard, PlayerLeaderboardWithNormalizedRanking } from '$types';
-import { sortPointsDesc } from '$lib/helpers';
+import { sortMatchPointsDesc, sortTerritoriesPointsDesc } from '$lib/helpers';
 import type { Player, Tournament } from '$lib/server/database/schema';
 
-function normalizeLeaderboardRanking(
+/**
+ * Normalizes the ranking in a sorted leaderboard by assigning ranks based on the sumPoints value.
+ * Players with the same sumPoints share the same rank.
+ *
+ * @param {Array<PlayerLeaderboard>} sortedLeaderboard - An array of player leaderboard entries,
+ * sorted in descending order by their sumPoints.
+ * @return {Array<PlayerLeaderboardWithNormalizedRanking>} An array of player leaderboard entries
+ * with normalized ranking, including the rank property.
+ */
+function normalizeLeaderboardRankingByMatchPoints(
 	sortedLeaderboard: Array<PlayerLeaderboard>
 ): Array<PlayerLeaderboardWithNormalizedRanking> {
 	const list: Array<PlayerLeaderboardWithNormalizedRanking> = [];
@@ -22,6 +31,35 @@ function normalizeLeaderboardRanking(
 		const current = sortedLeaderboard[index];
 		let currentRank = 0;
 		if (current.sumPoints === previousPoints) {
+			currentRank = previousRank;
+		} else {
+			currentRank = previousRank + 1;
+			previousRank += 1;
+		}
+
+		// console.log(current.sumPoints, previousPoints, previousRank, currentRank);
+		list.push({
+			...current,
+			rank: currentRank
+		} as PlayerLeaderboardWithNormalizedRanking);
+
+		previousPoints = current.sumPoints;
+	}
+
+	return list;
+}
+
+function normalizeLeaderboardRankingByTerritoriesPoints(
+	sortedLeaderboard: Array<PlayerLeaderboard>
+): Array<PlayerLeaderboardWithNormalizedRanking> {
+	const list: Array<PlayerLeaderboardWithNormalizedRanking> = [];
+	let previousRank = 0;
+	let previousPoints = 0;
+
+	for (let index = 0; index < sortedLeaderboard.length; index++) {
+		const current = sortedLeaderboard[index];
+		let currentRank = 0;
+		if (current.sumTerritoriesPoints === previousPoints) {
 			currentRank = previousRank;
 		} else {
 			currentRank = previousRank + 1;
@@ -69,12 +107,13 @@ export const load: PageServerLoad = async ({ params }) => {
 				// @ts-ignore
 				picture: player.picture || '',
 				sumPoints: x.totalPoints || 0,
+				sumTerritoriesPoints: x.totalTerritoriesPoints || 0,
 			} satisfies PlayerLeaderboard;
-		})
-		.sort(sortPointsDesc);
+		});
 
 	return {
 		tournament,
-		leaderboard: normalizeLeaderboardRanking(leaderboard)
+		leaderboardByMatchPoints: normalizeLeaderboardRankingByMatchPoints(leaderboard.sort(sortMatchPointsDesc)),
+		leaderboardByTerritoriesPoints: normalizeLeaderboardRankingByTerritoriesPoints(leaderboard.sort(sortTerritoriesPointsDesc))
 	};
 };

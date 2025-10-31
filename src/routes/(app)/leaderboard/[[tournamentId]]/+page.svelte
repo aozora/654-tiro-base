@@ -4,16 +4,39 @@
 	import PageTitle from '$components/PageTitle.svelte';
 	import { pluralizePoints } from '$lib/helpers';
 	import { Button } from '$lib/components/ui/button';
+	import * as ToggleGroup from '$lib/components/ui/toggle-group';
 	import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
 	import { ChevronRight } from '@lucide/svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
-	let { tournament, leaderboard } = data;
+	let { tournament, leaderboardByMatchPoints, leaderboardByTerritoriesPoints } = data;
+
+	type ViewMode = 'territories' | 'match';
+	let viewMode = $state<ViewMode>('territories');
+
+	let leaderboard = $derived(viewMode === 'territories' ? leaderboardByTerritoriesPoints : leaderboardByMatchPoints);
 </script>
 
+<PageTitle title="Classifica" />
 <Main className="flex flex-col pb-10">
-	<PageTitle title="Classifica" />
+
+	<div class="flex items-center justify-center">
+		<ToggleGroup.Root type="single" value={viewMode} onValueChange={(v) => viewMode = v as ViewMode}>
+			<ToggleGroup.Item value="territories"
+												variant="outline"
+												class="cursor-pointer border px-2"
+												aria-label="Visualizza classifica per punti territori">
+				Punti territori
+			</ToggleGroup.Item>
+			<ToggleGroup.Item value="match"
+												variant="outline"
+												class="cursor-pointer border px-2"
+												aria-label="Visualizza classifica per punti partita">
+				Punti partita
+			</ToggleGroup.Item>
+		</ToggleGroup.Root>
+	</div>
 
 	{#if leaderboard.length > 0}
 		<TopThree {leaderboard} />
@@ -26,7 +49,7 @@
 					<Button
 						href={`/player/${tournament.id}_${player.playerId}`}
 						variant="secondary"
-						class="flex items-center justify-between gap-4 h-12 w-full bg-indigo-500 hover:bg-indigo-700"
+						class="flex items-center justify-between gap-4 h-12 w-full bg-card hover:bg-indigo-700"
 					>
 						<div class="flex-1 flex items-center gap-2">
 							<span>{player.rank}</span>
@@ -38,7 +61,13 @@
 							</Avatar>
 							<strong>{player.name}</strong>
 						</div>
-						<span>{pluralizePoints(player.sumPoints)}</span>
+
+						{#if viewMode === "territories"}
+							<span>{pluralizePoints(player.sumTerritoriesPoints)} territorio</span>
+						{:else}
+							<span>{pluralizePoints(player.sumPoints)}</span>
+						{/if}
+
 						<ChevronRight size={24} />
 					</Button>
 				</li>

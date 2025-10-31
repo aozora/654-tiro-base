@@ -32,13 +32,13 @@
 	});
 </script>
 
+<PageTitle
+	title={`Profilo di ${player.name}`}
+	showBackButton={true}
+/>
+
 <Main className="user-page">
 	<div class="matches flex flex-col">
-		<PageTitle
-			title={`Profilo di ${player.name}`}
-			showBackButton={true}
-		/>
-
 		{#if player && stats}
 			<PlayerProfile {player} {stats} />
 		{/if}
@@ -79,7 +79,7 @@
 							<Button
 								href={`/matches/${tournament.id}/${match.matchId}`}
 								variant="secondary"
-								class="h-12 w-full flex items-center justify-between bg-indigo-500 hover:bg-indigo-700"
+								class="h-12 w-full flex items-center justify-between bg-card hover:bg-indigo-700"
 							>
 								<span>{new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)}</span>
 								<span class="">{pluralizePoints(match.points)}</span>
