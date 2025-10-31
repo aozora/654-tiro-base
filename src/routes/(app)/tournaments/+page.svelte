@@ -13,9 +13,9 @@
 	const otherTournaments = tournaments.filter((t) => t.id !== activeTournament?.id);
 </script>
 
+<PageTitle title="Tornei" />
 <Main className="user-page">
 	<div class="flex flex-col gap-4 justify-center items-center">
-		<PageTitle title="Tornei" />
 
 		<h2 class="mb-4">Torneo attuale:</h2>
 
@@ -25,7 +25,7 @@
 					<a href={`/leaderboard/${activeTournament.id}`}
 						 class={cn(
 							 buttonVariants({variant: "secondary"}),
-							 "h-12 w-full bg-indigo-500 hover:bg-indigo-700"
+							 "h-12 w-full bg-card hover:bg-indigo-700"
 							 )}>
 						<strong>{activeTournament.title}</strong>
 						<ChevronRight size="24" />

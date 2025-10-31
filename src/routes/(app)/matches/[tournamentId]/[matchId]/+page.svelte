@@ -14,13 +14,13 @@
 	const { match, matchPlayers } = data;
 </script>
 
+<PageTitle
+	title={`Partita del ${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)}`}
+	showBackButton={true}
+/>
+
 <Main className="user-page">
 	<div class="matches">
-		<PageTitle
-			title={`Partita del ${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)}`}
-			showBackButton={true}
-		/>
-
 		<div class="matches-wrapper mx-auto w-full max-w-lg">
 			<ul class="flex flex-col gap-5">
 				{#each matchPlayers as player}
