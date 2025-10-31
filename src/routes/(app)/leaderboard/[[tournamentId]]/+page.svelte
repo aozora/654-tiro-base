@@ -21,7 +21,7 @@
 <PageTitle title="Classifica" />
 <Main className="flex flex-col pb-10">
 
-	<div class="flex items-center justify-center">
+	<div class="flex items-center justify-center mb-6 md:mb-0">
 		<ToggleGroup.Root type="single" value={viewMode} onValueChange={(v) => viewMode = v as ViewMode}>
 			<ToggleGroup.Item value="territories"
 												variant="outline"
