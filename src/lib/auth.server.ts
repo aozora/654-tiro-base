@@ -6,8 +6,10 @@ import * as schemaAuth from './server/database/auth-schema';
 import * as schemaApp from './server/database/schema';
 import db from './server/db';
 import { getRequestEvent } from '$app/server';
+import { env } from '$env/dynamic/private';
 
 export const auth = betterAuth({
+	secret: env.BETTER_AUTH_SECRET,
 	database: drizzleAdapter(db, {
 		provider: 'sqlite', // or "pg" or "mysql"
 		schema: {
