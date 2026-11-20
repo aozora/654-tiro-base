@@ -9,20 +9,17 @@
 	} from '@formisch/svelte';
 	import { UserRound } from '@lucide/svelte';
 	import type { ColumnDef } from '@tanstack/table-core';
-	import { createRawSnippet } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import DataTable from '#components/DataTable.svelte';
 	import DataTableButton from '#components/DataTableButton.svelte';
 	import DataTableFormButton from '#components/DataTableFormButton.svelte';
 	import DataTablePlayer from '#components/DataTablePlayer.svelte';
+	import DataTableStatus from '#components/DataTableStatus.svelte';
 	import Main from '#components/Main.svelte';
 	import PageTitle from '#components/PageTitle.svelte';
 	import { Button } from '#lib/components/ui/button/index.ts';
 	import { Checkbox } from '#lib/components/ui/checkbox/index.ts';
-	import {
-		renderComponent,
-		renderSnippet,
-	} from '#lib/components/ui/data-table/index.ts';
+	import { renderComponent } from '#lib/components/ui/data-table/index.ts';
 	import * as Dialog from '#lib/components/ui/dialog/index.ts';
 	import { Input } from '#lib/components/ui/input/index.ts';
 	import { Label } from '#lib/components/ui/label/index.ts';
@@ -62,13 +59,9 @@
 			accessorKey: 'isActive',
 			header: 'Attivo',
 			cell: ({ row }) => {
-				const isActive = Boolean(row.getValue('isActive'));
-
-				return renderSnippet(
-					createRawSnippet(() => ({
-						render: () => (isActive ? `<span>Yes</span>` : `<span>No</span>`),
-					})),
-				);
+				return renderComponent(DataTableStatus, {
+					active: Boolean(row.getValue('isActive')),
+				});
 			},
 		},
 		{
@@ -97,13 +90,7 @@
 					variant: 'destructive',
 					icon: 'Trash2',
 					class: 'cursor-pointer',
-					onSubmit: (e) => {
-						const okDelete = confirm(`Elimino il giocatore ${player.name}?`);
-
-						if (!okDelete) {
-							e.preventDefault();
-						}
-					},
+					confirm: { title: `Eliminare il giocatore ${player.name}?` },
 				});
 			},
 		},
@@ -158,7 +145,7 @@
 			<Button
 				type="button"
 				size="lg"
-				class="h-11 w-full cursor-pointer rounded-full sm:w-auto"
+				class="h-11 w-full cursor-pointer sm:w-auto"
 				onclick={() => createPlayer()}
 			>
 				<span>Aggiungi giocatore</span>

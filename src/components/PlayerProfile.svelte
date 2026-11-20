@@ -34,7 +34,7 @@
 
 	<dl class="grid w-full grid-cols-3 gap-2 sm:gap-4">
 		{#each tiles as tile (tile.label)}
-			<div class="panel flex flex-col-reverse items-center gap-3 px-2 py-5">
+			<div class="panel flex flex-col-reverse items-center gap-1 px-2 py-4">
 				<dt class="text-xs tracking-wide text-muted-foreground uppercase">
 					{tile.label}
 				</dt>

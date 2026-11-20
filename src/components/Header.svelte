@@ -36,13 +36,13 @@
 </script>
 
 <header
-	class="sticky top-0 z-20 border-b bg-background/90 pt-[env(safe-area-inset-top)] supports-backdrop-filter:bg-background/75 supports-backdrop-filter:backdrop-blur-md"
+	class="sticky top-0 z-20 border-b bg-background pt-[env(safe-area-inset-top)] [view-transition-name:site-header]"
 >
 	<div
 		class="mx-auto flex h-14 w-full max-w-5xl items-center gap-4 px-4 md:px-6"
 	>
 		<a
-			href="/"
+			href="/leaderboard"
 			class="font-brutal text-xl whitespace-nowrap text-brand sm:text-2xl"
 			>654 tiro base</a
 		>
@@ -56,7 +56,7 @@
 							href={link.href}
 							aria-current={current ? 'page' : undefined}
 							class={cn(
-								'inline-flex h-9 items-center rounded-full px-4 text-sm font-medium transition-colors',
+								'inline-flex h-9 items-center rounded-md px-4 text-sm font-medium transition-colors',
 								'text-muted-foreground hover:bg-accent/60 hover:text-foreground',
 								current &&
 									'bg-accent text-foreground underline decoration-brand decoration-2 underline-offset-8',
@@ -72,7 +72,7 @@
 		<form action="/logout" method="POST" class="ml-auto flex sm:ml-0">
 			<button
 				type="submit"
-				class="inline-flex h-11 cursor-pointer items-center gap-2 rounded-full px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground sm:h-9"
+				class="inline-flex h-11 cursor-pointer items-center gap-2 rounded-md px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground sm:h-9"
 			>
 				<LogOut size={18} aria-hidden="true" />
 				<span>Esci</span>
@@ -83,7 +83,7 @@
 
 <!-- Mobile: primary navigation stays within thumb reach -->
 <nav
-	class="fixed inset-x-0 bottom-0 z-20 border-t bg-background/95 pb-[env(safe-area-inset-bottom)] sm:hidden"
+	class="fixed inset-x-0 bottom-0 z-20 border-t bg-background pb-[env(safe-area-inset-bottom)] [view-transition-name:tab-bar] sm:hidden"
 	aria-label="Principale"
 >
 	<ul class="mx-auto flex max-w-md">
@@ -94,13 +94,13 @@
 					href={link.href}
 					aria-current={current ? 'page' : undefined}
 					class={cn(
-						'flex h-16 flex-col items-center justify-center gap-2 text-xs font-medium transition-colors',
+						'flex h-16 flex-col items-center justify-center gap-1 text-xs font-medium transition-colors',
 						current ? 'text-foreground' : 'text-muted-foreground',
 					)}
 				>
 					<span
 						class={cn(
-							'flex h-8 w-14 items-center justify-center rounded-full transition-colors',
+							'flex h-8 w-14 items-center justify-center rounded-md transition-colors',
 							current && 'bg-primary text-primary-foreground',
 						)}
 					>

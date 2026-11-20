@@ -47,7 +47,7 @@
 			>
 				<a
 					href={`/player/${tournamentId}_${player.playerId}`}
-					class="group flex flex-col items-center gap-3 rounded-lg px-1 py-2 text-center outline-offset-2 focus-visible:outline-2"
+					class="group flex flex-col items-center gap-1 rounded-lg px-1 py-2 text-center outline-offset-2 focus-visible:outline-2"
 				>
 					<span class="relative flex">
 						<PlayerAvatar
@@ -70,7 +70,7 @@
 							<span class="sr-only">Posizione </span>{player.rank}
 						</span>
 					</span>
-					<strong class="mt-1 max-w-full truncate text-base sm:text-lg"
+					<strong class="mt-2 max-w-full truncate text-base sm:text-lg"
 						>{player.name}</strong
 					>
 					<span class="text-sm text-muted-foreground tabular-nums">

@@ -85,13 +85,7 @@
 					variant: 'destructive',
 					icon: 'Trash2',
 					class: 'cursor-pointer',
-					onSubmit: (e) => {
-						const okDelete = confirm(`Elimino il punteggio di ${player.name}?`);
-
-						if (!okDelete) {
-							e.preventDefault();
-						}
-					},
+					confirm: { title: `Eliminare il punteggio di ${player.name}?` },
 				});
 			},
 		},
@@ -173,7 +167,7 @@
 			<Button
 				type="button"
 				size="lg"
-				class="h-11 w-full cursor-pointer rounded-full sm:w-auto"
+				class="h-11 w-full cursor-pointer sm:w-auto"
 				onclick={() => addPlayer()}
 			>
 				<span>Aggiungi punteggio</span>

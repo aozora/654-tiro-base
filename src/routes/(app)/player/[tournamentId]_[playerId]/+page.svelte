@@ -37,7 +37,7 @@
 			<section class="panel mb-8 px-4 pt-5 pb-4" aria-labelledby="trend-title">
 				<h2
 					id="trend-title"
-					class="mb-5 text-sm font-medium text-muted-foreground"
+					class="mb-3 text-sm font-medium text-muted-foreground"
 				>
 					Andamento punti partita
 				</h2>
@@ -78,7 +78,7 @@
 								>{formatDate(match.date, 'long')}</strong
 							>
 							<span
-								class="flex shrink-0 flex-col items-end gap-2 text-sm text-muted-foreground"
+								class="flex shrink-0 flex-col items-end text-sm leading-tight text-muted-foreground"
 							>
 								<span>
 									<strong class="text-base text-foreground tabular-nums"

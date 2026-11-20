@@ -2,6 +2,7 @@
 	import { ChevronRight, Trophy } from '@lucide/svelte';
 	import Main from '#components/Main.svelte';
 	import PageTitle from '#components/PageTitle.svelte';
+	import { Badge } from '#lib/components/ui/badge/index.ts';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -34,16 +35,19 @@
 					class="panel flex items-center gap-4 border-primary/60 bg-primary/15 p-5 transition-colors hover:bg-primary/25 focus-visible:outline-2 focus-visible:outline-offset-2"
 				>
 					<span
-						class="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground"
+						class="flex size-12 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground"
 					>
 						<Trophy size={24} aria-hidden="true" />
 					</span>
-					<span class="flex min-w-0 flex-1 flex-col gap-3">
+					<span class="flex min-w-0 flex-1 flex-col gap-1">
 						<strong class="text-lg wrap-anywhere"
 							>{activeTournament.title}</strong
 						>
-						<span class="text-sm text-muted-foreground">
-							{matchesLabel(activeTournament.matchesCount)} · In corso
+						<span
+							class="flex flex-wrap items-center gap-2 text-sm text-muted-foreground"
+						>
+							<Badge>In corso</Badge>
+							{matchesLabel(activeTournament.matchesCount)}
 						</span>
 					</span>
 					<ChevronRight

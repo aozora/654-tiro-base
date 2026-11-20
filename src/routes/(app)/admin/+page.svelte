@@ -30,11 +30,11 @@
 					class="panel flex h-full items-center gap-4 p-5 transition-colors hover:bg-accent/60 focus-visible:outline-2 focus-visible:outline-offset-2"
 				>
 					<span
-						class="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground"
+						class="flex size-12 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground"
 					>
 						<section.icon size={24} aria-hidden="true" />
 					</span>
-					<span class="flex min-w-0 flex-1 flex-col gap-3">
+					<span class="flex min-w-0 flex-1 flex-col gap-1">
 						<strong class="text-lg">{section.title}</strong>
 						<span class="text-sm text-muted-foreground"
 							>{section.description}</span

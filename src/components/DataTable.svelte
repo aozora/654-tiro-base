@@ -16,7 +16,9 @@
 		get data() {
 			return data;
 		},
-		columns,
+		get columns() {
+			return columns;
+		},
 		getCoreRowModel: getCoreRowModel(),
 	});
 
@@ -120,7 +122,7 @@
 			display: flex;
 			flex-wrap: wrap;
 			align-items: center;
-			gap: 0.875rem 0.5rem;
+			gap: 0.5rem;
 			padding: 1rem;
 		}
 

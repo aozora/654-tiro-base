@@ -21,14 +21,14 @@
 
 <!-- Side columns have equal width so the title stays centred with or without the back button -->
 <div
-	class="mx-auto grid w-full max-w-3xl grid-cols-[2.75rem_minmax(0,1fr)_2.75rem] items-center gap-x-2 gap-y-3 px-4 pt-7 pb-8 md:px-6 md:pt-10"
+	class="mx-auto grid w-full max-w-3xl grid-cols-[2.75rem_minmax(0,1fr)_2.75rem] items-center gap-x-2 gap-y-1 px-4 pt-6 pb-6 md:px-6 md:pt-10"
 >
 	{#if showBackButton}
 		<Button
 			type="button"
 			variant="outline"
 			size="icon-lg"
-			class="size-11 cursor-pointer rounded-full"
+			class="size-11 cursor-pointer"
 			aria-label="Indietro"
 			onclick={goBack}
 		>

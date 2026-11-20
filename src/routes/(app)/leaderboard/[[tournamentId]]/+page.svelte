@@ -5,6 +5,7 @@
 	import PlayerAvatar from '#components/PlayerAvatar.svelte';
 	import TopThree from '#components/TopThree.svelte';
 	import { Button } from '#lib/components/ui/button/index.ts';
+	import * as Tabs from '#lib/components/ui/tabs/index.ts';
 	import { cn } from '#lib/utils.ts';
 	import type { PlayerLeaderboardWithNormalizedRanking } from '#types';
 	import type { PageProps } from './$types';
@@ -13,49 +14,57 @@
 	let { tournament, leaderboardByMatchPoints, leaderboardByTerritoriesPoints } =
 		$derived(data);
 
-	type ViewMode = 'territories' | 'match';
-	let viewMode = $state<ViewMode>('territories');
+	type Leaderboard = Array<PlayerLeaderboardWithNormalizedRanking>;
 
-	const views: Array<{ value: ViewMode; label: string }> = [
-		{ value: 'territories', label: 'Punti territori' },
-		{ value: 'match', label: 'Punti partita' },
-	];
+	let viewMode = $state('territories');
 
-	let leaderboard = $derived(
-		viewMode === 'territories'
-			? leaderboardByTerritoriesPoints
-			: leaderboardByMatchPoints,
-	);
-
-	const score = (player: PlayerLeaderboardWithNormalizedRanking) =>
-		viewMode === 'territories' ? player.sumTerritoriesPoints : player.sumPoints;
+	const views = $derived([
+		{
+			value: 'territories',
+			label: 'Punti territori',
+			leaderboard: leaderboardByTerritoriesPoints,
+			score: (player: Leaderboard[number]) => player.sumTerritoriesPoints,
+		},
+		{
+			value: 'match',
+			label: 'Punti partita',
+			leaderboard: leaderboardByMatchPoints,
+			score: (player: Leaderboard[number]) => player.sumPoints,
+		},
+	]);
 </script>
 
 <PageTitle title="Classifica" subtitle={tournament.title} />
 
 <Main>
-	<div
-		class="mx-auto mb-8 grid w-full max-w-sm grid-cols-2 gap-1 rounded-full border bg-card/90 p-1"
-		role="group"
-		aria-label="Tipo di classifica"
-	>
-		{#each views as view (view.value)}
-			<button
-				type="button"
-				aria-pressed={viewMode === view.value}
-				class={cn(
-					'h-10 cursor-pointer rounded-full px-3 text-sm font-medium transition-colors',
-					viewMode === view.value
-						? 'bg-primary text-primary-foreground shadow-sm'
-						: 'text-muted-foreground hover:text-foreground',
-				)}
-				onclick={() => (viewMode = view.value)}
-			>
-				{view.label}
-			</button>
-		{/each}
-	</div>
+	<!-- Each tab shows the same players, ranked by a different score -->
+	<Tabs.Root bind:value={viewMode} class="gap-8">
+		<Tabs.List
+			aria-label="Tipo di classifica"
+			class="mx-auto w-full max-w-sm rounded-lg border bg-card/90 p-1 group-data-horizontal/tabs:h-12"
+		>
+			{#each views as view (view.value)}
+				<Tabs.Trigger
+					value={view.value}
+					class="h-full cursor-pointer rounded-md data-active:bg-primary data-active:text-primary-foreground dark:data-active:border-transparent dark:data-active:bg-primary dark:data-active:text-primary-foreground"
+				>
+					{view.label}
+				</Tabs.Trigger>
+			{/each}
+		</Tabs.List>
 
+		{#each views as view (view.value)}
+			<Tabs.Content value={view.value}>
+				{@render board(view.leaderboard, view.score)}
+			</Tabs.Content>
+		{/each}
+	</Tabs.Root>
+</Main>
+
+{#snippet board(
+	leaderboard: Leaderboard,
+	score: (player: Leaderboard[number]) => number,
+)}
 	{#if leaderboard.length > 0}
 		<TopThree {leaderboard} tournamentId={tournament.id} {score} />
 
@@ -99,7 +108,7 @@
 				href={`/matches/${tournament.id}`}
 				variant="outline"
 				size="lg"
-				class="mt-6 h-12 w-full rounded-full"
+				class="mt-6 h-12 w-full"
 			>
 				Visualizza tutte le partite
 			</Button>
@@ -111,4 +120,4 @@
 			Non ci sono ancora partite!
 		</p>
 	{/if}
-</Main>
+{/snippet}

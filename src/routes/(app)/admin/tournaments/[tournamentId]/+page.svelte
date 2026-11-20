@@ -79,7 +79,7 @@
 				return renderComponent(DataTableButton, {
 					label: 'Gestisci',
 					type: 'button',
-					variant: 'outline',
+					variant: 'default',
 					icon: 'Dices',
 					class: 'cursor-pointer',
 					href: `/admin/tournaments/${tournament.id}/${match.id}`,
@@ -99,14 +99,9 @@
 					variant: 'destructive',
 					icon: 'Trash2',
 					class: 'cursor-pointer',
-					onSubmit: (e) => {
-						const okDelete = confirm(
-							`Elimino la partita del ${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)} ?`,
-						);
-
-						if (!okDelete) {
-							e.preventDefault();
-						}
+					confirm: {
+						title: `Eliminare la partita del ${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)}?`,
+						description: 'Verranno eliminati anche i punteggi della partita.',
 					},
 				});
 			},
@@ -190,7 +185,7 @@
 			<Button
 				type="button"
 				size="lg"
-				class="h-11 w-full cursor-pointer rounded-full sm:w-auto"
+				class="h-11 w-full cursor-pointer sm:w-auto"
 				onclick={() => createMatch()}
 			>
 				<span>Nuova partita</span>

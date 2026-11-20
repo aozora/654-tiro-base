@@ -39,7 +39,7 @@
 							>{player.name}</strong
 						>
 						<span
-							class="flex shrink-0 flex-col items-end gap-2 text-sm text-muted-foreground"
+							class="flex shrink-0 flex-col items-end text-sm leading-tight text-muted-foreground"
 						>
 							<span>
 								<strong class="text-base text-foreground tabular-nums"

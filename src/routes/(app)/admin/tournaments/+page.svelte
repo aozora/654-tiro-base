@@ -14,6 +14,7 @@
 	import DataTable from '#components/DataTable.svelte';
 	import DataTableButton from '#components/DataTableButton.svelte';
 	import DataTableFormButton from '#components/DataTableFormButton.svelte';
+	import DataTableStatus from '#components/DataTableStatus.svelte';
 	import Main from '#components/Main.svelte';
 	import PageTitle from '#components/PageTitle.svelte';
 	import { Button } from '#lib/components/ui/button/index.ts';
@@ -55,13 +56,9 @@
 			accessorKey: 'isActive',
 			header: 'Attivo',
 			cell: ({ row }) => {
-				const isActive = Boolean(row.getValue('isActive'));
-
-				return renderSnippet(
-					createRawSnippet(() => ({
-						render: () => (isActive ? `<span>Yes</span>` : `<span>No</span>`),
-					})),
-				);
+				return renderComponent(DataTableStatus, {
+					active: Boolean(row.getValue('isActive')),
+				});
 			},
 		},
 		{
@@ -99,7 +96,7 @@
 				return renderComponent(DataTableButton, {
 					label: 'Gestisci',
 					type: 'button',
-					variant: 'outline',
+					variant: 'default',
 					icon: 'Dices',
 					class: 'cursor-pointer',
 					href: `/admin/tournaments/${tournament.id}`,
@@ -120,6 +117,7 @@
 						variant: 'destructive',
 						icon: 'Trash2',
 						class: 'cursor-pointer',
+						confirm: { title: `Eliminare il torneo ${tournament.title}?` },
 					});
 				}
 
@@ -176,7 +174,7 @@
 			<Button
 				type="button"
 				size="lg"
-				class="h-11 w-full cursor-pointer rounded-full sm:w-auto"
+				class="h-11 w-full cursor-pointer sm:w-auto"
 				onclick={() => createTournament()}
 			>
 				<span>Nuovo torneo</span>

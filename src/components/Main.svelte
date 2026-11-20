@@ -14,7 +14,7 @@
 <main
 	id="main"
 	class={cn(
-		'main flex w-full flex-1 flex-col px-4 md:px-6 lg:px-8',
+		'main flex w-full flex-1 flex-col px-4 [view-transition-name:page] md:px-6 lg:px-8',
 		'pb-[calc(6.5rem+env(safe-area-inset-bottom))] sm:pb-12',
 		className,
 	)}
