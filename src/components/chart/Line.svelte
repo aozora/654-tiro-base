@@ -3,29 +3,33 @@
   Generates an SVG line shape.
  -->
 <script>
-	import { getContext } from 'svelte';
+	import { getLayerCakeContext } from 'layercake';
 
-	const { data, xGet, yGet } = getContext('LayerCake');
+	const k = getLayerCakeContext();
 
-	/** @type {String} [stroke='#ab00d6'] - The shape's fill color. This is technically optional because it comes with a default value but you'll likely want to replace it with your own color. */
-	export let stroke = '#ab00d6';
+	/**
+	 * @typedef {Object} Props
+	 * @property {string} [stroke] - The line color.
+	 */
 
-	$: path =
+	/** @type {Props} */
+	let { stroke = '#ab00d6' } = $props();
+
+	const path = $derived(
 		'M' +
-		$data
-			.map((/** @type {any} */ d) => {
-				return $xGet(d) + ',' + $yGet(d);
-			})
-			.join('L');
+			k.data
+				.map((/** @type {any} */ d) => k.xGet(d) + ',' + k.yGet(d))
+				.join('L'),
+	);
 </script>
 
 <path class="path-line" d={path} {stroke}></path>
 
 <style>
-    .path-line {
-        fill: none;
-        stroke-linejoin: round;
-        stroke-linecap: round;
-        stroke-width: 2;
-    }
+	.path-line {
+		fill: none;
+		stroke-linejoin: round;
+		stroke-linecap: round;
+		stroke-width: 2;
+	}
 </style>

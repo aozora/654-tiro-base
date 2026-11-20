@@ -1,15 +1,21 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-import type { PageServerLoad } from './$types';
+import { error } from '@sveltejs/kit';
+import {
+	sortMatchPointsDesc,
+	sortTerritoriesPointsDesc,
+} from '#lib/helpers.ts';
+import type { Tournament } from '#lib/server/database/schema.ts';
 import {
 	getActiveTournament,
 	getLeaderboard,
 	getPlayers,
-	getTournament
+	getTournament,
 } from '#lib/server/repository.ts';
-import { error } from '@sveltejs/kit';
-import type { PlayerLeaderboard, PlayerLeaderboardWithNormalizedRanking } from '#types';
-import { sortMatchPointsDesc, sortTerritoriesPointsDesc } from '#lib/helpers.ts';
-import type { Player, Tournament } from '#lib/server/database/schema.ts';
+import type {
+	PlayerLeaderboard,
+	PlayerLeaderboardWithNormalizedRanking,
+} from '#types';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import type { PageServerLoad } from './$types';
 
 /**
  * Normalizes the ranking in a sorted leaderboard by assigning ranks based on the sumPoints value.
@@ -21,7 +27,7 @@ import type { Player, Tournament } from '#lib/server/database/schema.ts';
  * with normalized ranking, including the rank property.
  */
 function normalizeLeaderboardRankingByMatchPoints(
-	sortedLeaderboard: Array<PlayerLeaderboard>
+	sortedLeaderboard: Array<PlayerLeaderboard>,
 ): Array<PlayerLeaderboardWithNormalizedRanking> {
 	const list: Array<PlayerLeaderboardWithNormalizedRanking> = [];
 	let previousRank = 0;
@@ -40,7 +46,7 @@ function normalizeLeaderboardRankingByMatchPoints(
 		// console.log(current.sumPoints, previousPoints, previousRank, currentRank);
 		list.push({
 			...current,
-			rank: currentRank
+			rank: currentRank,
 		} as PlayerLeaderboardWithNormalizedRanking);
 
 		previousPoints = current.sumPoints;
@@ -50,7 +56,7 @@ function normalizeLeaderboardRankingByMatchPoints(
 }
 
 function normalizeLeaderboardRankingByTerritoriesPoints(
-	sortedLeaderboard: Array<PlayerLeaderboard>
+	sortedLeaderboard: Array<PlayerLeaderboard>,
 ): Array<PlayerLeaderboardWithNormalizedRanking> {
 	const list: Array<PlayerLeaderboardWithNormalizedRanking> = [];
 	let previousRank = 0;
@@ -69,10 +75,10 @@ function normalizeLeaderboardRankingByTerritoriesPoints(
 		// console.log(current.sumPoints, previousPoints, previousRank, currentRank);
 		list.push({
 			...current,
-			rank: currentRank
+			rank: currentRank,
 		} as PlayerLeaderboardWithNormalizedRanking);
 
-		previousPoints = current.sumPoints;
+		previousPoints = current.sumTerritoriesPoints;
 	}
 
 	return list;
@@ -89,31 +95,37 @@ export const load: PageServerLoad = async ({ params }) => {
 		tournament = await getActiveTournament();
 	}
 
-	const players: Array<Player> = await getPlayers();
-
 	if (!tournament) {
 		error(500, 'Active tournament not found!');
 	}
 
-	const leaderboardData = await getLeaderboard(tournament.id);
-	const leaderboard: Array<PlayerLeaderboard> = leaderboardData
-		.map((x) => {
-			const player = players.find((p) => p.id === x.playerId);
+	// Independent queries: run them in parallel
+	const [players, leaderboardData] = await Promise.all([
+		getPlayers(),
+		getLeaderboard(tournament.id),
+	]);
+	const leaderboard: Array<PlayerLeaderboard> = leaderboardData.map((x) => {
+		const player = players.find((p) => p.id === x.playerId);
 
-			return {
-				playerId: x.playerId,
-				// @ts-ignore
-				name: player.name,
-				// @ts-ignore
-				picture: player.picture || '',
-				sumPoints: x.totalPoints || 0,
-				sumTerritoriesPoints: x.totalTerritoriesPoints || 0,
-			} satisfies PlayerLeaderboard;
-		});
+		return {
+			playerId: x.playerId,
+			// @ts-ignore
+			name: player.name,
+			// @ts-ignore
+			picture: player.picture || '',
+			sumPoints: x.totalPoints || 0,
+			sumTerritoriesPoints: x.totalTerritoriesPoints || 0,
+		} satisfies PlayerLeaderboard;
+	});
 
 	return {
 		tournament,
-		leaderboardByMatchPoints: normalizeLeaderboardRankingByMatchPoints(leaderboard.sort(sortMatchPointsDesc)),
-		leaderboardByTerritoriesPoints: normalizeLeaderboardRankingByTerritoriesPoints(leaderboard.sort(sortTerritoriesPointsDesc))
+		leaderboardByMatchPoints: normalizeLeaderboardRankingByMatchPoints(
+			leaderboard.sort(sortMatchPointsDesc),
+		),
+		leaderboardByTerritoriesPoints:
+			normalizeLeaderboardRankingByTerritoriesPoints(
+				leaderboard.sort(sortTerritoriesPointsDesc),
+			),
 	};
 };

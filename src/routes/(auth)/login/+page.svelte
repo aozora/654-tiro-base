@@ -1,19 +1,25 @@
 <script lang="ts">
+	import {
+		createForm,
+		Field,
+		Form,
+		setErrors,
+		type SubmitHandler,
+	} from '@formisch/svelte';
+	import { Button } from '#lib/components/ui/button/index.ts';
 	import * as Card from '#lib/components/ui/card/index.ts';
 	import { Input } from '#lib/components/ui/input/index.ts';
-	import { formSchema } from './schema';
-	import { Button } from '#lib/components/ui/button/index.ts';
 	import { Label } from '#lib/components/ui/label/index.ts';
-	import { cn } from '#lib/utils.ts';
-	import { createForm, Field, Form, setErrors, type SubmitHandler } from '@formisch/svelte';
 	import { failureMessage, postAction } from '#lib/forms/post-action.ts';
+	import { cn } from '#lib/utils.ts';
+	import { formSchema } from './schema';
 
 	const loginForm = createForm({
 		schema: formSchema,
 		initialInput: {
 			email: '',
-			password: ''
-		}
+			password: '',
+		},
 	});
 
 	const handleSubmit: SubmitHandler<typeof formSchema> = async (output) => {
@@ -21,7 +27,7 @@
 			const result = await postAction('/login', output);
 			if (result.type === 'failure' || result.type === 'error') {
 				setErrors(loginForm, {
-					errors: [failureMessage(result, 'Signin failed')]
+					errors: [failureMessage(result, 'Signin failed')],
 				});
 			}
 		} catch (error) {
@@ -31,22 +37,39 @@
 	};
 </script>
 
+<svelte:head>
+	<!-- The backdrop is a CSS background, so the browser cannot discover it from the HTML -->
+	<link
+		rel="preload"
+		as="image"
+		href="/img/frame6.webp"
+		type="image/webp"
+		fetchpriority="high"
+	/>
+</svelte:head>
+
 <div
 	class={cn(
-		'flex h-full min-h-screen w-full items-center justify-center',
-		'bg-[url("/img/frame6.webp")] bg-cover bg-position-[60%_100%] bg-no-repeat'
+		'flex min-h-dvh w-full flex-1 items-center justify-center px-4 py-8',
+		'bg-[url("/img/frame6.webp")] bg-cover bg-position-[60%_100%] bg-no-repeat',
 	)}
 >
-	<div class={cn('flex min-w-80 flex-col gap-6 lg:min-w-100', 'mx-auto max-w-7xl')}>
+	<div class="mx-auto flex w-full max-w-sm flex-col gap-6">
 		<Card.Root>
 			<Card.Header class="text-center">
 				<Card.Title>
-					<h1 class="font-brutal text-5xl text-brand">Risiko!</h1>
+					<h1 class="font-brutal text-4xl text-brand sm:text-5xl">Risiko!</h1>
 				</Card.Title>
-				<h2 class="font-brutal text-5xl text-brand">654 tiro base!</h2>
+				<h2 class="font-brutal text-4xl text-brand sm:text-5xl">
+					654 tiro base!
+				</h2>
 			</Card.Header>
 			<Card.Content>
-				<Form of={loginForm} onsubmit={handleSubmit} class="flex flex-col gap-4">
+				<Form
+					of={loginForm}
+					onsubmit={handleSubmit}
+					class="flex flex-col gap-4"
+				>
 					<Field of={loginForm} path={['email']}>
 						{#snippet children(field)}
 							<Label for="login-email">Email</Label>
@@ -79,14 +102,21 @@
 								aria-errormessage="login-password-error"
 							/>
 							{#if field.errors}
-								<p id="login-password-error" class="mb-4 text-sm text-destructive">
+								<p
+									id="login-password-error"
+									class="mb-4 text-sm text-destructive"
+								>
 									{field.errors[0]}
 								</p>
 							{/if}
 						{/snippet}
 					</Field>
 
-					<Button type="submit" disabled={loginForm.isSubmitting} class="w-full">
+					<Button
+						type="submit"
+						disabled={loginForm.isSubmitting}
+						class="w-full"
+					>
 						{loginForm.isSubmitting ? 'Caricamento...' : 'Entra'}
 					</Button>
 

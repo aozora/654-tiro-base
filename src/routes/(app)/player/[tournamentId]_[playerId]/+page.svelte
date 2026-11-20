@@ -1,51 +1,47 @@
 <script lang="ts">
+	import { ChevronRight } from '@lucide/svelte';
+	import { LayerCake, Svg } from 'layercake';
+	import Area from '#components/chart/Area.svelte';
+	import AxisX from '#components/chart/AxisX.svelte';
+	import AxisY from '#components/chart/AxisY.svelte';
+	import Line from '#components/chart/Line.svelte';
 	/**
 	 * Display all the matches of the player
 	 */
 	import Main from '#components/Main.svelte';
 	import PageTitle from '#components/PageTitle.svelte';
-	import { pluralizePoints } from '#lib/helpers.ts';
 	import PlayerProfile from '#components/PlayerProfile.svelte';
-	import { LayerCake, Svg } from 'layercake';
-	import AxisX from '#components/chart/AxisX.svelte';
-	import AxisY from '#components/chart/AxisY.svelte';
-	import Area from '#components/chart/Area.svelte';
-	import Line from '#components/chart/Line.svelte';
-	import { Card, CardContent } from '#lib/components/ui/card/index.ts';
-	import { Button } from '#lib/components/ui/button/index.ts';
-	import { ChevronRight } from '@lucide/svelte';
+	import { formatDate } from '#lib/helpers.ts';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
-	let { stats, player, tournament } = data;
+	let { stats, player, tournament } = $derived(data);
 
-	let points: Array<{ x: Date, y: number }> = $state([]);
-	console.log({ stats, player, tournament });
-
-	$effect(() => {
-		points = stats ? stats.matchesDatesAndPoints.map((m) => {
-			return {
-				x: m.date,
-				y: m.points
-			};
-		}) : [];
-	});
+	let points = $derived(
+		stats.matchesDatesAndPoints.map((m) => ({ x: m.date, y: m.points })),
+	);
 </script>
 
 <PageTitle
-	title={`Profilo di ${player?.name ?? ''}`}
+	title={player.name}
+	subtitle={tournament.title}
 	showBackButton={true}
 />
 
-<Main className="user-page">
-	<div class="matches flex flex-col">
-		{#if player && stats}
-			<PlayerProfile {player} {stats} />
-		{/if}
+<Main>
+	<div class="mx-auto flex w-full max-w-xl flex-col">
+		<PlayerProfile {player} {stats} />
 
-		<Card class="chart mb-12 w-full">
-			<CardContent>
-				<div class="chart h-50 pb-6 w-full">
+		<!-- A trend needs at least two matches -->
+		{#if points.length > 1}
+			<section class="panel mb-8 px-4 pt-5 pb-4" aria-labelledby="trend-title">
+				<h2
+					id="trend-title"
+					class="mb-5 text-sm font-medium text-muted-foreground"
+				>
+					Andamento punti partita
+				</h2>
+				<div class="h-48 w-full pb-6">
 					<LayerCake
 						padding={{ top: 8, right: 10, bottom: 20, left: 25 }}
 						x="x"
@@ -54,42 +50,59 @@
 						data={points}
 					>
 						<Svg>
-							<AxisX
-								ticks={4}
-								format={(d) => `${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(d)}`}
-							/>
+							<AxisX ticks={4} format={(d) => formatDate(d)} />
 							<AxisY ticks={4} />
-							<Line stroke="#fff" />
-							<Area/>
+							<Line stroke="var(--primary)" />
+							<Area
+								fill="color-mix(in oklab, var(--primary) 18%, transparent)"
+							/>
 						</Svg>
 					</LayerCake>
 				</div>
-			</CardContent>
-		</Card>
+			</section>
+		{/if}
 
-		<div class="matches-wrapper mx-auto w-full max-w-xl mb-10">
-			<h2 class="h-20 w-full text-center text-2xl">
-				Partite giocate: {stats?.matchesDatesAndPoints.length}
-			</h2>
+		<h2 class="mb-4 px-1 text-sm font-medium text-muted-foreground">
+			Partite giocate: {stats.matchesDatesAndPoints.length}
+		</h2>
 
-			<ul class="flex flex-col gap-5">
-				{#if stats && tournament}
-					{#each stats.matchesDatesAndPoints as match}
-						<li class="h-12">
-							<Button
-								href={`/matches/${tournament.id}/${match.matchId}`}
-								variant="secondary"
-								class="h-12 w-full flex items-center justify-between bg-card hover:bg-indigo-700"
+		{#if stats.matchesDatesAndPoints.length > 0}
+			<ul class="panel divide-y">
+				{#each stats.matchesDatesAndPoints as match (match.matchId)}
+					<li>
+						<a
+							href={`/matches/${tournament.id}/${match.matchId}`}
+							class="panel-row"
+						>
+							<strong class="min-w-0 flex-1 text-base"
+								>{formatDate(match.date, 'long')}</strong
 							>
-								<span>{new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)}</span>
-								<span class="">{pluralizePoints(match.points)}</span>
-								<span class="">({pluralizePoints(match.territoriesPoints)} territori)</span>
-								<ChevronRight size="24" />
-							</Button>
-						</li>
-					{/each}
-				{/if}
+							<span
+								class="flex shrink-0 flex-col items-end gap-2 text-sm text-muted-foreground"
+							>
+								<span>
+									<strong class="text-base text-foreground tabular-nums"
+										>{match.points}</strong
+									>
+									pt
+								</span>
+								<span class="text-xs tabular-nums"
+									>{match.territoriesPoints} territori</span
+								>
+							</span>
+							<ChevronRight
+								size={20}
+								class="shrink-0 text-muted-foreground"
+								aria-hidden="true"
+							/>
+						</a>
+					</li>
+				{/each}
 			</ul>
-		</div>
+		{:else}
+			<p class="panel px-6 py-12 text-center text-lg text-muted-foreground">
+				Nessuna partita giocata in questo torneo.
+			</p>
+		{/if}
 	</div>
 </Main>

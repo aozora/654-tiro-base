@@ -1,3 +1,14 @@
 [build]
 command = "npm run build"
 publish = "build"
+
+# Static assets are not fingerprinted: fonts never change, images may be replaced
+[[headers]]
+for = "/fonts/*"
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/img/*"
+[headers.values]
+Cache-Control = "public, max-age=604800, stale-while-revalidate=2592000"

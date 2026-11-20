@@ -1,26 +1,37 @@
 <script lang="ts">
-	import Main from '#components/Main.svelte';
-	import PageTitle from '#components/PageTitle.svelte';
-	import type { PageProps } from './$types';
-	import { toast } from 'svelte-sonner';
+	import {
+		createForm,
+		Field,
+		Form,
+		reset,
+		setErrors,
+		type SubmitHandler,
+	} from '@formisch/svelte';
+	import {
+		CalendarDate,
+		DateFormatter,
+		getLocalTimeZone,
+	} from '@internationalized/date';
+	import { PackagePlus } from '@lucide/svelte';
+	import { Calendar1 } from '@lucide/svelte';
 	import type { ColumnDef } from '@tanstack/table-core';
-	import { renderComponent } from '#lib/components/ui/data-table/index.ts';
-	import type { Match } from '#lib/server/database/schema.ts';
+	import { toast } from 'svelte-sonner';
 	import DataTable from '#components/DataTable.svelte';
 	import DataTableButton from '#components/DataTableButton.svelte';
-	import { PackagePlus } from '@lucide/svelte';
-	import { Button, buttonVariants } from '#lib/components/ui/button/index.ts';
-	import { schema } from './schema';
 	import DataTableFormButton from '#components/DataTableFormButton.svelte';
-	import * as Dialog from '#lib/components/ui/dialog/index.ts';
+	import Main from '#components/Main.svelte';
+	import PageTitle from '#components/PageTitle.svelte';
+	import { Button, buttonVariants } from '#lib/components/ui/button/index.ts';
 	import { Calendar } from '#lib/components/ui/calendar/index.js';
-	import * as Popover from '#lib/components/ui/popover/index.js';
+	import { renderComponent } from '#lib/components/ui/data-table/index.ts';
+	import * as Dialog from '#lib/components/ui/dialog/index.ts';
 	import { Label } from '#lib/components/ui/label/index.ts';
-	import { cn } from '#lib/utils.ts';
-	import { Calendar1 } from '@lucide/svelte';
-	import { CalendarDate, DateFormatter, getLocalTimeZone } from '@internationalized/date';
-	import { createForm, Field, Form, reset, setErrors, type SubmitHandler } from '@formisch/svelte';
+	import * as Popover from '#lib/components/ui/popover/index.js';
 	import { failureMessage, postAction } from '#lib/forms/post-action.ts';
+	import type { Match } from '#lib/server/database/schema.ts';
+	import { cn } from '#lib/utils.ts';
+	import type { PageProps } from './$types';
+	import { schema } from './schema';
 
 	let { data }: PageProps = $props();
 	const { tournament, matches } = $derived(data);
@@ -29,8 +40,8 @@
 		schema,
 		initialInput: {
 			tournamentId: '',
-			date: new Date().toISOString()
-		}
+			date: new Date().toISOString(),
+		},
 	});
 
 	let isModalOpen = $state(false);
@@ -42,8 +53,10 @@
 			header: 'Data partita',
 			cell: ({ row }) => {
 				const match = row.original;
-				return new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date);
-			}
+				return new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(
+					match.date,
+				);
+			},
 		},
 		{
 			id: 'editAction',
@@ -55,9 +68,9 @@
 					variant: 'outline',
 					icon: 'PencilLine',
 					class: 'cursor-pointer',
-					onclick: () => onEditMatch(match)
+					onclick: () => onEditMatch(match),
 				});
-			}
+			},
 		},
 		{
 			id: 'editMatchAction',
@@ -69,9 +82,9 @@
 					variant: 'outline',
 					icon: 'Dices',
 					class: 'cursor-pointer',
-					href: `/admin/tournaments/${tournament.id}/${match.id}`
+					href: `/admin/tournaments/${tournament.id}/${match.id}`,
 				});
-			}
+			},
 		},
 		{
 			id: 'deleteAction',
@@ -88,20 +101,20 @@
 					class: 'cursor-pointer',
 					onSubmit: (e) => {
 						const okDelete = confirm(
-							`Elimino la partita del ${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)} ?`
+							`Elimino la partita del ${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)} ?`,
 						);
 
 						if (!okDelete) {
 							e.preventDefault();
 						}
-					}
+					},
 				});
-			}
-		}
+			},
+		},
 	];
 
 	const df = new DateFormatter('it-IT', {
-		dateStyle: 'long'
+		dateStyle: 'long',
 	});
 
 	function toIsoDate(date: Date) {
@@ -112,7 +125,11 @@
 		if (!value) return undefined;
 		const date = new Date(value);
 		if (Number.isNaN(date.getTime())) return undefined;
-		return new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
+		return new CalendarDate(
+			date.getFullYear(),
+			date.getMonth() + 1,
+			date.getDate(),
+		);
 	}
 
 	const createMatch = () => {
@@ -120,8 +137,8 @@
 		reset(matchForm, {
 			initialInput: {
 				tournamentId: tournament.id,
-				date: toIsoDate(new Date())
-			}
+				date: toIsoDate(new Date()),
+			},
 		});
 		isModalOpen = true;
 	};
@@ -132,8 +149,8 @@
 			initialInput: {
 				matchId: row.id,
 				tournamentId: row.tournamentId,
-				date: toIsoDate(row.date)
-			}
+				date: toIsoDate(row.date),
+			},
 		});
 		isModalOpen = true;
 	};
@@ -149,7 +166,7 @@
 			}
 			if (result.type === 'failure' || result.type === 'error') {
 				setErrors(matchForm, {
-					errors: [failureMessage(result, 'Qualcosa è andato storto')]
+					errors: [failureMessage(result, 'Qualcosa è andato storto')],
 				});
 				toast.error("Cita murta! c'è un errore....");
 			}
@@ -167,10 +184,15 @@
 	variant="admin"
 />
 
-<Main className="flex flex-col pb-10">
+<Main>
 	<div class="mx-auto w-full max-w-3xl">
-		<header class="mb-8">
-			<Button type="button" class="cursor-pointer" onclick={() => createMatch()}>
+		<header class="mb-6 flex justify-end">
+			<Button
+				type="button"
+				size="lg"
+				class="h-11 w-full cursor-pointer rounded-full sm:w-auto"
+				onclick={() => createMatch()}
+			>
 				<span>Nuova partita</span>
 				<PackagePlus size={24} />
 			</Button>
@@ -179,7 +201,9 @@
 		{#if matches.length > 0}
 			<DataTable data={matches} {columns} />
 		{:else}
-			<p class="">Non c'è ancora nessuna partita qua...</p>
+			<p class="panel px-6 py-12 text-center text-muted-foreground">
+				Non c'è ancora nessuna partita qua...
+			</p>
 		{/if}
 	</div>
 </Main>
@@ -187,7 +211,11 @@
 <Dialog.Root bind:open={isModalOpen}>
 	<Dialog.Content>
 		<Dialog.Header>
-			<Dialog.Title>{item === undefined ? 'Nuova partita' : 'Modifica partita'}</Dialog.Title>
+			<Dialog.Title
+				>{item === undefined
+					? 'Nuova partita'
+					: 'Modifica partita'}</Dialog.Title
+			>
 		</Dialog.Header>
 
 		<Form of={matchForm} onsubmit={handleSubmit} class="flex flex-col gap-4">
@@ -203,11 +231,13 @@
 							aria-invalid={!!field.errors}
 							class={cn(
 								buttonVariants({ variant: 'outline' }),
-								'w-[280px] justify-start pl-4 text-left font-normal',
-								!selected && 'text-muted-foreground'
+								'w-full justify-start pl-4 text-left font-normal',
+								!selected && 'text-muted-foreground',
 							)}
 						>
-							{selected ? df.format(selected.toDate(getLocalTimeZone())) : 'Pick a date'}
+							{selected
+								? df.format(selected.toDate(getLocalTimeZone()))
+								: 'Pick a date'}
 							<Calendar1 class="ml-auto size-4 opacity-50" />
 						</Popover.Trigger>
 						<Popover.Content class="w-auto p-0" side="top">
@@ -218,7 +248,7 @@
 								calendarLabel="Data partita"
 								onValueChange={(value) => {
 									field.onInput(
-										value ? value.toDate(getLocalTimeZone()).toISOString() : ''
+										value ? value.toDate(getLocalTimeZone()).toISOString() : '',
 									);
 								}}
 							/>

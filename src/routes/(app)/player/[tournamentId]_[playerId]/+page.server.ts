@@ -1,11 +1,9 @@
+import { error } from '@sveltejs/kit';
 import {
 	getPlayerById,
 	getPlayerStats,
 	getTournament,
-	type PlayerStats
 } from '#lib/server/repository.ts';
-import type { Tournament } from '#lib/server/database/schema.ts';
-import { error, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 /**
@@ -18,23 +16,19 @@ export const load: PageServerLoad = async ({ params }) => {
 		return error(500, 'tournamentId or playerId missing');
 	}
 
-	const player = await getPlayerById(playerId);
-	const tournament: Tournament = await getTournament(tournamentId);
-	const stats: PlayerStats = await getPlayerStats(tournamentId, playerId);
+	const [player, tournament, stats] = await Promise.all([
+		getPlayerById(playerId),
+		getTournament(tournamentId),
+		getPlayerStats(tournamentId, playerId),
+	]);
 
 	if (!player) {
-		return fail(400, 'Unable to load player');
+		return error(400, 'Unable to load player');
 	}
-
-	console.log({
-		player,
-		tournament,
-		stats
-	});
 
 	return {
 		player,
 		tournament,
-		stats
+		stats,
 	};
 };

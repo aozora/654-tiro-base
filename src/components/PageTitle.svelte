@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Button } from '#lib/components/ui/button/index.ts';
 	import { ArrowLeft } from '@lucide/svelte';
+	import { Button } from '#lib/components/ui/button/index.ts';
 	import { cn } from '#lib/utils.ts';
 	import { goBack } from '#lib/utils/navigation.ts';
 
@@ -9,36 +9,45 @@
 		subtitle?: string;
 		showBackButton?: boolean;
 		variant?: 'default' | 'admin';
-	}
+	};
 
-	let { title, subtitle, showBackButton = false, variant = 'default' }: Props = $props();
-
-	const isAdmin = variant === 'admin';
-	const iconSize = isAdmin ? 20 : 24;
-	const titleClasses = isAdmin
-		? "font-serif text-2xl md:text-4xl text-primary font-bold"
-		: "font-serif text-2xl md:text-4xl text-foreground";
-	const containerClasses = isAdmin
-		? "px-4 mb-9 flex h-12 w-full cursor-pointer items-center justify-center bg-gradient-to-b from-black/40 to-transparent"
-		: "mb-9 flex w-full items-center justify-center bg-gradient-to-b from-black/40 to-transparent";
+	let {
+		title,
+		subtitle,
+		showBackButton = false,
+		variant = 'default',
+	}: Props = $props();
 </script>
 
-<div class={cn(containerClasses)}>
+<!-- Side columns have equal width so the title stays centred with or without the back button -->
+<div
+	class="mx-auto grid w-full max-w-3xl grid-cols-[2.75rem_minmax(0,1fr)_2.75rem] items-center gap-x-2 gap-y-3 px-4 pt-7 pb-8 md:px-6 md:pt-10"
+>
 	{#if showBackButton}
 		<Button
 			type="button"
 			variant="outline"
-			class="mr-8 flex-0 cursor-pointer"
+			size="icon-lg"
+			class="size-11 cursor-pointer rounded-full"
+			aria-label="Indietro"
 			onclick={goBack}
 		>
-			<ArrowLeft size={iconSize} />
+			<ArrowLeft aria-hidden="true" />
 		</Button>
 	{/if}
 
-	<h1 class={titleClasses}>
+	<h1
+		class={cn(
+			'col-start-2 text-center font-serif text-3xl text-balance wrap-anywhere md:text-4xl',
+			variant === 'admin' ? 'font-bold text-primary' : 'text-foreground',
+		)}
+	>
 		{title}
-		{#if subtitle}
-			<span>{subtitle}</span>
-		{/if}
 	</h1>
+
+	{#if subtitle}
+		<p class="col-start-2 text-center text-sm text-muted-foreground">
+			{subtitle}
+		</p>
+	{/if}
 </div>

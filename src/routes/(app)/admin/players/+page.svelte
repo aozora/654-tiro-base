@@ -1,25 +1,35 @@
 <script lang="ts">
-	import Main from '#components/Main.svelte';
-	import PageTitle from '#components/PageTitle.svelte';
+	import {
+		createForm,
+		Field,
+		Form,
+		reset,
+		setErrors,
+		type SubmitHandler,
+	} from '@formisch/svelte';
 	import { UserRound } from '@lucide/svelte';
-	import type { PageProps } from './$types';
-	import { toast } from 'svelte-sonner';
-	import type { Player } from '#lib/server/database/schema.ts';
-	import { Button } from '#lib/components/ui/button/index.ts';
-	import DataTable from '#components/DataTable.svelte';
 	import type { ColumnDef } from '@tanstack/table-core';
-	import { renderComponent, renderSnippet } from '#lib/components/ui/data-table/index.ts';
+	import { createRawSnippet } from 'svelte';
+	import { toast } from 'svelte-sonner';
+	import DataTable from '#components/DataTable.svelte';
 	import DataTableButton from '#components/DataTableButton.svelte';
 	import DataTableFormButton from '#components/DataTableFormButton.svelte';
-	import { createRawSnippet } from 'svelte';
 	import DataTablePlayer from '#components/DataTablePlayer.svelte';
+	import Main from '#components/Main.svelte';
+	import PageTitle from '#components/PageTitle.svelte';
+	import { Button } from '#lib/components/ui/button/index.ts';
+	import { Checkbox } from '#lib/components/ui/checkbox/index.ts';
+	import {
+		renderComponent,
+		renderSnippet,
+	} from '#lib/components/ui/data-table/index.ts';
 	import * as Dialog from '#lib/components/ui/dialog/index.ts';
 	import { Input } from '#lib/components/ui/input/index.ts';
-	import { Checkbox } from '#lib/components/ui/checkbox/index.ts';
 	import { Label } from '#lib/components/ui/label/index.ts';
-	import { schema } from './schema';
-	import { createForm, Field, Form, reset, setErrors, type SubmitHandler } from '@formisch/svelte';
 	import { failureMessage, postAction } from '#lib/forms/post-action.ts';
+	import type { Player } from '#lib/server/database/schema.ts';
+	import type { PageProps } from './$types';
+	import { schema } from './schema';
 
 	let { data }: PageProps = $props();
 	const { players } = $derived(data);
@@ -27,12 +37,12 @@
 	const emptyPlayer = {
 		name: '',
 		picture: '',
-		isActive: false
+		isActive: false,
 	};
 
 	const playerForm = createForm({
 		schema,
-		initialInput: emptyPlayer
+		initialInput: emptyPlayer,
 	});
 
 	let isModalOpen = $state(false);
@@ -44,9 +54,9 @@
 			header: 'Nome',
 			cell: ({ row }) => {
 				return renderComponent(DataTablePlayer, {
-					player: row.original
+					player: row.original,
 				});
-			}
+			},
 		},
 		{
 			accessorKey: 'isActive',
@@ -56,10 +66,10 @@
 
 				return renderSnippet(
 					createRawSnippet(() => ({
-						render: () => (isActive ? `<span>Yes</span>` : `<span>No</span>`)
-					}))
+						render: () => (isActive ? `<span>Yes</span>` : `<span>No</span>`),
+					})),
 				);
-			}
+			},
 		},
 		{
 			id: 'editAction',
@@ -70,9 +80,9 @@
 					variant: 'outline',
 					icon: 'PencilLine',
 					class: 'cursor-pointer',
-					onclick: () => onEditPlayer(row.original)
+					onclick: () => onEditPlayer(row.original),
 				});
-			}
+			},
 		},
 		{
 			id: 'deleteAction',
@@ -93,10 +103,10 @@
 						if (!okDelete) {
 							e.preventDefault();
 						}
-					}
+					},
 				});
-			}
-		}
+			},
+		},
 	];
 
 	const onEditPlayer = (row: Player) => {
@@ -106,8 +116,8 @@
 				id: row.id,
 				name: row.name,
 				picture: row.picture ?? '',
-				isActive: row.isActive
-			}
+				isActive: row.isActive,
+			},
 		});
 		isModalOpen = true;
 	};
@@ -129,7 +139,7 @@
 			}
 			if (result.type === 'failure' || result.type === 'error') {
 				setErrors(playerForm, {
-					errors: [failureMessage(result, 'Qualcosa è andato storto')]
+					errors: [failureMessage(result, 'Qualcosa è andato storto')],
 				});
 				toast.error("Cita murta! c'è un errore....");
 			}
@@ -142,10 +152,15 @@
 
 <PageTitle title="Gestione giocatori" showBackButton={true} variant="admin" />
 
-<Main className="flex flex-col pb-10">
+<Main>
 	<div class="mx-auto w-full max-w-3xl">
-		<header class="mb-8">
-			<Button type="button" class="cursor-pointer" onclick={() => createPlayer()}>
+		<header class="mb-6 flex justify-end">
+			<Button
+				type="button"
+				size="lg"
+				class="h-11 w-full cursor-pointer rounded-full sm:w-auto"
+				onclick={() => createPlayer()}
+			>
 				<span>Aggiungi giocatore</span>
 				<UserRound size="24" />
 			</Button>
@@ -154,7 +169,9 @@
 		{#if players.length > 0}
 			<DataTable data={players} {columns} />
 		{:else}
-			<p class="">Non ci sono ancora giocatori qua...</p>
+			<p class="panel px-6 py-12 text-center text-muted-foreground">
+				Non ci sono ancora giocatori qua...
+			</p>
 		{/if}
 	</div>
 </Main>
@@ -162,7 +179,11 @@
 <Dialog.Root bind:open={isModalOpen}>
 	<Dialog.Content>
 		<Dialog.Header>
-			<Dialog.Title>{item === undefined ? 'Nuovo giocatore' : 'Modifica giocatore'}</Dialog.Title>
+			<Dialog.Title
+				>{item === undefined
+					? 'Nuovo giocatore'
+					: 'Modifica giocatore'}</Dialog.Title
+			>
 		</Dialog.Header>
 
 		<Form of={playerForm} onsubmit={handleSubmit} class="flex flex-col gap-4">
@@ -179,7 +200,9 @@
 						aria-errormessage="player-name-error"
 					/>
 					{#if field.errors}
-						<p id="player-name-error" class="text-sm text-destructive">{field.errors[0]}</p>
+						<p id="player-name-error" class="text-sm text-destructive">
+							{field.errors[0]}
+						</p>
 					{/if}
 				{/snippet}
 			</Field>
@@ -196,7 +219,9 @@
 						aria-errormessage="player-picture-error"
 					/>
 					{#if field.errors}
-						<p id="player-picture-error" class="text-sm text-destructive">{field.errors[0]}</p>
+						<p id="player-picture-error" class="text-sm text-destructive">
+							{field.errors[0]}
+						</p>
 					{/if}
 				{/snippet}
 			</Field>
@@ -218,7 +243,9 @@
 						<Label id="player-active-label" for="player-active">Attivo</Label>
 					</div>
 					{#if field.errors}
-						<p id="player-active-error" class="text-sm text-destructive">{field.errors[0]}</p>
+						<p id="player-active-error" class="text-sm text-destructive">
+							{field.errors[0]}
+						</p>
 					{/if}
 				{/snippet}
 			</Field>

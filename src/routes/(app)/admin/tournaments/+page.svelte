@@ -1,36 +1,46 @@
 <script lang="ts">
+	import {
+		createForm,
+		Field,
+		Form,
+		reset,
+		setErrors,
+		type SubmitHandler,
+	} from '@formisch/svelte';
+	import { PackagePlus } from '@lucide/svelte';
+	import type { ColumnDef } from '@tanstack/table-core';
+	import { createRawSnippet } from 'svelte';
+	import { toast } from 'svelte-sonner';
+	import DataTable from '#components/DataTable.svelte';
+	import DataTableButton from '#components/DataTableButton.svelte';
+	import DataTableFormButton from '#components/DataTableFormButton.svelte';
 	import Main from '#components/Main.svelte';
 	import PageTitle from '#components/PageTitle.svelte';
-	import type { PageProps } from './$types';
-	import type { Match, Tournament } from '#lib/server/database/schema.ts';
-	import { toast } from 'svelte-sonner';
-	import type { ColumnDef } from '@tanstack/table-core';
-	import { renderComponent, renderSnippet } from '#lib/components/ui/data-table/index.js';
-	import { createRawSnippet } from 'svelte';
-	import DataTable from '#components/DataTable.svelte';
 	import { Button } from '#lib/components/ui/button/index.ts';
-	import { PackagePlus } from '@lucide/svelte';
-	import DataTableButton from '#components/DataTableButton.svelte';
+	import { Checkbox } from '#lib/components/ui/checkbox/index.ts';
+	import {
+		renderComponent,
+		renderSnippet,
+	} from '#lib/components/ui/data-table/index.js';
 	import * as Dialog from '#lib/components/ui/dialog/index.ts';
 	import { Input } from '#lib/components/ui/input/index.ts';
-	import { schema } from './schema';
-	import { Checkbox } from '#lib/components/ui/checkbox/index.ts';
 	import { Label } from '#lib/components/ui/label/index.ts';
-	import DataTableFormButton from '#components/DataTableFormButton.svelte';
-	import { createForm, Field, Form, reset, setErrors, type SubmitHandler } from '@formisch/svelte';
 	import { failureMessage, postAction } from '#lib/forms/post-action.ts';
+	import type { Match, Tournament } from '#lib/server/database/schema.ts';
+	import type { PageProps } from './$types';
+	import { schema } from './schema';
 
 	let { data }: PageProps = $props();
 	let { tournaments } = $derived(data);
 
 	const emptyTournament = {
 		title: '',
-		isActive: false
+		isActive: false,
 	};
 
 	const tournamentForm = createForm({
 		schema,
-		initialInput: emptyTournament
+		initialInput: emptyTournament,
 	});
 
 	let isModalOpen = $state(false);
@@ -39,7 +49,7 @@
 	const columns: ColumnDef<Tournament>[] = [
 		{
 			accessorKey: 'title',
-			header: 'Titolo torneo'
+			header: 'Titolo torneo',
 		},
 		{
 			accessorKey: 'isActive',
@@ -49,10 +59,10 @@
 
 				return renderSnippet(
 					createRawSnippet(() => ({
-						render: () => (isActive ? `<span>Yes</span>` : `<span>No</span>`)
-					}))
+						render: () => (isActive ? `<span>Yes</span>` : `<span>No</span>`),
+					})),
 				);
-			}
+			},
 		},
 		{
 			accessorKey: 'matches',
@@ -62,10 +72,11 @@
 
 				return renderSnippet(
 					createRawSnippet(() => ({
-						render: () => `<span class='text-right font-medium'>${matches.length}</span>`
-					}))
+						render: () =>
+							`<span class='text-right font-medium'>${matches.length}</span>`,
+					})),
 				);
-			}
+			},
 		},
 		{
 			id: 'editAction',
@@ -77,9 +88,9 @@
 					variant: 'outline',
 					icon: 'PencilLine',
 					class: 'cursor-pointer',
-					onclick: () => onEditTournament(tournament)
+					onclick: () => onEditTournament(tournament),
 				});
-			}
+			},
 		},
 		{
 			id: 'matchesAction',
@@ -91,9 +102,9 @@
 					variant: 'outline',
 					icon: 'Dices',
 					class: 'cursor-pointer',
-					href: `/admin/tournaments/${tournament.id}`
+					href: `/admin/tournaments/${tournament.id}`,
 				});
-			}
+			},
 		},
 		{
 			id: 'deleteAction',
@@ -108,13 +119,13 @@
 						type: 'submit',
 						variant: 'destructive',
 						icon: 'Trash2',
-						class: 'cursor-pointer'
+						class: 'cursor-pointer',
 					});
 				}
 
 				return null;
-			}
-		}
+			},
+		},
 	];
 
 	const onEditTournament = (row: Tournament) => {
@@ -123,8 +134,8 @@
 			initialInput: {
 				id: row.id,
 				title: row.title,
-				isActive: row.isActive
-			}
+				isActive: row.isActive,
+			},
 		});
 		isModalOpen = true;
 	};
@@ -146,7 +157,7 @@
 			}
 			if (result.type === 'failure' || result.type === 'error') {
 				setErrors(tournamentForm, {
-					errors: [failureMessage(result, 'Qualcosa è andato storto')]
+					errors: [failureMessage(result, 'Qualcosa è andato storto')],
 				});
 				toast.error("Cita murta! c'è un errore....");
 			}
@@ -159,10 +170,15 @@
 
 <PageTitle title="Gestione tornei" showBackButton={true} variant="admin" />
 
-<Main className="flex flex-col pb-10">
+<Main>
 	<div class="mx-auto w-full max-w-3xl">
-		<header class="mb-8">
-			<Button type="button" class="cursor-pointer" onclick={() => createTournament()}>
+		<header class="mb-6 flex justify-end">
+			<Button
+				type="button"
+				size="lg"
+				class="h-11 w-full cursor-pointer rounded-full sm:w-auto"
+				onclick={() => createTournament()}
+			>
 				<span>Nuovo torneo</span>
 				<PackagePlus size={24} />
 			</Button>
@@ -175,10 +191,16 @@
 <Dialog.Root bind:open={isModalOpen}>
 	<Dialog.Content>
 		<Dialog.Header>
-			<Dialog.Title>{item === undefined ? 'Nuovo torneo' : 'Modifica torneo'}</Dialog.Title>
+			<Dialog.Title
+				>{item === undefined ? 'Nuovo torneo' : 'Modifica torneo'}</Dialog.Title
+			>
 		</Dialog.Header>
 
-		<Form of={tournamentForm} onsubmit={handleSubmit} class="flex flex-col gap-4">
+		<Form
+			of={tournamentForm}
+			onsubmit={handleSubmit}
+			class="flex flex-col gap-4"
+		>
 			<Field of={tournamentForm} path={['title']}>
 				{#snippet children(field)}
 					<Label for="tournament-title">Titolo</Label>
@@ -192,7 +214,9 @@
 						aria-errormessage="tournament-title-error"
 					/>
 					{#if field.errors}
-						<p id="tournament-title-error" class="text-sm text-destructive">{field.errors[0]}</p>
+						<p id="tournament-title-error" class="text-sm text-destructive">
+							{field.errors[0]}
+						</p>
 					{/if}
 				{/snippet}
 			</Field>
@@ -211,7 +235,9 @@
 								if (typeof checked === 'boolean') field.onInput(checked);
 							}}
 						/>
-						<Label id="tournament-active-label" for="tournament-active">Attivo</Label>
+						<Label id="tournament-active-label" for="tournament-active"
+							>Attivo</Label
+						>
 					</div>
 					{#if field.errors}
 						<p class="text-sm text-destructive">{field.errors[0]}</p>
@@ -219,12 +245,18 @@
 				{/snippet}
 			</Field>
 
-			<Button type="submit" disabled={tournamentForm.isSubmitting} class="w-full">
+			<Button
+				type="submit"
+				disabled={tournamentForm.isSubmitting}
+				class="w-full"
+			>
 				{tournamentForm.isSubmitting ? 'Salvataggio...' : 'Conferma'}
 			</Button>
 
 			{#if tournamentForm.errors}
-				<div class="mt-3 rounded-md text-red-700">{tournamentForm.errors[0]}</div>
+				<div class="mt-3 rounded-md text-red-700">
+					{tournamentForm.errors[0]}
+				</div>
 			{/if}
 		</Form>
 	</Dialog.Content>

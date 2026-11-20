@@ -1,23 +1,30 @@
 <script lang="ts">
-	import Main from '#components/Main.svelte';
-	import PageTitle from '#components/PageTitle.svelte';
-	import type { PageProps } from './$types';
+	import {
+		createForm,
+		Field,
+		Form,
+		reset,
+		setErrors,
+		type SubmitHandler,
+	} from '@formisch/svelte';
+	import { Dice6 } from '@lucide/svelte';
+	import type { ColumnDef } from '@tanstack/table-core';
 	import { toast } from 'svelte-sonner';
 	import DataTable from '#components/DataTable.svelte';
-	import type { ColumnDef } from '@tanstack/table-core';
-	import { renderComponent } from '#lib/components/ui/data-table/index.ts';
 	import DataTableButton from '#components/DataTableButton.svelte';
-	import type { PlayerExtended } from '#lib/server/repository.ts';
+	import DataTableFormButton from '#components/DataTableFormButton.svelte';
+	import Main from '#components/Main.svelte';
+	import PageTitle from '#components/PageTitle.svelte';
 	import { Button } from '#lib/components/ui/button/index.ts';
-	import { Dice6 } from '@lucide/svelte';
+	import { renderComponent } from '#lib/components/ui/data-table/index.ts';
 	import * as Dialog from '#lib/components/ui/dialog/index.ts';
 	import { Input } from '#lib/components/ui/input/index.ts';
-	import * as Select from '#lib/components/ui/select/index.ts';
 	import { Label } from '#lib/components/ui/label/index.ts';
-	import { schema } from './schema';
-	import DataTableFormButton from '#components/DataTableFormButton.svelte';
-	import { createForm, Field, Form, reset, setErrors, type SubmitHandler } from '@formisch/svelte';
+	import * as Select from '#lib/components/ui/select/index.ts';
 	import { failureMessage, postAction } from '#lib/forms/post-action.ts';
+	import type { PlayerExtended } from '#lib/server/repository.ts';
+	import type { PageProps } from './$types';
+	import { schema } from './schema';
 
 	let { data }: PageProps = $props();
 
@@ -29,8 +36,8 @@
 			matchId: '',
 			playerId: '',
 			points: 0,
-			territoriesPoints: 0
-		}
+			territoriesPoints: 0,
+		},
 	});
 
 	let isModalOpen = $state(false);
@@ -39,15 +46,15 @@
 	const columns: ColumnDef<PlayerExtended>[] = [
 		{
 			accessorKey: 'name',
-			header: 'Giocatore'
+			header: 'Giocatore',
 		},
 		{
 			accessorKey: 'points',
-			header: 'Punti'
+			header: 'Punti',
 		},
 		{
 			accessorKey: 'territoriesPoints',
-			header: 'Punti territori'
+			header: 'Punti territori',
 		},
 		{
 			id: 'editAction',
@@ -58,9 +65,9 @@
 					variant: 'outline',
 					icon: 'PencilLine',
 					class: 'cursor-pointer',
-					onclick: () => onEditPoints(row.original)
+					onclick: () => onEditPoints(row.original),
 				});
-			}
+			},
 		},
 		{
 			id: 'deleteAction',
@@ -70,7 +77,7 @@
 				return renderComponent(DataTableFormButton, {
 					ids: [
 						{ name: 'matchId', value: match.id },
-						{ name: 'playerId', value: player.id }
+						{ name: 'playerId', value: player.id },
 					],
 					action: '?/delete',
 					label: 'Elimina',
@@ -84,10 +91,10 @@
 						if (!okDelete) {
 							e.preventDefault();
 						}
-					}
+					},
 				});
-			}
-		}
+			},
+		},
 	];
 
 	const onEditPoints = (row: PlayerExtended) => {
@@ -97,8 +104,8 @@
 				matchId: match.id,
 				playerId: row.id,
 				points: row.points,
-				territoriesPoints: row.territoriesPoints
-			}
+				territoriesPoints: row.territoriesPoints,
+			},
 		});
 		isModalOpen = true;
 	};
@@ -110,15 +117,15 @@
 				matchId: match.id,
 				playerId: '',
 				points: 0,
-				territoriesPoints: 0
-			}
+				territoriesPoints: 0,
+			},
 		});
 		isModalOpen = true;
 	};
 
 	function onNumberInput(
 		event: Event,
-		onInput: (value: number | undefined) => void
+		onInput: (value: number | undefined) => void,
 	) {
 		const input = event.currentTarget;
 		if (!(input instanceof HTMLInputElement)) return;
@@ -142,7 +149,7 @@
 			}
 			if (result.type === 'failure' || result.type === 'error') {
 				setErrors(scoreForm, {
-					errors: [failureMessage(result, 'Qualcosa è andato storto')]
+					errors: [failureMessage(result, 'Qualcosa è andato storto')],
 				});
 				toast.error("Cita murta! c'è un errore....");
 			}
@@ -160,10 +167,15 @@
 	variant="admin"
 />
 
-<Main className="flex flex-col pb-10">
+<Main>
 	<div class="mx-auto w-full max-w-3xl">
-		<header class="mb-8">
-			<Button type="button" class="cursor-pointer" onclick={() => addPlayer()}>
+		<header class="mb-6 flex justify-end">
+			<Button
+				type="button"
+				size="lg"
+				class="h-11 w-full cursor-pointer rounded-full sm:w-auto"
+				onclick={() => addPlayer()}
+			>
 				<span>Aggiungi punteggio</span>
 				<Dice6 size="24" />
 			</Button>
@@ -172,7 +184,9 @@
 		{#if players.length > 0}
 			<DataTable data={players} {columns} />
 		{:else}
-			<p class="">Non ci sono ancora giocatori qua...</p>
+			<p class="panel px-6 py-12 text-center text-muted-foreground">
+				Non ci sono ancora giocatori qua...
+			</p>
 		{/if}
 	</div>
 </Main>
@@ -180,7 +194,11 @@
 <Dialog.Root bind:open={isModalOpen}>
 	<Dialog.Content>
 		<Dialog.Header>
-			<Dialog.Title>{item === undefined ? 'Nuovo giocatore' : 'Modifica giocatore'}</Dialog.Title>
+			<Dialog.Title
+				>{item === undefined
+					? 'Nuovo giocatore'
+					: 'Modifica giocatore'}</Dialog.Title
+			>
 		</Dialog.Header>
 
 		<Form of={scoreForm} onsubmit={handleSubmit} class="flex flex-col gap-4">
@@ -233,7 +251,9 @@
 						oninput={(event) => onNumberInput(event, field.onInput)}
 					/>
 					{#if field.errors}
-						<p id="score-points-error" class="text-sm text-destructive">{field.errors[0]}</p>
+						<p id="score-points-error" class="text-sm text-destructive">
+							{field.errors[0]}
+						</p>
 					{/if}
 				{/snippet}
 			</Field>

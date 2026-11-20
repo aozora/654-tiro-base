@@ -1,87 +1,114 @@
 <script lang="ts">
-	import MobileMenu from '#components/MobileMenu.svelte';
 	import { page } from '$app/state';
-	import { MediaQuery } from 'svelte/reactivity';
-	import { Dices } from '@lucide/svelte';
+	import { LogOut, Settings, Swords, Trophy } from '@lucide/svelte';
 	import { cn } from '#lib/utils.ts';
-	// import { Button } from '#lib/components/ui/button/index.ts';
-	// import { toggleMode } from 'mode-watcher';
-	// import MoonIcon from "@lucide/svelte/icons/moon";
-	// import SunIcon from "@lucide/svelte/icons/sun";
 
 	const { user } = $props();
 
-	const isDesktop = new MediaQuery('min-width: 40em');
-	const isMobile = $derived(!isDesktop.current);
-	let isOpen = $state(false);
+	const links = $derived([
+		{
+			href: '/leaderboard',
+			label: 'Classifica',
+			icon: Trophy,
+			// Player and match pages are reached from the leaderboard
+			sections: ['/leaderboard', '/player', '/matches'],
+		},
+		{
+			href: '/tournaments',
+			label: 'Tornei',
+			icon: Swords,
+			sections: ['/tournaments'],
+		},
+		...(user?.role === 'admin'
+			? [
+					{
+						href: '/admin',
+						label: 'Admin',
+						icon: Settings,
+						sections: ['/admin'],
+					},
+				]
+			: []),
+	]);
 
-	const onClose = () => {
-		isOpen = false;
-	};
+	const isCurrent = (sections: string[]) =>
+		sections.some((section) => page.url.pathname.startsWith(section));
 </script>
 
-<header class={cn(
-	"header sticky top-0 z-10 flex h-16 items-center justify-between p-4 px-4",
-	"bg-gradient-to-b from-black via-black/80 to-black/40"
-)}>
-	<a href="/" class="logo">
-		{#if page.data.tournament}
-			<span>{page.data.tournament.title}</span>
-		{:else}
-			<span>654 tiro base</span>
-		{/if}
-	</a>
+<header
+	class="sticky top-0 z-20 border-b bg-background/90 pt-[env(safe-area-inset-top)] supports-backdrop-filter:bg-background/75 supports-backdrop-filter:backdrop-blur-md"
+>
+	<div
+		class="mx-auto flex h-14 w-full max-w-5xl items-center gap-4 px-4 md:px-6"
+	>
+		<a
+			href="/"
+			class="font-brutal text-xl whitespace-nowrap text-brand sm:text-2xl"
+			>654 tiro base</a
+		>
 
-	{#if !isMobile}
-		<nav class="menu flex-1">
-			<ul class="flex items-center justify-end gap-4">
-<!--				<li>-->
-<!--					<Button onclick={toggleMode} variant="ghost" size="icon" class="cursor-pointer">-->
-<!--						<SunIcon-->
-<!--							class="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 !transition-all dark:-rotate-90 dark:scale-0"-->
-<!--						/>-->
-<!--						<MoonIcon-->
-<!--							class="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 !transition-all dark:rotate-0 dark:scale-100"-->
-<!--						/>-->
-<!--						<span class="sr-only">Toggle theme</span>-->
-<!--					</Button>-->
-<!--				</li>-->
-				<li>
-					<a href="/leaderboard"
-						 class="cursor-pointer text-base text-primary transition hover:underline">Classifica</a>
-				</li>
-				<li>
-					<a href="/tournaments"
-						 class="cursor-pointer text-base text-primary transition hover:underline">Tornei</a>
-				</li>
-
-				{#if user && user?.role === 'admin'}
+		<nav class="ml-auto hidden sm:block" aria-label="Principale">
+			<ul class="flex items-center gap-1">
+				{#each links as link (link.href)}
+					{@const current = isCurrent(link.sections)}
 					<li>
-						<a href="/admin"
-							 class="cursor-pointer text-base text-primary transition hover:underline">Amministrazione</a>
+						<a
+							href={link.href}
+							aria-current={current ? 'page' : undefined}
+							class={cn(
+								'inline-flex h-9 items-center rounded-full px-4 text-sm font-medium transition-colors',
+								'text-muted-foreground hover:bg-accent/60 hover:text-foreground',
+								current &&
+									'bg-accent text-foreground underline decoration-brand decoration-2 underline-offset-8',
+							)}
+						>
+							{link.label}
+						</a>
 					</li>
-				{/if}
-
-				<li class="logout">
-					<form action="/logout" method="POST">
-						<button type="submit"
-										class="cursor-pointer text-base text-primary transition hover:underline">Esci
-						</button>
-					</form>
-				</li>
+				{/each}
 			</ul>
 		</nav>
-	{:else}
-		<button
-			type="button"
-			class="toggle-menu z-101"
-			aria-expanded={isOpen}
-			onclick={() => (isOpen = !isOpen)}
-		>
-			<Dices size="36" />
-		</button>
 
-		<MobileMenu open={isOpen} {user} {onClose} />
-	{/if}
+		<form action="/logout" method="POST" class="ml-auto flex sm:ml-0">
+			<button
+				type="submit"
+				class="inline-flex h-11 cursor-pointer items-center gap-2 rounded-full px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground sm:h-9"
+			>
+				<LogOut size={18} aria-hidden="true" />
+				<span>Esci</span>
+			</button>
+		</form>
+	</div>
 </header>
 
+<!-- Mobile: primary navigation stays within thumb reach -->
+<nav
+	class="fixed inset-x-0 bottom-0 z-20 border-t bg-background/95 pb-[env(safe-area-inset-bottom)] sm:hidden"
+	aria-label="Principale"
+>
+	<ul class="mx-auto flex max-w-md">
+		{#each links as link (link.href)}
+			{@const current = isCurrent(link.sections)}
+			<li class="flex-1">
+				<a
+					href={link.href}
+					aria-current={current ? 'page' : undefined}
+					class={cn(
+						'flex h-16 flex-col items-center justify-center gap-2 text-xs font-medium transition-colors',
+						current ? 'text-foreground' : 'text-muted-foreground',
+					)}
+				>
+					<span
+						class={cn(
+							'flex h-8 w-14 items-center justify-center rounded-full transition-colors',
+							current && 'bg-primary text-primary-foreground',
+						)}
+					>
+						<link.icon size={20} aria-hidden="true" />
+					</span>
+					{link.label}
+				</a>
+			</li>
+		{/each}
+	</ul>
+</nav>
