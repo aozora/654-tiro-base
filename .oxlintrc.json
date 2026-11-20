@@ -1,0 +1,26 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"categories": {
+		"correctness": "error",
+		"suspicious": "warn"
+	},
+	"env": {
+		"browser": true,
+		"node": true
+	},
+	"ignorePatterns": [".svelte-kit", "build", ".netlify", "dist", "drizzle"],
+	"rules": {
+		"unicorn/no-empty-file": "off"
+	},
+	"overrides": [
+		{
+			"files": ["**/*.svelte", "**/*.svelte.ts", "**/*.svelte.js"],
+			"rules": {
+				"prefer-const": "off",
+				"no-unused-vars": "off",
+				"typescript/no-unused-vars": "off",
+				"typescript/consistent-type-imports": "off"
+			}
+		}
+	]
+}

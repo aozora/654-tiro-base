@@ -1,0 +1,15 @@
+{
+	"$schema": "./node_modules/oxfmt/configuration_schema.json",
+	"useTabs": true,
+	"singleQuote": true,
+	"printWidth": 80,
+	"svelte": true,
+	"sortImports": {
+		"newlinesBetween": false
+	},
+	"ignorePatterns": ["drizzle"],
+	"sortTailwindcss": {
+		"stylesheet": "./src/styles/app.css",
+		"functions": ["clsx", "cn", "cva"]
+	}
+}
