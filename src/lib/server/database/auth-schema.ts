@@ -1,44 +1,57 @@
 import { sql } from 'drizzle-orm';
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import {
+	integer,
+	sqliteTable,
+	text,
+	uniqueIndex,
+} from 'drizzle-orm/sqlite-core';
 
-export const user = sqliteTable('user', {
-	id: text('id').primaryKey(),
-	name: text('name').notNull(),
-	email: text('email').notNull().unique(),
-	emailVerified: integer('email_verified', { mode: 'boolean' })
-		.default(false)
-		.notNull(),
-	image: text('image'),
-	createdAt: integer('created_at', { mode: 'timestamp' })
-		.default(sql`(current_timestamp)`)
-		.notNull(),
-	updatedAt: integer('updated_at', { mode: 'timestamp' })
-		.default(sql`(current_timestamp)`)
-		.$onUpdate(() => /* @__PURE__ */ new Date())
-		.notNull(),
-	role: text('role').default('user'),
-	banned: integer('banned', { mode: 'boolean' }).default(false),
-	banReason: text('ban_reason'),
-	banExpires: integer('ban_expires', { mode: 'timestamp' }),
-});
+export const user = sqliteTable(
+	'user',
+	{
+		id: text('id').primaryKey(),
+		name: text('name').notNull(),
+		email: text('email').notNull(),
+		emailVerified: integer('email_verified', { mode: 'boolean' })
+			.default(false)
+			.notNull(),
+		image: text('image'),
+		createdAt: integer('created_at', { mode: 'timestamp' })
+			.default(sql`(current_timestamp)`)
+			.notNull(),
+		updatedAt: integer('updated_at', { mode: 'timestamp' })
+			.default(sql`(current_timestamp)`)
+			.$onUpdate(() => /* @__PURE__ */ new Date())
+			.notNull(),
+		role: text('role').default('user'),
+		banned: integer('banned', { mode: 'boolean' }).default(false),
+		banReason: text('ban_reason'),
+		banExpires: integer('ban_expires', { mode: 'timestamp' }),
+	},
+	(table) => [uniqueIndex('user_email_unique').on(table.email)],
+);
 
-export const session = sqliteTable('session', {
-	id: text('id').primaryKey(),
-	expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
-	token: text('token').notNull().unique(),
-	createdAt: integer('created_at', { mode: 'timestamp' })
-		.default(sql`(current_timestamp)`)
-		.notNull(),
-	updatedAt: integer('updated_at', { mode: 'timestamp' })
-		.$onUpdate(() => /* @__PURE__ */ new Date())
-		.notNull(),
-	ipAddress: text('ip_address'),
-	userAgent: text('user_agent'),
-	userId: text('user_id')
-		.notNull()
-		.references(() => user.id, { onDelete: 'cascade' }),
-	impersonatedBy: text('impersonated_by'),
-});
+export const session = sqliteTable(
+	'session',
+	{
+		id: text('id').primaryKey(),
+		expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
+		token: text('token').notNull(),
+		createdAt: integer('created_at', { mode: 'timestamp' })
+			.default(sql`(current_timestamp)`)
+			.notNull(),
+		updatedAt: integer('updated_at', { mode: 'timestamp' })
+			.$onUpdate(() => /* @__PURE__ */ new Date())
+			.notNull(),
+		ipAddress: text('ip_address'),
+		userAgent: text('user_agent'),
+		userId: text('user_id')
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		impersonatedBy: text('impersonated_by'),
+	},
+	(table) => [uniqueIndex('session_token_unique').on(table.token)],
+);
 
 export const account = sqliteTable('account', {
 	id: text('id').primaryKey(),

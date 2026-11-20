@@ -1,12 +1,12 @@
-import type { PageServerLoad } from './$types';
+import type { Match, Tournament } from '#lib/server/database/schema.ts';
 import {
 	getMatch,
 	getMatchPlayers,
 	getTournament,
-	type PlayerExtended
-} from '$lib/server/repository';
-import type { PlayerLeaderboardWithNormalizedRanking } from '$types';
-import type { Match, Tournament } from '$lib/server/database/schema';
+	type PlayerExtended,
+} from '#lib/server/repository.ts';
+import type { PlayerLeaderboardWithNormalizedRanking } from '#types';
+import type { PageServerLoad } from './$types';
 
 function sortPointsDesc(a: PlayerExtended, b: PlayerExtended) {
 	if (a.points > b.points) {
@@ -20,7 +20,7 @@ function sortPointsDesc(a: PlayerExtended, b: PlayerExtended) {
 }
 
 function normalizeLeaderboardRanking(
-	sortedLeaderboard: Array<PlayerExtended>
+	sortedLeaderboard: Array<PlayerExtended>,
 ): Array<PlayerLeaderboardWithNormalizedRanking> {
 	const list: Array<PlayerLeaderboardWithNormalizedRanking> = [];
 	let previousRank = 0;
@@ -43,7 +43,7 @@ function normalizeLeaderboardRanking(
 			picture: current.picture,
 			sumPoints: current.points,
 			sumTerritoriesPoints: current.territoriesPoints,
-			rank: currentRank
+			rank: currentRank,
 		} as PlayerLeaderboardWithNormalizedRanking);
 
 		previousPoints = current.points;
@@ -58,13 +58,21 @@ function normalizeLeaderboardRanking(
 export const load: PageServerLoad = async ({ params }) => {
 	const { tournamentId, matchId } = params;
 
-	const tournament: Tournament = await getTournament(tournamentId);
-	const match: Match = await getMatch(matchId);
-	const matchPlayers: Array<PlayerExtended> = await getMatchPlayers(matchId);
+	const [tournament, match, matchPlayers]: [
+		Tournament,
+		Match,
+		Array<PlayerExtended>,
+	] = await Promise.all([
+		getTournament(tournamentId),
+		getMatch(matchId),
+		getMatchPlayers(matchId),
+	]);
 
 	return {
 		tournament,
 		match,
-		matchPlayers: normalizeLeaderboardRanking(matchPlayers.sort(sortPointsDesc))
+		matchPlayers: normalizeLeaderboardRanking(
+			matchPlayers.sort(sortPointsDesc),
+		),
 	};
 };

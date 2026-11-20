@@ -1,4 +1,3 @@
-import { relations } from 'drizzle-orm';
 import {
 	integer,
 	primaryKey,
@@ -52,37 +51,6 @@ export const playersOnMatches = sqliteTable(
 	},
 	(table) => ({
 		pk: primaryKey({ columns: [table.playerId, table.matchId] }),
-	}),
-);
-
-// Relations
-export const playersRelations = relations(players, ({ many }) => ({
-	matches: many(playersOnMatches),
-}));
-
-export const tournamentsRelations = relations(tournaments, ({ many }) => ({
-	matches: many(matches),
-}));
-
-export const matchesRelations = relations(matches, ({ one, many }) => ({
-	tournament: one(tournaments, {
-		fields: [matches.tournamentId],
-		references: [tournaments.id],
-	}),
-	players: many(playersOnMatches),
-}));
-
-export const playersOnMatchesRelations = relations(
-	playersOnMatches,
-	({ one }) => ({
-		player: one(players, {
-			fields: [playersOnMatches.playerId],
-			references: [players.id],
-		}),
-		match: one(matches, {
-			fields: [playersOnMatches.matchId],
-			references: [matches.id],
-		}),
 	}),
 );
 

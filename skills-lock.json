@@ -1,0 +1,101 @@
+{
+  "version": 2,
+  "skills": {
+    "better-auth-best-practices": {
+      "source": "better-auth/skills",
+      "commit": "20c9e88a5c007461a703f1c213572b073196113e",
+      "sourceType": "github",
+      "skillPath": "better-auth/best-practices/SKILL.md",
+      "computedHash": "2773c3687f2cf96d659049ebf2d8c86058a33541b09360712df0dc6b1404c403"
+    },
+    "better-auth-security-best-practices": {
+      "source": "better-auth/skills",
+      "commit": "20c9e88a5c007461a703f1c213572b073196113e",
+      "sourceType": "github",
+      "skillPath": "security/SKILL.md",
+      "computedHash": "36e9710eaa13c61c00bec00a4902fdc6ed829e6de13127238ae57494e93c1d9d"
+    },
+    "create-auth": {
+      "source": "better-auth/skills",
+      "commit": "20c9e88a5c007461a703f1c213572b073196113e",
+      "sourceType": "github",
+      "skillPath": "better-auth/create-auth/SKILL.md",
+      "computedHash": "6f68253a5ab812aa8c9b70c57609aca763093a594e3b07163142e0fa7d64904a"
+    },
+    "drizzle": {
+      "source": "./node_modules/drizzle-kit/skills",
+      "sourceType": "local",
+      "computedHash": "8b15ab0cab70900d89171078b22f4c20398c7fe51fc7bfee9caa297791a2603d"
+    },
+    "drizzle-generate": {
+      "source": "./node_modules/drizzle-kit/skills",
+      "sourceType": "local",
+      "computedHash": "9f1f1322cb0a59294b270425089c23b14c4598c62ebf50063cc23cf9c0cc7ecb"
+    },
+    "drizzle-hints": {
+      "source": "./node_modules/drizzle-kit/skills",
+      "sourceType": "local",
+      "computedHash": "47a58f2fd78deee52f90242f0d6804554bc8f3045aca79ca1e6e9f5ce62a0ff0"
+    },
+    "drizzle-migrations": {
+      "source": "./node_modules/drizzle-kit/skills",
+      "sourceType": "local",
+      "computedHash": "54badcbbb3c8e954f2f5cd41bea1151d0fca46904958ee1b727fff81240353d2"
+    },
+    "drizzle-output-modes": {
+      "source": "./node_modules/drizzle-kit/skills",
+      "sourceType": "local",
+      "computedHash": "9a1641e572e02a63ed0a6bfcb027ce2aa11718f26aff92475eb7b205dd379dae"
+    },
+    "drizzle-pull": {
+      "source": "./node_modules/drizzle-kit/skills",
+      "sourceType": "local",
+      "computedHash": "fdfe8458168080d4d55ef1246ff533a6842b635168edc93e96836d18e8f9879a"
+    },
+    "drizzle-push": {
+      "source": "./node_modules/drizzle-kit/skills",
+      "sourceType": "local",
+      "computedHash": "7b3d9e2b02792c2075ed9e8ea9ae6785844b9271da6ba3aa379ef67f34fda0b8"
+    },
+    "drizzle-responses-and-errors": {
+      "source": "./node_modules/drizzle-kit/skills",
+      "sourceType": "local",
+      "computedHash": "464c1400d02c7d0f79742c337d7d87f5b40cfe24a80a7a24aca429edffd4aab3"
+    },
+    "email-and-password-best-practices": {
+      "source": "better-auth/skills",
+      "commit": "20c9e88a5c007461a703f1c213572b073196113e",
+      "sourceType": "github",
+      "skillPath": "better-auth/emailAndPassword/SKILL.md",
+      "computedHash": "407c1244202876daa748818ed41dc55afde1b3f7aec48ae3a1f1c8a7ee40465e"
+    },
+    "formisch": {
+      "source": "open-circle/agent-skills",
+      "commit": "ea150d8fc3a856801256308b3a83ed79cb3ff3a4",
+      "sourceType": "github",
+      "skillPath": "skills/formisch/SKILL.md",
+      "computedHash": "eaba41ef4fc50162e7552d9463561847c4f8427519af1a4343d53b33513246fe"
+    },
+    "organization-best-practices": {
+      "source": "better-auth/skills",
+      "commit": "20c9e88a5c007461a703f1c213572b073196113e",
+      "sourceType": "github",
+      "skillPath": "better-auth/organization/SKILL.md",
+      "computedHash": "e5b1238c3b62c789918fe397ed52787742e50944343de33f459629f29b0fe922"
+    },
+    "two-factor-authentication-best-practices": {
+      "source": "better-auth/skills",
+      "commit": "20c9e88a5c007461a703f1c213572b073196113e",
+      "sourceType": "github",
+      "skillPath": "better-auth/twoFactor/SKILL.md",
+      "computedHash": "89ca7fde92a69aec2cf7407d29058c5428e17d228e2578c79e0129d128524f38"
+    },
+    "valibot": {
+      "source": "open-circle/agent-skills",
+      "commit": "ea150d8fc3a856801256308b3a83ed79cb3ff3a4",
+      "sourceType": "github",
+      "skillPath": "skills/valibot/SKILL.md",
+      "computedHash": "5792dc3f1fe0d09b69be700a75b3ea643ce7ed97fba659082f5da2f7f024ea12"
+    }
+  }
+}

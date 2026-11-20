@@ -12,17 +12,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Code Quality & Linting
 
-This project uses **Biome** for formatting and linting:
-- Tab indentation (configured in biome.json)
-- Single quotes for JavaScript
-- React domain rules enabled
-- Auto-organize imports on save
-- Sorted CSS classes rule enabled
+This project uses **oxlint** for linting and **oxfmt** for formatting:
+- Tab indentation and single quotes (configured in `.oxfmtrc.json`)
+- Import sorting and Tailwind class sorting via oxfmt
+- Svelte files are formatted by oxfmt (`svelte: true`); oxlint checks their script blocks
 
-Run Biome commands manually if needed:
-- Format: `npx biome format --write .`
-- Lint: `npx biome lint .`
-- Check all: `npx biome check .`
+Run commands manually if needed:
+- Format: `pnpm format`
+- Format check: `pnpm format:check`
+- Lint: `pnpm lint`
+- Lint with fixes: `pnpm lint:fix`
 
 ## Architecture Overview
 

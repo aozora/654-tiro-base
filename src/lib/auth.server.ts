@@ -1,17 +1,17 @@
-import { betterAuth } from 'better-auth';
-import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { betterAuth } from 'better-auth/minimal';
+import { drizzleAdapter } from '@better-auth/drizzle-adapter';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { admin } from 'better-auth/plugins';
 import * as schemaAuth from './server/database/auth-schema';
 import * as schemaApp from './server/database/schema';
 import db from './server/db';
 import { getRequestEvent } from '$app/server';
-import { env } from '$env/dynamic/private';
+import { BETTER_AUTH_SECRET } from '$app/env/private';
 
 export const auth = betterAuth({
-	secret: env.BETTER_AUTH_SECRET,
+	secret: BETTER_AUTH_SECRET,
 	database: drizzleAdapter(db, {
-		provider: 'sqlite', // or "pg" or "mysql"
+		provider: 'sqlite',
 		schema: {
 			...schemaApp,
 			user: schemaAuth.user,
@@ -21,16 +21,12 @@ export const auth = betterAuth({
 		}
 	}),
 	emailAndPassword: {
-		enabled: true,
-		sendEmailVerificationOnSignUp: false,
-		asResponse: true
+		enabled: true
 	},
 	plugins: [
 		admin(),
-		sveltekitCookies(getRequestEvent)// make sure this is the last plugin in the array
+		sveltekitCookies(getRequestEvent) // make sure this is the last plugin in the array
 	],
-	//if all of them are just using plural form, you can just pass the option below
-	usePlural: false,
 	trustedOrigins: ['http://localhost:5173', 'https://654-tiro-base.netlify.app'],
 	session: {
 		cookieCache: {
@@ -38,7 +34,10 @@ export const auth = betterAuth({
 			maxAge: 5 * 60 // Cache duration in seconds
 		}
 	},
-	debug: process.env.NODE_ENV === 'development'
+	logger: {
+		level: 'debug',
+		disabled: process.env.NODE_ENV !== 'development'
+	}
 });
 
 /**

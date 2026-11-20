@@ -1,44 +1,63 @@
 <script lang="ts">
 	/**
-	 * Display all the matches of the player
+	 * Display the final ranking of a match
 	 */
-	import Main from '$components/Main.svelte';
-	import PageTitle from '$components/PageTitle.svelte';
-	import { pluralizePoints } from '$lib/helpers';
+	import Main from '#components/Main.svelte';
+	import PageTitle from '#components/PageTitle.svelte';
+	import PlayerAvatar from '#components/PlayerAvatar.svelte';
+	import { formatDate } from '#lib/helpers.ts';
+	import { cn } from '#lib/utils.ts';
 	import type { PageProps } from './$types';
-	import { buttonVariants } from '$lib/components/ui/button';
-	import { cn } from '$lib/utils';
 
 	let { data }: PageProps = $props();
 
-	const { match, matchPlayers } = data;
+	const { match, matchPlayers, tournament } = $derived(data);
 </script>
 
 <PageTitle
-	title={`Partita del ${new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)}`}
+	title={`Partita del ${formatDate(match.date)}`}
+	subtitle={tournament.title}
 	showBackButton={true}
 />
 
-<Main className="user-page">
-	<div class="matches">
-		<div class="matches-wrapper mx-auto w-full max-w-lg">
-			<ul class="flex flex-col gap-5">
-				{#each matchPlayers as player}
-					<li class="h-12">
-						<div class={cn(
-								buttonVariants({ variant: "default" }),
-								"h-12 w-full flex items-center justify-between"
-								)}>
-							<span>{player.rank}</span>
-							<span>{player.name}</span>
-							<div class="flex gap-2">
-								<span class="points">{pluralizePoints(player.sumPoints)}</span>
-								<span class="points">({pluralizePoints(player.sumTerritoriesPoints)} territori)</span>
-							</div>
-						</div>
+<Main>
+	<div class="mx-auto w-full max-w-xl">
+		{#if matchPlayers.length > 0}
+			<ol class="panel divide-y">
+				{#each matchPlayers as player (player.playerId)}
+					<li class={cn('panel-row', player.rank === 1 && 'bg-primary/15')}>
+						<span
+							class={cn(
+								'w-6 shrink-0 text-center font-semibold tabular-nums',
+								player.rank > 1 && 'text-muted-foreground',
+							)}
+						>
+							<span class="sr-only">Posizione </span>{player.rank}
+						</span>
+						<PlayerAvatar name={player.name} picture={player.picture} eager />
+						<strong class="min-w-0 flex-1 truncate text-base"
+							>{player.name}</strong
+						>
+						<span
+							class="flex shrink-0 flex-col items-end text-sm leading-tight text-muted-foreground"
+						>
+							<span>
+								<strong class="text-base text-foreground tabular-nums"
+									>{player.sumPoints}</strong
+								>
+								pt
+							</span>
+							<span class="text-xs tabular-nums"
+								>{player.sumTerritoriesPoints} territori</span
+							>
+						</span>
 					</li>
 				{/each}
-			</ul>
-		</div>
+			</ol>
+		{:else}
+			<p class="panel px-6 py-12 text-center text-lg text-muted-foreground">
+				Nessun punteggio registrato per questa partita.
+			</p>
+		{/if}
 	</div>
 </Main>

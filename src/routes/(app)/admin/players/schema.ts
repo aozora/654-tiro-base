@@ -1,5 +1,5 @@
 import * as v from 'valibot';
-import { deleteSchema as commonDeleteSchema } from '$lib/validation/common-schemas';
+import { deleteSchema as commonDeleteSchema } from '#lib/validation/common-schemas.ts';
 
 export const schema = v.object({
 	id: v.optional(v.string()),

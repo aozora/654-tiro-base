@@ -1,5 +1,5 @@
-import { updatePlayerPicture } from '$lib/server/repository';
-import { error, json } from '@sveltejs/kit';
+import { updatePlayerPicture } from '#lib/server/repository.ts';
+import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request }) => {
@@ -14,5 +14,5 @@ export const POST: RequestHandler = async ({ request }) => {
 		error(500, `Error updatePlayerPicture id=${id} picture=${picture}`);
 	}
 
-	return json(true);
+	return Response.json(true);
 };

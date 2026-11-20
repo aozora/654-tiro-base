@@ -5,19 +5,13 @@ import {
 	getPlayers,
 	getTournament,
 	upsertMatch
-} from '$lib/server/repository';
-import { superValidate } from 'sveltekit-superforms';
-import { valibot } from 'sveltekit-superforms/adapters';
+} from '#lib/server/repository.ts';
 import { error } from '@sveltejs/kit';
-import type { Match, Player, Tournament } from '$lib/server/database/schema';
+import type { Match, Player, Tournament } from '#lib/server/database/schema.ts';
 import { schema } from './schema';
 import { deleteSchema } from '../schema';
-import { handleDelete, handleUpdate } from '$lib/server/action-helpers';
+import { handleDelete, handleUpdate } from '#lib/server/action-helpers.ts';
 
-
-/**
- * Page Load
- */
 export const load: PageServerLoad = async ({ params }) => {
 	const { tournamentId } = params;
 
@@ -29,32 +23,22 @@ export const load: PageServerLoad = async ({ params }) => {
 		error(500, `Tournament with id ${tournamentId} not found`);
 	}
 
-	const form = await superValidate(valibot(schema));
-
 	return {
 		tournament,
 		players,
-		matches,
-		form
+		matches
 	};
 };
 
-/**
- * Page Action
- */
 export const actions: Actions = {
 	update: async ({ request }) => {
-		return handleUpdate(request, schema, async (data: any) => {
-			await upsertMatch(
-				data.matchId,
-				data.tournamentId,
-				data.date
-			);
+		return handleUpdate(request, schema, async (data) => {
+			await upsertMatch(data.matchId, data.tournamentId, data.date);
 		});
 	},
 
 	delete: async ({ request }) => {
-		return handleDelete(request, deleteSchema, async (data: any) => {
+		return handleDelete(request, deleteSchema, async (data) => {
 			await deleteMatchDeep(data.id);
 		});
 	}

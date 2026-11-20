@@ -1,5 +1,5 @@
 import type { RequestHandler } from './$types';
-import { auth } from '$lib/auth.server';
+import { auth } from '#lib/auth.server.ts';
 
 export const POST: RequestHandler = async (event) => {
 	if (!event.locals.session) {

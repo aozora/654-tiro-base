@@ -3,7 +3,7 @@
 //  * Custom theme for https://github.com/zerodevx/svelte-toast
 //  */
 // import { toast as svelteToast } from '@zerodevx/svelte-toast';
-// import ToastNotification from '$components/ui/Notification/ToastNotification.svelte';
+// import ToastNotification from '#components/ui/Notification/ToastNotification.svelte';
 //
 // export type ToastProps = {
 // 	kind: 'error' | 'info' | 'success' | 'warning';

@@ -1,8 +1,16 @@
-<script lang="ts">
-	import * as icons from '@lucide/svelte';
+<script lang="ts" module>
+	import { Dices, PencilLine, Trash2 } from '@lucide/svelte';
 
+	// Only the icons listed here are bundled: importing the whole library by
+	// name ships every icon to the browser.
+	const icons = { Dices, PencilLine, Trash2 };
+
+	export type IconName = keyof typeof icons;
+</script>
+
+<script lang="ts">
 	type Props = {
-		name: keyof typeof icons;
+		name: IconName;
 		[key: string]: unknown;
 	};
 
@@ -10,6 +18,4 @@
 	const Icon = $derived(icons[name]);
 </script>
 
-{#if Icon && typeof Icon !== 'object'}
-	<Icon {...props} />
-{/if}
+<Icon {...props} />

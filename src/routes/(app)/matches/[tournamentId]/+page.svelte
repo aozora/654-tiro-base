@@ -1,39 +1,50 @@
 <script lang="ts">
-	import Main from '$components/Main.svelte';
-	import PageTitle from '$components/PageTitle.svelte';
-	import { Button } from '$lib/components/ui/button';
 	import { ChevronRight } from '@lucide/svelte';
+	import Main from '#components/Main.svelte';
+	import PageTitle from '#components/PageTitle.svelte';
+	import { formatDate } from '#lib/helpers.ts';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
-	const { matches, tournament } = data;
+	const { matches, tournament } = $derived(data);
 </script>
 
-<PageTitle title={`Cronologia partite`} showBackButton={true} />
-<Main className="matches-page">
-	<div class="matches">
+<PageTitle
+	title="Cronologia partite"
+	subtitle={matches.length === 1
+		? '1 partita giocata'
+		: `${matches.length} partite giocate`}
+	showBackButton={true}
+/>
 
-		<div class="matches-wrapper mx-auto w-full max-w-3xl">
-			<h2 class="h-12 w-full text-center">
-				{#if matches}
-					{matches.length} partite giocate.
-				{/if}
-			</h2>
-
-			<ul class="flex flex-col gap-5">
-				{#each matches as match}
-					<li class="h-12">
-						<Button
-							href={`/matches/${tournament.id}/${match.id}`}
-							variant="secondary"
-							class="flex items-center justify-between gap-4 h-12 w-full bg-card hover:bg-indigo-700"
-						>
-							<strong>{new Intl.DateTimeFormat('it', { dateStyle: 'short' }).format(match.date)}</strong>
-							<ChevronRight size={24} />
-						</Button>
+<Main>
+	<div class="mx-auto w-full max-w-xl">
+		{#if matches.length > 0}
+			<ol class="panel divide-y">
+				{#each matches as match, index (match.id)}
+					<li>
+						<a href={`/matches/${tournament.id}/${match.id}`} class="panel-row">
+							<span
+								class="w-8 shrink-0 text-sm text-muted-foreground tabular-nums"
+							>
+								#{matches.length - index}
+							</span>
+							<strong class="min-w-0 flex-1 text-base"
+								>{formatDate(match.date, 'long')}</strong
+							>
+							<ChevronRight
+								size={20}
+								class="shrink-0 text-muted-foreground"
+								aria-hidden="true"
+							/>
+						</a>
 					</li>
 				{/each}
-			</ul>
-		</div>
+			</ol>
+		{:else}
+			<p class="panel px-6 py-12 text-center text-lg text-muted-foreground">
+				Non ci sono ancora partite!
+			</p>
+		{/if}
 	</div>
 </Main>

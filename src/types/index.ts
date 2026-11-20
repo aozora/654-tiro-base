@@ -1,6 +1,6 @@
 export enum Icons {
 	TankBlue = 'tank-blue',
-	TankBrand = 'tank-brand'
+	TankBrand = 'tank-brand',
 }
 
 export type PlayerLeaderboard = {
@@ -18,4 +18,11 @@ export type PlayerLeaderboardWithNormalizedRanking = {
 	picture: string;
 	sumPoints: number;
 	sumTerritoriesPoints: number;
+};
+
+/** A row of the tournament leaderboard, whichever score it is ranked by. */
+export type LeaderboardEntry = PlayerLeaderboardWithNormalizedRanking & {
+	matchesPlayed: number;
+	/** Territory points per match played. */
+	averageTerritoriesPoints: number;
 };

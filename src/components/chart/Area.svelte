@@ -3,38 +3,33 @@
   Generates an SVG area shape.
  -->
 <script>
-	import { getContext } from 'svelte';
+	import { getLayerCakeContext } from 'layercake';
 
-	const { data, xGet, yGet, xScale, yScale, extents } = getContext('LayerCake');
+	const k = getLayerCakeContext();
 
-	/**  @type {String} [fill='#ab00d610'] The shape's fill color. This is technically optional because it comes with a default value but you'll likely want to replace it with your own color. */
-	export let fill = '#ab00d610';
+	/**
+	 * @typedef {Object} Props
+	 * @property {string} [fill] - The shape's fill color.
+	 */
 
-	$: path =
-		'M' +
-		$data
-			.map(d => {
-				return $xGet(d) + ',' + $yGet(d);
-			})
-			.join('L');
+	/** @type {Props} */
+	let { fill = '#ab00d610' } = $props();
 
-	/**  @type {String} **/
-	let area;
+	const area = $derived.by(() => {
+		const path =
+			'M' +
+			k.data
+				.map((/** @type {any} */ d) => k.xGet(d) + ',' + k.yGet(d))
+				.join('L');
+		const baseline = k.yScale.range()[0];
+		const extent = k.extents.x;
 
-	$: {
-		const yRange = $yScale.range();
-		area =
+		return (
 			path +
-			('L' +
-				$xScale($extents.x ? $extents.x[1] : 0) +
-				',' +
-				yRange[0] +
-				'L' +
-				$xScale($extents.x ? $extents.x[0] : 0) +
-				',' +
-				yRange[0] +
-				'Z');
-	}
+			('L' + k.xScale(extent ? extent[1] : 0) + ',' + baseline) +
+			('L' + k.xScale(extent ? extent[0] : 0) + ',' + baseline + 'Z')
+		);
+	});
 </script>
 
 <path class="path-area" d={area} {fill}></path>
