@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Main from '$components/Main.svelte';
-	import PageTitle from '$components/PageTitle.svelte';
-	import { buttonVariants } from '$lib/components/ui/button';
-	import { cn } from '$lib/utils';
+	import Main from '#components/Main.svelte';
+	import PageTitle from '#components/PageTitle.svelte';
+	import { buttonVariants } from '#lib/components/ui/button/index.ts';
+	import { cn } from '#lib/utils.ts';
 </script>
 
 <PageTitle title="Gestione 654" variant="admin" />

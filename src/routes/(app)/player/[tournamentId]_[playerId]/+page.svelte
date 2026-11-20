@@ -2,17 +2,17 @@
 	/**
 	 * Display all the matches of the player
 	 */
-	import Main from '$components/Main.svelte';
-	import PageTitle from '$components/PageTitle.svelte';
-	import { pluralizePoints } from '$lib/helpers';
-	import PlayerProfile from '$components/PlayerProfile.svelte';
+	import Main from '#components/Main.svelte';
+	import PageTitle from '#components/PageTitle.svelte';
+	import { pluralizePoints } from '#lib/helpers.ts';
+	import PlayerProfile from '#components/PlayerProfile.svelte';
 	import { LayerCake, Svg } from 'layercake';
-	import AxisX from '$components/chart/AxisX.svelte';
-	import AxisY from '$components/chart/AxisY.svelte';
-	import Area from '$components/chart/Area.svelte';
-	import Line from '$components/chart/Line.svelte';
-	import { Card, CardContent } from '$lib/components/ui/card';
-	import { Button } from '$lib/components/ui/button';
+	import AxisX from '#components/chart/AxisX.svelte';
+	import AxisY from '#components/chart/AxisY.svelte';
+	import Area from '#components/chart/Area.svelte';
+	import Line from '#components/chart/Line.svelte';
+	import { Card, CardContent } from '#lib/components/ui/card/index.ts';
+	import { Button } from '#lib/components/ui/button/index.ts';
 	import { ChevronRight } from '@lucide/svelte';
 	import type { PageProps } from './$types';
 
@@ -33,7 +33,7 @@
 </script>
 
 <PageTitle
-	title={`Profilo di ${player.name}`}
+	title={`Profilo di ${player?.name ?? ''}`}
 	showBackButton={true}
 />
 
@@ -73,7 +73,7 @@
 			</h2>
 
 			<ul class="flex flex-col gap-5">
-				{#if stats}
+				{#if stats && tournament}
 					{#each stats.matchesDatesAndPoints as match}
 						<li class="h-12">
 							<Button

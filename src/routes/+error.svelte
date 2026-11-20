@@ -1,8 +1,8 @@
 <script>
 	import { page } from '$app/state';
-	import Main from '$components/Main.svelte';
+	import Main from '#components/Main.svelte';
 
-	import '$styles/app.css';
+	import '#styles/app.css';
 	import { Bug } from '@lucide/svelte';
 </script>
 

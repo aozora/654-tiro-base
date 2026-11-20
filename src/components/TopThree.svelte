@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { PlayerLeaderboard } from '$types';
-	import TopAvatar from '$components/TopAvatar.svelte';
-	import { cn } from '$lib/utils';
+	import type { PlayerLeaderboard } from '#types';
+	import TopAvatar from '#components/TopAvatar.svelte';
+	import { cn } from '#lib/utils.ts';
 
 	type TopThreeProps = {
 		leaderboard: Array<PlayerLeaderboard>;

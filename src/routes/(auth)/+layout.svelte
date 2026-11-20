@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Main from '$components/Main.svelte';
+	import Main from '#components/Main.svelte';
 	import type { LayoutProps } from './$types';
 
 	let { children }: LayoutProps = $props();

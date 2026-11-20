@@ -4,9 +4,9 @@ import {
 	getMatchPlayers,
 	getTournament,
 	type PlayerExtended
-} from '$lib/server/repository';
-import type { PlayerLeaderboardWithNormalizedRanking } from '$types';
-import type { Match, Tournament } from '$lib/server/database/schema';
+} from '#lib/server/repository.ts';
+import type { PlayerLeaderboardWithNormalizedRanking } from '#types';
+import type { Match, Tournament } from '#lib/server/database/schema.ts';
 
 function sortPointsDesc(a: PlayerExtended, b: PlayerExtended) {
 	if (a.points > b.points) {

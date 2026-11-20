@@ -1,11 +1,11 @@
 <script lang="ts">
-	import Main from '$components/Main.svelte';
-	import TopThree from '$components/TopThree.svelte';
-	import PageTitle from '$components/PageTitle.svelte';
-	import { pluralizePoints } from '$lib/helpers';
-	import { Button } from '$lib/components/ui/button';
-	import * as ToggleGroup from '$lib/components/ui/toggle-group';
-	import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
+	import Main from '#components/Main.svelte';
+	import TopThree from '#components/TopThree.svelte';
+	import PageTitle from '#components/PageTitle.svelte';
+	import { pluralizePoints } from '#lib/helpers.ts';
+	import { Button } from '#lib/components/ui/button/index.ts';
+	import * as ToggleGroup from '#lib/components/ui/toggle-group/index.ts';
+	import { Avatar, AvatarFallback, AvatarImage } from '#lib/components/ui/avatar/index.ts';
 	import { ChevronRight } from '@lucide/svelte';
 	import type { PageProps } from './$types';
 

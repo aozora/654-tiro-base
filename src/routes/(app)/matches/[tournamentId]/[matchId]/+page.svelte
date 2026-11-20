@@ -2,12 +2,12 @@
 	/**
 	 * Display all the matches of the player
 	 */
-	import Main from '$components/Main.svelte';
-	import PageTitle from '$components/PageTitle.svelte';
-	import { pluralizePoints } from '$lib/helpers';
+	import Main from '#components/Main.svelte';
+	import PageTitle from '#components/PageTitle.svelte';
+	import { pluralizePoints } from '#lib/helpers.ts';
 	import type { PageProps } from './$types';
-	import { buttonVariants } from '$lib/components/ui/button';
-	import { cn } from '$lib/utils';
+	import { buttonVariants } from '#lib/components/ui/button/index.ts';
+	import { cn } from '#lib/utils.ts';
 
 	let { data }: PageProps = $props();
 

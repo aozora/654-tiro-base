@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button';
+	import { Button } from '#lib/components/ui/button/index.ts';
 	import * as LucideIcons from '@lucide/svelte';
-	import type { ButtonProps } from '$lib/components/ui/button/button.svelte';
-	import Icon from '$components/Icon.svelte';
+	import type { ButtonProps } from '#lib/components/ui/button/button.svelte';
+	import Icon from '#components/Icon.svelte';
 
 	type Props = ButtonProps & {
 		icon?: keyof typeof LucideIcons;

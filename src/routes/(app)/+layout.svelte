@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Header from '$components/Header.svelte';
+	import Header from '#components/Header.svelte';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
-	import { cn } from '$lib/utils';
+	import { cn } from '#lib/utils.ts';
 	import type { LayoutProps } from './$types';
 
 	let { data, children }: LayoutProps = $props();

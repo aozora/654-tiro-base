@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { PlayerStats } from '$lib/server/repository';
-	import type { Player } from '$lib/server/database/schema';
-	import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
-	import { cn } from '$lib/utils';
+	import type { PlayerStats } from '#lib/server/repository.ts';
+	import type { Player } from '#lib/server/database/schema.ts';
+	import { Avatar, AvatarFallback, AvatarImage } from '#lib/components/ui/avatar/index.ts';
+	import { cn } from '#lib/utils.ts';
 
 	type PlayerProfileProps = {
 		player: Player;

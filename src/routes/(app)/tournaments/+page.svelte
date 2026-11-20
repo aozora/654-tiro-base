@@ -1,10 +1,10 @@
 <script lang="ts">
-	import Main from '$components/Main.svelte';
-	import PageTitle from '$components/PageTitle.svelte';
+	import Main from '#components/Main.svelte';
+	import PageTitle from '#components/PageTitle.svelte';
 	import type { PageProps } from './$types';
 	import { ChevronRight } from '@lucide/svelte';
-	import { buttonVariants } from '$lib/components/ui/button';
-	import { cn } from '$lib/utils';
+	import { buttonVariants } from '#lib/components/ui/button/index.ts';
+	import { cn } from '#lib/utils.ts';
 
 	let { data }: PageProps = $props();
 	const { tournaments } = data;

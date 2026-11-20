@@ -5,11 +5,11 @@ import {
 	getLeaderboard,
 	getPlayers,
 	getTournament
-} from '$lib/server/repository';
+} from '#lib/server/repository.ts';
 import { error } from '@sveltejs/kit';
-import type { PlayerLeaderboard, PlayerLeaderboardWithNormalizedRanking } from '$types';
-import { sortMatchPointsDesc, sortTerritoriesPointsDesc } from '$lib/helpers';
-import type { Player, Tournament } from '$lib/server/database/schema';
+import type { PlayerLeaderboard, PlayerLeaderboardWithNormalizedRanking } from '#types';
+import { sortMatchPointsDesc, sortTerritoriesPointsDesc } from '#lib/helpers.ts';
+import type { Player, Tournament } from '#lib/server/database/schema.ts';
 
 /**
  * Normalizes the ranking in a sorted leaderboard by assigning ranks based on the sumPoints value.

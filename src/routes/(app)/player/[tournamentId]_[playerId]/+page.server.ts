@@ -3,8 +3,8 @@ import {
 	getPlayerStats,
 	getTournament,
 	type PlayerStats
-} from '$lib/server/repository';
-import type { Tournament } from '$lib/server/database/schema';
+} from '#lib/server/repository.ts';
+import type { Tournament } from '#lib/server/database/schema.ts';
 import { error, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 

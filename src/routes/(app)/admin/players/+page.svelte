@@ -1,52 +1,39 @@
 <script lang="ts">
-	import Main from '$components/Main.svelte';
-	import { superForm } from 'sveltekit-superforms/client';
-	import { page } from '$app/state';
-	import PageTitle from '$components/PageTitle.svelte';
+	import Main from '#components/Main.svelte';
+	import PageTitle from '#components/PageTitle.svelte';
 	import { UserRound } from '@lucide/svelte';
 	import type { PageProps } from './$types';
-	import { valibotClient } from 'sveltekit-superforms/adapters';
 	import { toast } from 'svelte-sonner';
-	import type { Player } from '$lib/server/database/schema';
-	import { Button } from '$lib/components/ui/button';
-	import DataTable from '$components/DataTable.svelte';
+	import type { Player } from '#lib/server/database/schema.ts';
+	import { Button } from '#lib/components/ui/button/index.ts';
+	import DataTable from '#components/DataTable.svelte';
 	import type { ColumnDef } from '@tanstack/table-core';
-	import { renderComponent, renderSnippet } from '$lib/components/ui/data-table';
-	import DataTableButton from '$components/DataTableButton.svelte';
-	import DataTableFormButton from '$components/DataTableFormButton.svelte';
+	import { renderComponent, renderSnippet } from '#lib/components/ui/data-table/index.ts';
+	import DataTableButton from '#components/DataTableButton.svelte';
+	import DataTableFormButton from '#components/DataTableFormButton.svelte';
 	import { createRawSnippet } from 'svelte';
-	import DataTablePlayer from '$components/DataTablePlayer.svelte';
-	import * as Dialog from '$lib/components/ui/dialog';
-	import { Input } from '$lib/components/ui/input';
-	import * as Form from '$lib/components/ui/form';
-	import { Checkbox } from '$lib/components/ui/checkbox';
+	import DataTablePlayer from '#components/DataTablePlayer.svelte';
+	import * as Dialog from '#lib/components/ui/dialog/index.ts';
+	import { Input } from '#lib/components/ui/input/index.ts';
+	import { Checkbox } from '#lib/components/ui/checkbox/index.ts';
+	import { Label } from '#lib/components/ui/label/index.ts';
 	import { schema } from './schema';
+	import { createForm, Field, Form, reset, setErrors, type SubmitHandler } from '@formisch/svelte';
+	import { failureMessage, postAction } from '#lib/forms/post-action.ts';
 
 	let { data }: PageProps = $props();
 	const { players } = $derived(data);
 
-	let form = $derived(
-		superForm(data.form, {
-			validators: valibotClient(schema),
-			dataType: 'json',
-			onUpdated: ({ form }) => {
-				// When the form is successfully submitted close the modal and reset the item variable
-				if (form.valid && form.message && page.status < 400) {
-					item = undefined;
-					isModalOpen = false;
+	const emptyPlayer = {
+		name: '',
+		picture: '',
+		isActive: false
+	};
 
-					// show a toast
-					toast.success('Triplooo! Dati salvati!');
-				} else {
-					toast.error('Cita murta! c\'è un errore....');
-				}
-			}
-		})
-	);
-	let formData = $derived(form.form);
-	let errors = $derived(form.errors);
-	let submitting = $derived(form.submitting);
-	let enhance = $derived(form.enhance);
+	const playerForm = createForm({
+		schema,
+		initialInput: emptyPlayer
+	});
 
 	let isModalOpen = $state(false);
 	let item: Player | undefined = $state(undefined);
@@ -69,7 +56,7 @@
 
 				return renderSnippet(
 					createRawSnippet(() => ({
-						render: () => isActive ? `<span>Yes</span>` : `<span>No</span>`
+						render: () => (isActive ? `<span>Yes</span>` : `<span>No</span>`)
 					}))
 				);
 			}
@@ -93,10 +80,7 @@
 				const player = row.original;
 
 				return renderComponent(DataTableFormButton, {
-					ids: [
-						{ name: 'id', value: player.id }
-					],
-					enhance: enhance,
+					ids: [{ name: 'id', value: player.id }],
 					action: '?/delete',
 					label: 'Elimina',
 					type: 'submit',
@@ -104,13 +88,10 @@
 					icon: 'Trash2',
 					class: 'cursor-pointer',
 					onSubmit: (e) => {
-						const okDelete = confirm(
-							`Elimino il giocatore ${player.name}?`
-						);
+						const okDelete = confirm(`Elimino il giocatore ${player.name}?`);
 
 						if (!okDelete) {
 							e.preventDefault();
-							return;
 						}
 					}
 				});
@@ -120,28 +101,43 @@
 
 	const onEditPlayer = (row: Player) => {
 		item = row;
+		reset(playerForm, {
+			initialInput: {
+				id: row.id,
+				name: row.name,
+				picture: row.picture ?? '',
+				isActive: row.isActive
+			}
+		});
 		isModalOpen = true;
 	};
 
 	const createPlayer = () => {
 		item = undefined;
+		reset(playerForm, { initialInput: emptyPlayer });
 		isModalOpen = true;
 	};
 
-	// Populate form data when item changes
-	$effect(() => {
-		if (item) {
-			$formData.id = item.id;
-			$formData.name = item.name;
-			$formData.picture = item.picture ?? undefined;
-			$formData.isActive = item.isActive;
-		} else {
-			$formData.id = undefined;
-			$formData.name = '';
-			$formData.picture = undefined;
-			$formData.isActive = false;
+	const handleSubmit: SubmitHandler<typeof schema> = async (output) => {
+		try {
+			const result = await postAction('?/update', output);
+			if (result.type === 'success') {
+				item = undefined;
+				isModalOpen = false;
+				toast.success('Triplooo! Dati salvati!');
+				return;
+			}
+			if (result.type === 'failure' || result.type === 'error') {
+				setErrors(playerForm, {
+					errors: [failureMessage(result, 'Qualcosa è andato storto')]
+				});
+				toast.error("Cita murta! c'è un errore....");
+			}
+		} catch (error) {
+			console.error(error);
+			toast.error("Cita murta! c'è un errore....");
 		}
-	});
+	};
 </script>
 
 <PageTitle title="Gestione giocatori" showBackButton={true} variant="admin" />
@@ -163,69 +159,77 @@
 	</div>
 </Main>
 
-
 <Dialog.Root bind:open={isModalOpen}>
 	<Dialog.Content>
 		<Dialog.Header>
 			<Dialog.Title>{item === undefined ? 'Nuovo giocatore' : 'Modifica giocatore'}</Dialog.Title>
 		</Dialog.Header>
 
-		<form method="POST" action="?/update" use:enhance>
-			<input type="hidden" name="id" value={$formData.id} />
+		<Form of={playerForm} onsubmit={handleSubmit} class="flex flex-col gap-4">
+			<Field of={playerForm} path={['name']}>
+				{#snippet children(field)}
+					<Label for="player-name">Nome</Label>
+					<Input
+						{...field.props}
+						id="player-name"
+						type="text"
+						placeholder="Inserisci il nome del giocatore"
+						value={field.input}
+						aria-invalid={!!field.errors}
+						aria-errormessage="player-name-error"
+					/>
+					{#if field.errors}
+						<p id="player-name-error" class="text-sm text-destructive">{field.errors[0]}</p>
+					{/if}
+				{/snippet}
+			</Field>
 
-			<Form.Field {form} name="name">
-				<Form.Control>
-					{#snippet children({ props })}
-						<Form.Label>Nome</Form.Label>
-						<Input
-							{...props}
-							bind:value={$formData.name}
-							type="text"
-							placeholder="Inserisci il nome del giocatore"
-						/>
-					{/snippet}
-				</Form.Control>
-				<Form.FieldErrors class="mb-4 *:mb-2" />
-			</Form.Field>
+			<Field of={playerForm} path={['picture']}>
+				{#snippet children(field)}
+					<Label for="player-picture">Foto (path)</Label>
+					<Input
+						{...field.props}
+						id="player-picture"
+						type="text"
+						value={field.input ?? ''}
+						aria-invalid={!!field.errors}
+						aria-errormessage="player-picture-error"
+					/>
+					{#if field.errors}
+						<p id="player-picture-error" class="text-sm text-destructive">{field.errors[0]}</p>
+					{/if}
+				{/snippet}
+			</Field>
 
-			<Form.Field {form} name="picture">
-				<Form.Control>
-					{#snippet children({ props })}
-						<Form.Label>Foto (path)</Form.Label>
-						<Input
-							{...props}
-							bind:value={$formData.picture}
-							type="text"
-							placeholder=""
-						/>
-					{/snippet}
-				</Form.Control>
-				<Form.FieldErrors class="mb-4 *:mb-2" />
-			</Form.Field>
-
-			<Form.Field {form} name="isActive">
-				<Form.Control>
-					{#snippet children({ props })}
-						<Form.Label>Attivo</Form.Label>
+			<Field of={playerForm} path={['isActive']}>
+				{#snippet children(field)}
+					{@const { oninput, onchange, ...fieldProps } = field.props}
+					<div class="flex items-center gap-2">
 						<Checkbox
-							{...props}
-							bind:checked={$formData.isActive}
+							{...fieldProps}
+							id="player-active"
+							aria-labelledby="player-active-label"
+							aria-invalid={!!field.errors}
+							checked={field.input ?? false}
+							onCheckedChange={(checked) => {
+								if (typeof checked === 'boolean') field.onInput(checked);
+							}}
 						/>
-					{/snippet}
-				</Form.Control>
-				<Form.FieldErrors class="mb-4 *:mb-2" />
-			</Form.Field>
+						<Label id="player-active-label" for="player-active">Attivo</Label>
+					</div>
+					{#if field.errors}
+						<p id="player-active-error" class="text-sm text-destructive">{field.errors[0]}</p>
+					{/if}
+				{/snippet}
+			</Field>
 
-			<Form.Button disabled={$submitting} class="w-full">
-				{$submitting ? 'Salvataggio...' : 'Conferma'}
-			</Form.Button>
+			<Button type="submit" disabled={playerForm.isSubmitting} class="w-full">
+				{playerForm.isSubmitting ? 'Salvataggio...' : 'Conferma'}
+			</Button>
 
-			{#if $errors?._errors}
-				<div class="mt-3 rounded-md text-red-700">
-					{$errors?._errors}
-				</div>
+			{#if playerForm.errors}
+				<div class="mt-3 rounded-md text-red-700">{playerForm.errors[0]}</div>
 			{/if}
-		</form>
-
+		</Form>
 	</Dialog.Content>
 </Dialog.Root>

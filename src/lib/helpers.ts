@@ -1,4 +1,4 @@
-import type { PlayerLeaderboard } from '$types';
+import type { PlayerLeaderboard } from '#types';
 
 export function pluralizePoints(points: number) {
 	return points === 1 ? '1 punto' : `${points} punti`;

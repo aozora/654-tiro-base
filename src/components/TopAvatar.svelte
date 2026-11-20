@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { PlayerLeaderboard } from '$types';
+	import type { PlayerLeaderboard } from '#types';
 	import { MediaQuery } from 'svelte/reactivity';
-	import { cn } from '$lib/utils';
-	import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
+	import { cn } from '#lib/utils.ts';
+	import { Avatar, AvatarFallback, AvatarImage } from '#lib/components/ui/avatar/index.ts';
 
 	type Props = {
 		player: PlayerLeaderboard;

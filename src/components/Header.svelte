@@ -1,10 +1,10 @@
 <script lang="ts">
-	import MobileMenu from '$components/MobileMenu.svelte';
+	import MobileMenu from '#components/MobileMenu.svelte';
 	import { page } from '$app/state';
 	import { MediaQuery } from 'svelte/reactivity';
 	import { Dices } from '@lucide/svelte';
-	import { cn } from '$lib/utils';
-	// import { Button } from '$lib/components/ui/button';
+	import { cn } from '#lib/utils.ts';
+	// import { Button } from '#lib/components/ui/button/index.ts';
 	// import { toggleMode } from 'mode-watcher';
 	// import MoonIcon from "@lucide/svelte/icons/moon";
 	// import SunIcon from "@lucide/svelte/icons/sun";

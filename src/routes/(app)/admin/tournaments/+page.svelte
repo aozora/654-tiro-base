@@ -1,52 +1,37 @@
 <script lang="ts">
-	import Main from '$components/Main.svelte';
-	import { superForm } from 'sveltekit-superforms/client';
-	import PageTitle from '$components/PageTitle.svelte';
+	import Main from '#components/Main.svelte';
+	import PageTitle from '#components/PageTitle.svelte';
 	import type { PageProps } from './$types';
-	import { page } from '$app/state';
-	import type { Match, Tournament } from '$lib/server/database/schema';
+	import type { Match, Tournament } from '#lib/server/database/schema.ts';
 	import { toast } from 'svelte-sonner';
 	import type { ColumnDef } from '@tanstack/table-core';
-	import { renderSnippet } from '$lib/components/ui/data-table/index.js';
+	import { renderComponent, renderSnippet } from '#lib/components/ui/data-table/index.js';
 	import { createRawSnippet } from 'svelte';
-	import { renderComponent } from '$lib/components/ui/data-table/index.js';
-	import DataTable from '$components/DataTable.svelte';
-	import { Button } from '$lib/components/ui/button';
+	import DataTable from '#components/DataTable.svelte';
+	import { Button } from '#lib/components/ui/button/index.ts';
 	import { PackagePlus } from '@lucide/svelte';
-	import DataTableButton from '$components/DataTableButton.svelte';
-	import * as Dialog from '$lib/components/ui/dialog';
-	import { Input } from '$lib/components/ui/input';
-	import * as Form from '$lib/components/ui/form';
-	import { valibotClient } from 'sveltekit-superforms/adapters';
+	import DataTableButton from '#components/DataTableButton.svelte';
+	import * as Dialog from '#lib/components/ui/dialog/index.ts';
+	import { Input } from '#lib/components/ui/input/index.ts';
 	import { schema } from './schema';
-	import { Checkbox } from '$lib/components/ui/checkbox';
-	import DataTableFormButton from '$components/DataTableFormButton.svelte';
+	import { Checkbox } from '#lib/components/ui/checkbox/index.ts';
+	import { Label } from '#lib/components/ui/label/index.ts';
+	import DataTableFormButton from '#components/DataTableFormButton.svelte';
+	import { createForm, Field, Form, reset, setErrors, type SubmitHandler } from '@formisch/svelte';
+	import { failureMessage, postAction } from '#lib/forms/post-action.ts';
 
 	let { data }: PageProps = $props();
-	let { tournaments,  } = $derived(data);
+	let { tournaments } = $derived(data);
 
-	let form = $derived(
-		superForm(data.form, {
-			validators: valibotClient(schema),
-			dataType: 'json',
-			onUpdated: ({ form }) => {
-				// When the form is successfully submitted close the modal and reset the item variable
-				if (form.valid && form.message && page.status < 400) {
-					item = undefined;
-					isModalOpen = false;
+	const emptyTournament = {
+		title: '',
+		isActive: false
+	};
 
-					// show a toast
-					toast.success('Triplooo! Dati salvati!');
-				} else {
-					toast.error('Cita murta! c\'è un errore....');
-				}
-			}
-		})
-	);
-	let formData = $derived(form.form);
-	let errors = $derived(form.errors);
-	let submitting = $derived(form.submitting);
-	let enhance = $derived(form.enhance);
+	const tournamentForm = createForm({
+		schema,
+		initialInput: emptyTournament
+	});
 
 	let isModalOpen = $state(false);
 	let item: Tournament | undefined = $state(undefined);
@@ -64,7 +49,7 @@
 
 				return renderSnippet(
 					createRawSnippet(() => ({
-						render: () => isActive ? `<span>Yes</span>` : `<span>No</span>`
+						render: () => (isActive ? `<span>Yes</span>` : `<span>No</span>`)
 					}))
 				);
 			}
@@ -118,7 +103,6 @@
 				if (matches.length === 0) {
 					return renderComponent(DataTableFormButton, {
 						ids: [{ name: 'id', value: tournament.id }],
-						enhance: enhance,
 						action: '?/delete',
 						label: 'Elimina',
 						type: 'submit',
@@ -135,26 +119,42 @@
 
 	const onEditTournament = (row: Tournament) => {
 		item = row;
+		reset(tournamentForm, {
+			initialInput: {
+				id: row.id,
+				title: row.title,
+				isActive: row.isActive
+			}
+		});
 		isModalOpen = true;
 	};
 
 	const createTournament = () => {
 		item = undefined;
+		reset(tournamentForm, { initialInput: emptyTournament });
 		isModalOpen = true;
 	};
 
-	// Populate form data when item changes
-	$effect(() => {
-		if (item) {
-			$formData.id = item.id;
-			$formData.title = item.title;
-			$formData.isActive = item.isActive;
-		} else {
-			$formData.id = undefined;
-			$formData.title = '';
-			$formData.isActive = false;
+	const handleSubmit: SubmitHandler<typeof schema> = async (output) => {
+		try {
+			const result = await postAction('?/update', output);
+			if (result.type === 'success') {
+				item = undefined;
+				isModalOpen = false;
+				toast.success('Triplooo! Dati salvati!');
+				return;
+			}
+			if (result.type === 'failure' || result.type === 'error') {
+				setErrors(tournamentForm, {
+					errors: [failureMessage(result, 'Qualcosa è andato storto')]
+				});
+				toast.error("Cita murta! c'è un errore....");
+			}
+		} catch (error) {
+			console.error(error);
+			toast.error("Cita murta! c'è un errore....");
 		}
-	});
+	};
 </script>
 
 <PageTitle title="Gestione tornei" showBackButton={true} variant="admin" />
@@ -178,47 +178,54 @@
 			<Dialog.Title>{item === undefined ? 'Nuovo torneo' : 'Modifica torneo'}</Dialog.Title>
 		</Dialog.Header>
 
-		<form method="POST" action="?/update" use:enhance>
-			<input type="hidden" name="id" value={item?.id} />
+		<Form of={tournamentForm} onsubmit={handleSubmit} class="flex flex-col gap-4">
+			<Field of={tournamentForm} path={['title']}>
+				{#snippet children(field)}
+					<Label for="tournament-title">Titolo</Label>
+					<Input
+						{...field.props}
+						id="tournament-title"
+						type="text"
+						placeholder="Inserisci il titolo del torneo..."
+						value={field.input}
+						aria-invalid={!!field.errors}
+						aria-errormessage="tournament-title-error"
+					/>
+					{#if field.errors}
+						<p id="tournament-title-error" class="text-sm text-destructive">{field.errors[0]}</p>
+					{/if}
+				{/snippet}
+			</Field>
 
-			<Form.Field {form} name="title">
-				<Form.Control>
-					{#snippet children({ props })}
-						<Form.Label>Titolo</Form.Label>
-						<Input
-							{...props}
-							bind:value={$formData.title}
-							type="text"
-							placeholder="Inserisci il titolo del torneo..."
-						/>
-					{/snippet}
-				</Form.Control>
-				<Form.FieldErrors class="mb-4 *:mb-2" />
-			</Form.Field>
-
-			<Form.Field {form} name="isActive">
-				<Form.Control>
-					{#snippet children({ props })}
-						<Form.Label>Attivo</Form.Label>
+			<Field of={tournamentForm} path={['isActive']}>
+				{#snippet children(field)}
+					{@const { oninput, onchange, ...fieldProps } = field.props}
+					<div class="flex items-center gap-2">
 						<Checkbox
-							{...props}
-							bind:checked={$formData.isActive}
+							{...fieldProps}
+							id="tournament-active"
+							aria-labelledby="tournament-active-label"
+							aria-invalid={!!field.errors}
+							checked={field.input ?? false}
+							onCheckedChange={(checked) => {
+								if (typeof checked === 'boolean') field.onInput(checked);
+							}}
 						/>
-					{/snippet}
-				</Form.Control>
-				<Form.FieldErrors class="mb-4 *:mb-2" />
-			</Form.Field>
+						<Label id="tournament-active-label" for="tournament-active">Attivo</Label>
+					</div>
+					{#if field.errors}
+						<p class="text-sm text-destructive">{field.errors[0]}</p>
+					{/if}
+				{/snippet}
+			</Field>
 
-			<Form.Button disabled={$submitting} class="w-full">
-				{$submitting ? 'Salvataggio...' : 'Conferma'}
-			</Form.Button>
+			<Button type="submit" disabled={tournamentForm.isSubmitting} class="w-full">
+				{tournamentForm.isSubmitting ? 'Salvataggio...' : 'Conferma'}
+			</Button>
 
-			{#if $errors?._errors}
-				<div class="mt-3 rounded-md text-red-700">
-					{$errors?._errors}
-				</div>
+			{#if tournamentForm.errors}
+				<div class="mt-3 rounded-md text-red-700">{tournamentForm.errors[0]}</div>
 			{/if}
-		</form>
-
+		</Form>
 	</Dialog.Content>
 </Dialog.Root>

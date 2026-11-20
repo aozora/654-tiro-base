@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
-	import type { Player } from '$lib/server/database/schema';
+	import { Avatar, AvatarFallback, AvatarImage } from '#lib/components/ui/avatar/index.ts';
+	import type { Player } from '#lib/server/database/schema.ts';
 
 	type Props = {
 		player: Player;

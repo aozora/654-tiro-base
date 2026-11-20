@@ -13,7 +13,7 @@
 	$: path =
 		'M' +
 		$data
-			.map(d => {
+			.map((/** @type {any} */ d) => {
 				return $xGet(d) + ',' + $yGet(d);
 			})
 			.join('L');

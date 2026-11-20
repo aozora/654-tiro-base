@@ -1,10 +1,9 @@
-import { auth } from '$lib/auth.server';
+import { auth } from '#lib/auth.server.ts';
 import { fail, redirect } from '@sveltejs/kit';
-import { setError, superValidate } from 'sveltekit-superforms';
-import { valibot } from 'sveltekit-superforms/adapters';
 import type { Actions, PageServerLoad } from './$types';
 import { formSchema } from './schema';
 import { APIError } from 'better-auth';
+import * as v from 'valibot';
 
 export const load: PageServerLoad = async (event) => {
 	const session = await auth.api.getSession({
@@ -15,31 +14,30 @@ export const load: PageServerLoad = async (event) => {
 		redirect(302, '/leaderboard');
 	}
 
-	const form = await superValidate(valibot(formSchema));
-	return { form };
+	return {};
 };
 
 export const actions = {
 	default: async (event) => {
-		const form = await superValidate(event, valibot(formSchema));
+		const parsed = v.safeParse(formSchema, await event.request.json());
 
-		if (!form.valid) {
-			return fail(400, { form });
+		if (!parsed.success) {
+			return fail(400, { message: 'Form not valid' });
 		}
 
 		try {
 			await auth.api.signInEmail({
 				body: {
-					email: form.data.email,
-					password: form.data.password,
+					email: parsed.output.email,
+					password: parsed.output.password
 				}
 			});
 		} catch (error) {
 			if (error instanceof APIError) {
-				return setError(form, error.message || 'Signin failed');
+				return fail(400, { message: error.message || 'Signin failed' });
 			}
 			console.error('Unexpected error during sign in', error);
-			return setError(form, 'Unexpected error');
+			return fail(500, { message: 'Unexpected error' });
 		}
 
 		redirect(302, '/leaderboard');

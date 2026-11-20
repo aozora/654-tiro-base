@@ -7,47 +7,35 @@ import {
 	type PlayerExtended,
 	removePlayerFromMatch,
 	upsertMatchPlayer
-} from '$lib/server/repository';
-import { superValidate } from 'sveltekit-superforms';
-import { valibot } from 'sveltekit-superforms/adapters';
-import type { Player, Tournament } from '$lib/server/database/schema';
-import { schema } from './schema';
-import { deleteSchema } from './schema';
-import { handleDelete, handleUpdate } from '$lib/server/action-helpers';
+} from '#lib/server/repository.ts';
+import type { Player, Tournament } from '#lib/server/database/schema.ts';
+import { deleteSchema, schema } from './schema';
+import { handleDelete, handleUpdate } from '#lib/server/action-helpers.ts';
 
-
-/**
- * Page Load
- */
 export const load: PageServerLoad = async ({ params }) => {
 	const { matchId, tournamentId } = params;
 	const match = await getMatch(matchId);
 	const tournament: Tournament = await getTournament(tournamentId);
 	const allPlayers: Array<Player> = await getPlayers();
 	const players: Array<PlayerExtended> = await getMatchPlayers(matchId);
-	const form = await superValidate(valibot(schema));
 
 	return {
 		match,
 		tournament,
-		allPlayers: allPlayers.filter((x) => x.isActive),
-		players,
-		form
+		allPlayers: allPlayers.filter((player) => player.isActive),
+		players
 	};
 };
 
-/**
- * Page Action
- */
 export const actions: Actions = {
 	update: async ({ request }) => {
-		return handleUpdate(request, schema, async (data: any) => {
+		return handleUpdate(request, schema, async (data) => {
 			await upsertMatchPlayer(data.matchId, data.playerId, data.points, data.territoriesPoints);
 		});
 	},
 
 	delete: async ({ request }) => {
-		return handleDelete(request, deleteSchema, async (data: any) => {
+		return handleDelete(request, deleteSchema, async (data) => {
 			await removePlayerFromMatch(data.matchId, data.playerId);
 		});
 	}

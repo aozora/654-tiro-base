@@ -1,36 +1,21 @@
-import { deletePlayer, getPlayers, upsertPlayer } from '$lib/server/repository';
-import { superValidate } from 'sveltekit-superforms';
-import { valibot } from 'sveltekit-superforms/adapters';
+import { deletePlayer, getPlayers, upsertPlayer } from '#lib/server/repository.ts';
 import type { Actions, PageServerLoad } from './$types';
 import { deleteSchema, schema } from './schema';
-import type { Player } from '$lib/server/database/schema';
-import { handleDelete, handleUpdate } from '$lib/server/action-helpers';
+import type { Player } from '#lib/server/database/schema.ts';
+import { handleDelete, handleUpdate } from '#lib/server/action-helpers.ts';
 
-/**
- * Page Load
- */
 export const load: PageServerLoad = async () => {
 	const players: Array<Player> = await getPlayers();
-	const form = await superValidate(valibot(schema));
 
 	return {
-		players,
-		form
+		players
 	};
 };
 
-/**
- * Page Action
- */
 export const actions: Actions = {
 	update: async ({ request }) => {
-		return handleUpdate(request, schema, async (data: any) => {
-			await upsertPlayer(
-				data.id,
-				data.name,
-				data.picture || '',
-				data.isActive
-			);
+		return handleUpdate(request, schema, async (data) => {
+			await upsertPlayer(data.id, data.name, data.picture || '', data.isActive);
 		});
 	},
 
@@ -38,7 +23,7 @@ export const actions: Actions = {
 	 * NOTE: delete don't work cause of FK relations in table Player
 	 */
 	delete: async ({ request }) => {
-		return handleDelete(request, deleteSchema, async (data: any) => {
+		return handleDelete(request, deleteSchema, async (data) => {
 			await deletePlayer(data.id);
 		});
 	}

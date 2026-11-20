@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button';
+	import { Button } from '#lib/components/ui/button/index.ts';
 	import { ArrowLeft } from '@lucide/svelte';
-	import { cn } from '$lib/utils';
-	import { goBack } from '$lib/utils/navigation';
+	import { cn } from '#lib/utils.ts';
+	import { goBack } from '#lib/utils/navigation.ts';
 
 	type Props = {
 		title: string;

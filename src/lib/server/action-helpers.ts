@@ -1,61 +1,65 @@
-import { fail, message, superValidate } from 'sveltekit-superforms';
-import { valibot } from 'sveltekit-superforms/adapters';
-import type { RequestEvent } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
+import * as v from 'valibot';
+
+async function readBody(request: Request): Promise<unknown> {
+	const type = request.headers.get('content-type') ?? '';
+	if (type.includes('application/json') || type.includes('text/plain')) {
+		return request.json();
+	}
+
+	const data = await request.formData();
+	return Object.fromEntries(data);
+}
+
+async function validate<TSchema extends v.GenericSchema>(request: Request, schema: TSchema) {
+	return v.safeParse(schema, await readBody(request));
+}
 
 /**
- * Generic handler for update/create form actions
- * @param request - The request object from the action
- * @param schema - The valibot schema to validate against
- * @param updateFn - Async function that performs the update/create operation with form data
- * @returns SuperValidated form with success/error status
+ * Validates a create/update submission with Valibot, then runs the write.
  */
-export async function handleUpdate<T>(
+export async function handleUpdate<TSchema extends v.GenericSchema>(
 	request: Request,
-	schema: any,
-	updateFn: (data: T) => Promise<void>
+	schema: TSchema,
+	updateFn: (data: v.InferOutput<TSchema>) => Promise<void>
 ) {
-	const form = await superValidate(request, valibot(schema));
+	const parsed = await validate(request, schema);
 
-	if (!form.valid) {
-		console.error('Form not valid', form);
-		return fail(400, { form, message: 'Form not valid' });
+	if (!parsed.success) {
+		console.error('Form not valid', parsed.issues);
+		return fail(400, { message: 'Form not valid' });
 	}
 
 	try {
-		await updateFn(form.data as T);
-		return message(form, 'success');
+		await updateFn(parsed.output);
+		return { message: 'success' };
 	} catch (error: unknown) {
 		console.error(error);
-		return fail(500, { form, message: 'Something went wrong' });
+		return fail(500, { message: 'Something went wrong' });
 	}
 }
 
 /**
- * Generic handler for delete form actions
- * @param request - The request object from the action
- * @param schema - The valibot schema to validate against
- * @param deleteFn - Async function that performs the delete operation with the ID(s)
- * @param successMessage - Optional custom success message (defaults to 'success')
- * @returns SuperValidated form with success/error status
+ * Validates a delete submission with Valibot, then runs the delete.
  */
-export async function handleDelete<T>(
+export async function handleDelete<TSchema extends v.GenericSchema>(
 	request: Request,
-	schema: any,
-	deleteFn: (data: T) => Promise<void>,
-	successMessage: string = 'success'
+	schema: TSchema,
+	deleteFn: (data: v.InferOutput<TSchema>) => Promise<void>,
+	successMessage = 'success'
 ) {
-	const form = await superValidate(request, valibot(schema));
+	const parsed = await validate(request, schema);
 
-	if (!form.valid) {
-		console.error('Delete Form not valid', form);
-		return fail(400, { form, message: 'Form not valid' });
+	if (!parsed.success) {
+		console.error('Delete Form not valid', parsed.issues);
+		return fail(400, { message: 'Form not valid' });
 	}
 
 	try {
-		await deleteFn(form.data as T);
-		return message(form, successMessage);
+		await deleteFn(parsed.output);
+		return { message: successMessage };
 	} catch (error: unknown) {
 		console.error(error);
-		return fail(500, { form, message: 'Something went wrong' });
+		return fail(500, { message: 'Something went wrong' });
 	}
 }

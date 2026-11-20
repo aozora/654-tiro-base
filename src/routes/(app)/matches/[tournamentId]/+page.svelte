@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Main from '$components/Main.svelte';
-	import PageTitle from '$components/PageTitle.svelte';
-	import { Button } from '$lib/components/ui/button';
+	import Main from '#components/Main.svelte';
+	import PageTitle from '#components/PageTitle.svelte';
+	import { Button } from '#lib/components/ui/button/index.ts';
 	import { ChevronRight } from '@lucide/svelte';
 	import type { PageProps } from './$types';
 
