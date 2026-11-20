@@ -7,29 +7,56 @@
 	import { Button } from '#lib/components/ui/button/index.ts';
 	import * as Tabs from '#lib/components/ui/tabs/index.ts';
 	import { cn } from '#lib/utils.ts';
-	import type { PlayerLeaderboardWithNormalizedRanking } from '#types';
+	import type { LeaderboardEntry } from '#types';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
-	let { tournament, leaderboardByMatchPoints, leaderboardByTerritoriesPoints } =
-		$derived(data);
+	let {
+		tournament,
+		leaderboardByMatchPoints,
+		leaderboardByTerritoriesPoints,
+		leaderboardByAverage,
+	} = $derived(data);
 
-	type Leaderboard = Array<PlayerLeaderboardWithNormalizedRanking>;
+	type View = {
+		value: string;
+		label: string;
+		leaderboard: Array<LeaderboardEntry>;
+		/** The score the view is ranked by, ready to display. */
+		score: (player: LeaderboardEntry) => string;
+		/** Extra context shown under the score. */
+		detail?: (player: LeaderboardEntry) => string;
+	};
+
+	const averageFormat = new Intl.NumberFormat('it', {
+		maximumFractionDigits: 2,
+	});
 
 	let viewMode = $state('territories');
 
-	const views = $derived([
+	const views: Array<View> = $derived([
 		{
 			value: 'territories',
 			label: 'Punti territori',
 			leaderboard: leaderboardByTerritoriesPoints,
-			score: (player: Leaderboard[number]) => player.sumTerritoriesPoints,
+			score: (player) => String(player.sumTerritoriesPoints),
 		},
 		{
 			value: 'match',
 			label: 'Punti partita',
 			leaderboard: leaderboardByMatchPoints,
-			score: (player: Leaderboard[number]) => player.sumPoints,
+			score: (player) => String(player.sumPoints),
+		},
+		{
+			// Territory points divided by the matches the player took part in
+			value: 'average',
+			label: 'Media punti',
+			leaderboard: leaderboardByAverage,
+			score: (player) => averageFormat.format(player.averageTerritoriesPoints),
+			detail: (player) =>
+				player.matchesPlayed === 1
+					? '1 partita'
+					: `${player.matchesPlayed} partite`,
 		},
 	]);
 </script>
@@ -41,12 +68,12 @@
 	<Tabs.Root bind:value={viewMode} class="gap-8">
 		<Tabs.List
 			aria-label="Tipo di classifica"
-			class="mx-auto w-full max-w-sm rounded-lg border bg-card/90 p-1 group-data-horizontal/tabs:h-12"
+			class="mx-auto w-full max-w-md rounded-lg border bg-card/90 p-1 group-data-horizontal/tabs:h-12"
 		>
 			{#each views as view (view.value)}
 				<Tabs.Trigger
 					value={view.value}
-					class="h-full cursor-pointer rounded-md data-active:bg-primary data-active:text-primary-foreground dark:data-active:border-transparent dark:data-active:bg-primary dark:data-active:text-primary-foreground"
+					class="h-full cursor-pointer rounded-md px-1 text-xs sm:text-sm data-active:bg-primary data-active:text-primary-foreground dark:data-active:border-transparent dark:data-active:bg-primary dark:data-active:text-primary-foreground"
 				>
 					{view.label}
 				</Tabs.Trigger>
@@ -55,16 +82,13 @@
 
 		{#each views as view (view.value)}
 			<Tabs.Content value={view.value}>
-				{@render board(view.leaderboard, view.score)}
+				{@render board(view)}
 			</Tabs.Content>
 		{/each}
 	</Tabs.Root>
 </Main>
 
-{#snippet board(
-	leaderboard: Leaderboard,
-	score: (player: Leaderboard[number]) => number,
-)}
+{#snippet board({ leaderboard, score, detail }: View)}
 	{#if leaderboard.length > 0}
 		<TopThree {leaderboard} tournamentId={tournament.id} {score} />
 
@@ -88,11 +112,18 @@
 							<strong class="min-w-0 flex-1 truncate text-base"
 								>{player.name}</strong
 							>
-							<span class="shrink-0 text-sm text-muted-foreground">
-								<strong class="text-base text-foreground tabular-nums"
-									>{score(player)}</strong
-								>
-								pt
+							<span
+								class="flex shrink-0 flex-col items-end text-sm leading-tight text-muted-foreground"
+							>
+								<span>
+									<strong class="text-base text-foreground tabular-nums"
+										>{score(player)}</strong
+									>
+									pt
+								</span>
+								{#if detail}
+									<span class="text-xs tabular-nums">{detail(player)}</span>
+								{/if}
 							</span>
 							<ChevronRight
 								size={20}

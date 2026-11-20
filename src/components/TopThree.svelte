@@ -1,13 +1,13 @@
 <script lang="ts">
 	import PlayerAvatar from '#components/PlayerAvatar.svelte';
 	import { cn } from '#lib/utils.ts';
-	import type { PlayerLeaderboardWithNormalizedRanking } from '#types';
+	import type { LeaderboardEntry } from '#types';
 
 	type TopThreeProps = {
-		leaderboard: Array<PlayerLeaderboardWithNormalizedRanking>;
+		leaderboard: Array<LeaderboardEntry>;
 		tournamentId: string;
 		/** Which score is shown under each name. */
-		score: (player: PlayerLeaderboardWithNormalizedRanking) => number;
+		score: (player: LeaderboardEntry) => string;
 	};
 
 	let { leaderboard, tournamentId, score }: TopThreeProps = $props();

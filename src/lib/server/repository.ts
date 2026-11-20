@@ -431,6 +431,7 @@ export async function getLeaderboard(tournamentId: string) {
 			playerId: playersOnMatches.playerId,
 			totalPoints: sql<number>`sum(${playersOnMatches.points})`,
 			totalTerritoriesPoints: sql<number>`sum(${playersOnMatches.territoriesPoints})`,
+			matchesPlayed: sql<number>`count(*)`,
 		})
 		.from(playersOnMatches)
 		.innerJoin(matches, eq(playersOnMatches.matchId, matches.id))
